@@ -1,0 +1,12 @@
+{
+"name": "kompilace_less",
+"version": "1.4.4",
+"description": "Pøíklad kompilace LESS souboru pomocí Gruntu",
+"devDependencies": {
+"grunt": "~1.0.0",
+"grunt-contrib-less": "~0.11.4",
+"grunt-contrib-watch": "^1.0.0"
+},
+"author": "lukaspavel.cz",
+"license": "GNU"
+}

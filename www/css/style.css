@@ -1,0 +1,57 @@
+@import "inspinia.css";
+.row.padding-bottom {
+  padding-bottom: 30px;
+}
+.nav-header .img-circle {
+  width: 64px;
+  height: 64px;
+}
+.page-heading.slim {
+  height: 66px;
+}
+.nopadding-right {
+  padding-right: 0;
+}
+.i-checks .radiolist label {
+  cursor: pointer;
+  line-height: 20px;
+}
+.i-checks label {
+  white-space: nowrap;
+}
+.icheckbox_square-green {
+  background-color: #FFFFFF !important;
+  margin-right: 5px !important;
+}
+.iradio_square-green {
+  margin-right: 5px !important;
+  margin-left: 15px !important;
+}
+.form-group.padding-radio {
+  padding-top: 29px;
+}
+.form-group.padding-checkbox {
+  padding-top: 14px;
+}
+.week-input {
+  font-weight: bold;
+  float: left;
+}
+.ibox-title.modified {
+  padding-top: 10px;
+}
+.ibox-title.modified .ibox-tools {
+  width: 50px;
+  float: right;
+  padding-top: 4px;
+}
+.week-number a {
+  width: 21px;
+  height: 20px;
+  text-align: center;
+  display: block;
+  float: left;
+}
+.week-number a:nth-child(-n+9) {
+  width: 15px;
+}
