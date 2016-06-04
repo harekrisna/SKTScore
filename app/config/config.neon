@@ -32,4 +32,5 @@ services:
 	guru: App\Model\Guru
 	center: App\Model\Center
 	preachingZone: App\Model\PreachingZone
+	membershipCategory: App\Model\MembershipCategory
 	membershipLevel: App\Model\MembershipLevel

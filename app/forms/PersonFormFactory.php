@@ -18,17 +18,20 @@ class PersonFormFactory extends Nette\Object {
 	private $center_model;	
 	/** @var PreachingZone */
 	private $preachingZone_model;
+	/** @var MembershipCategory */
+	private $membershipCategory_model;	
 	/** @var MembershipLevel */
-	private $membershipLevel_model;	
+	private $membershipLevel_model;
 	
 	
-	public function __construct(FormFactory $factory, \App\Model\Guru $guru_model, \App\Model\Region $region_model, \App\Model\Center $center_model, \App\Model\PreachingZone $preachingZone_model, \App\Model\MembershipLevel $membershipLevel_model) {
+	public function __construct(FormFactory $factory, \App\Model\Guru $guru_model, \App\Model\Region $region_model, \App\Model\Center $center_model, \App\Model\PreachingZone $preachingZone_model, \App\Model\MembershipCategory $membershipCategory_model, \App\Model\MembershipLevel $membershipLevel_model) {
 		$this->factory = $factory;
 		$this->guru_model = $guru_model;
 		$this->region_model = $region_model;
 		$this->center_model = $center_model;
 		$this->preachingZone_model = $preachingZone_model;
 		$this->membershipLevel_model = $membershipLevel_model;
+		$this->membershipCategory_model = $membershipCategory_model;
 
 	}
 
@@ -39,6 +42,7 @@ class PersonFormFactory extends Nette\Object {
 		$centerPairs = $this->center_model->findAll()->fetchPairs('id', 'title');
 		$preachingZonePairs = $this->preachingZone_model->findAll()->fetchPairs('id', 'title');
 		$membershipLevelPairs = $this->membershipLevel_model->findAll()->fetchPairs('id', 'title');
+		$membershipCategoryPairs = $this->membershipCategory_model->findAll()->fetchPairs('id', 'title');
 				
 		$form->addText('name', 'Jméno *');
 			 //->setRequired('Zadejte jméno prosím.');
@@ -79,16 +83,19 @@ class PersonFormFactory extends Nette\Object {
 	    $form->addSelect('leader_id', 'Vedení')
 		     ->setPrompt('- nezadáno -');
 
-	    $form->addSelect('preaching_zone_1', 'Kazatelská zóna 1')
+	    $form->addSelect('preaching_zone_1_id', 'Kazatelská zóna 1', $preachingZonePairs)
 		     ->setPrompt('- nezadáno -');		     
 
-	    $form->addSelect('preaching_zone_2', 'Kazatelská zóna 2')
+	    $form->addSelect('preaching_zone_2_id', 'Kazatelská zóna 2', $preachingZonePairs)
 		     ->setPrompt('- nezadáno -');
 
-	    $form->addSelect('preaching_zone_3', 'Kazatelská zóna 3')
+	    $form->addSelect('preaching_zone_3_id', 'Kazatelská zóna 3', $preachingZonePairs)
 		     ->setPrompt('- nezadáno -');		     		     
 
-	    $form->addSelect('membership_level', 'Kategorie členství', $membershipLevelPairs)
+	    $form->addSelect('membership_category_id', 'Kategorie členství', $membershipCategoryPairs)
+		     ->setPrompt('- nezadáno -');	
+
+	    $form->addSelect('membership_level_id', 'Úroveň členství', $membershipLevelPairs)
 		     ->setPrompt('- nezadáno -');	
 
 	    $form->addSubmit('send', 'Login');

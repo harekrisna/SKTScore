@@ -15,6 +15,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	protected $guru;
 	protected $center;
 	protected $preachingZone;
+	protected $membershipCategory;
 	protected $membershipLevel;
 	
 	protected function startup()	{
@@ -24,6 +25,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		$this->guru = $this->context->getService('guru');  
 		$this->center = $this->context->getService('center');  
 		$this->preachingZone = $this->context->getService('preachingZone');
+		$this->membershipCategory = $this->context->getService('membershipCategory');
 		$this->membershipLevel = $this->context->getService('membershipLevel');
 	}
 }
