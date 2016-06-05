@@ -11,6 +11,8 @@
 
     <link href="{$basePath}/css/animate.css" rel="stylesheet">
     <link href="{$basePath}/css/style.css" rel="stylesheet">
+    
+    <script src="{$basePath}/js/jquery-2.2.3.js"></script>
 	{block head}
 	{/block}
 </head>
@@ -95,13 +97,19 @@
     </div>
 
     <!-- Mainly scripts -->
-    <script src="{$basePath}/js/jquery-2.2.3.js"></script>
     <script src="{$basePath}/js/bootstrap.min.js"></script>
     <script src="{$basePath}/js/plugins/metisMenu/jquery.metisMenu.js"></script>
     <script src="{$basePath}/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>    
     <script src="{$basePath}/js/inspinia.js"></script>
     <script src="{$basePath}/js/plugins/pace/pace.min.js"></script>
-    <script src="{$basePath}/js/main.js"></script>
+    
+    <!-- Toastr script -->
+    <script src="{$basePath}/js/plugins/toastr/toastr.min.js"></script>
+    <script>
+    {foreach $flashes as $flash}
+    	toastr.{$flash->type|noescape}({$flash->message});
+    {/foreach}
+    </script>
 	{block scripts}
 	{/block}
 </body>

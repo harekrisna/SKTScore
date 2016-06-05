@@ -5,13 +5,13 @@ namespace App\Presenters;
 use Nette;
 use App\Model;
 use App\Forms\PersonFormFactory;
-use Tracy\Debugger;
 
 
-class ResultPresenter extends BasePresenter {
+class PersonPresenterNIX extends BasePresenter {	
+
 	/** @var PersonFormFactory @inject */
 	public $factory;
-		
+	
     protected function startup()  {
         parent::startup();
     
@@ -20,19 +20,18 @@ class ResultPresenter extends BasePresenter {
         }
     }
     
-	public function renderSetter()	{
-		$this->template->weeks_in_year = gmdate("W", strtotime("31 December 2016"));
+	public function actionAdd()	{
+		$this['personForm']->setDefaults(array(
+			"das" => "d"
+		));
 	}
-	
+		
 	protected function createComponentPersonForm() {
 		$form = $this->factory->create();
-		
 		$form->onSuccess[] = function ($form) {
-			$this->flashMessage("Osoba byla úspěšně přidána", 'success');
 			$form->getPresenter()->redirect('Result:setter');
-			$this->sdfsf();
-			$this->sendPaylouad();
 		};
 		return $form;
-	}
+	}	
+	
 }

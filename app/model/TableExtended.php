@@ -6,17 +6,16 @@ use Nette;
 abstract class TableExtended extends Table
 {   
 	public function insert($data)	{
-	  	try {
-	      	return $this->getTable()
+		try {
+	    	return $this->getTable()
 	                    ->insert($data);
-	                    
-	    } catch(\PDOException $e) {
-	        if($e->getCode() == 23000)
-	            return false;
-	        else
-	            throw $e;
-	    }
- 	}
+	    } catch (Nette\Database\UniqueConstraintViolationException $e) {
+		    ob_start();
+			var_dump($data);
+			$result = ob_get_clean();
+			throw new DuplicateException($result);
+		}
+	}    
  	   
     public function update($id, $data)  {
                 
@@ -32,7 +31,9 @@ abstract class TableExtended extends Table
 		
         return $this->getTable()
         			->where(['id' => $id])
-        			->update($data);
-        			
+        			->update($data);   			
     }
 }
+
+class DuplicateException extends \Exception
+{}

@@ -28,9 +28,4 @@ services:
 	- App\Forms\PersonFormFactory
 	router: App\RouterFactory::createRouter
 
-	region: App\Model\Region
-	guru: App\Model\Guru
-	center: App\Model\Center
-	preachingZone: App\Model\PreachingZone
-	membershipCategory: App\Model\MembershipCategory
-	membershipLevel: App\Model\MembershipLevel
+	person: App\Model\Person

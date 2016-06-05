@@ -12,7 +12,7 @@
                     <h2>Výsledky 2016</h2>
                             <strong style="float: left;">Týden:</strong>
 							<nav class="week-number">
-							{for $week_number = 1; $week_number <= 53; $week_number++}
+							{for $week_number = 1; $week_number <= $weeks_in_year; $week_number++}
 								<a href="#">{$week_number}</a>
 							{/for}
 							</nav>
@@ -43,7 +43,21 @@
                 </div>
             </div>
             <div class="ibox-content">
-            <table class="table table-striped table-bordered table-hover " id="editable" >
+	        <div class="">
+			{form personForm, class => "form-horizontal ajax"}
+                <script n:if="$form->hasErrors()">
+                $(document).ready(function(){    
+		        {foreach $form->errors as $error}
+		        	toastr.error({$error});
+		        {/foreach}
+		        });
+			    </script>
+                {label name, class => "col-sm-2 control-label" /}
+                        {input name}{label name, class => "error" }{$form['name']->error}{/label}
+                        {input send, class => "btn btn-primary"}
+            {/form}
+            </div>
+            <table class="table table-striped table-bordered table-hover" id="resultsTable" >
             <thead>
             <tr>
                 <th style="width: 50%;">Jméno</th>
@@ -492,10 +506,13 @@
     <script src="{$basePath}/js/plugins/datapicker/bootstrap-datepicker.js"></script>
     <script src="{$basePath}/js/libs/moment.min.js"></script>
     <script src="{$basePath}/js/libs/week-picker.js"></script>
-
+    
+    <script src="{$basePath}/js/jquery.form.min.js"></script>
+    <script src="{$basePath}/js/jquery.nette.js"></script>
+    
     <!-- Page-Level Scripts -->
     <script>
-        $(document).ready(function() {	        
+        $(document).ready(function() {
 	        $('#week_from_input').datepicker({
                 todayBtn: "linked",
                 keyboardNavigation: false,
@@ -540,10 +557,10 @@
             });
 
             /* Init DataTables */
-            var oTable = $('#editable').DataTable();
+            var oTable = $('#resultsTable').DataTable();
 
             /* Apply the jEditable handlers to the table */
-            oTable.$('td:not(:nth-child(1))').editable( 'http://webapplayers.com/example_ajax.php', {
+            oTable.$('td:nth-child(1)').editable( 'http://webapplayers.com/example_ajax.php', {
                 "callback": function( sValue, y ) {
                     var aPos = oTable.fnGetPosition( this );
                     oTable.fnUpdate( sValue, aPos[0], aPos[1] );
@@ -551,25 +568,49 @@
                 "submitdata": function ( value, settings ) {
                     return {
                         "row_id": this.parentNode.getAttribute('id'),
-                        "column": oTable.fnGetPosition(this)[2]
-                    };
+                        "column": "10"                    };
                 },
 					
                 "width": "80%",
                 "height": "100%"
-            } );
-
-
+            });
+            
+            	        
+	        var lol = $('div#resultsTable_wrapper');
+	        console.log(lol);
+            
+            
+	        function fnClickAddRow() {
+	            $('#resultsTable').dataTable().fnAddData( [
+	                "Custom row",
+	                "New row",
+	                "New row",
+	                "New row",
+	                "New row" ] );
+				            /* Init DataTables */
+	            var oTable = $('#resultsTable').DataTable();
+	
+	            /* Apply the jEditable handlers to the table */
+	            oTable.$('td:nth-child(1)').editable( 'http://webapplayers.com/example_ajax.php', {
+	                "callback": function( sValue, y ) {
+	                    var aPos = oTable.fnGetPosition( this );
+	                    oTable.fnUpdate( sValue, aPos[0], aPos[1] );
+	                },
+	                "submitdata": function ( value, settings ) {
+	                    return {
+	                        "row_id": this.parentNode.getAttribute('id'),
+	                        "column": "10"
+	                    };
+	                },
+						
+	                "width": "80%",
+	                "height": "100%"
+	            });
+	        }
         });
 
-        function fnClickAddRow() {
-            $('#editable').dataTable().fnAddData( [
-                "Custom row",
-                "New row",
-                "New row",
-                "New row",
-                "New row" ] );
 
-        }
+
+
     </script>
 {/block}

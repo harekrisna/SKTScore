@@ -11,21 +11,11 @@ use App\Model;
  */
 abstract class BasePresenter extends Nette\Application\UI\Presenter
 {
-	protected $region; 
-	protected $guru;
-	protected $center;
-	protected $preachingZone;
-	protected $membershipCategory;
-	protected $membershipLevel;
+	protected $person;
 	
 	protected function startup()	{
 		parent::startup();
 		
-		$this->region = $this->context->getService('region');
-		$this->guru = $this->context->getService('guru');  
-		$this->center = $this->context->getService('center');  
-		$this->preachingZone = $this->context->getService('preachingZone');
-		$this->membershipCategory = $this->context->getService('membershipCategory');
-		$this->membershipLevel = $this->context->getService('membershipLevel');
+		$this->person = $this->context->getService('person');
 	}
 }
