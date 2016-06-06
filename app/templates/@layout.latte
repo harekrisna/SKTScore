@@ -11,6 +11,9 @@
 
     <link href="{$basePath}/css/animate.css" rel="stylesheet">
     <link href="{$basePath}/css/style.css" rel="stylesheet">
+
+    <!-- Toastr style -->
+    <link href="{$basePath}/css/plugins/toastr/toastr.min.css" rel="stylesheet">
     
     <script src="{$basePath}/js/jquery-2.2.3.js"></script>
 	{block head}
@@ -75,10 +78,21 @@
 								<span class="label label-warning">16</span>
 							</a>
 						</li>
-						<li class="dropdown">
-							<a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-								<i class="fa fa-bell"></i>  <span class="label label-primary">8</span>
-							</a>
+						<li class="main-ajax-spinner">
+							<div class="sk-spinner sk-spinner-circle">
+								<div class="sk-circle1 sk-circle"></div>
+								<div class="sk-circle2 sk-circle"></div>
+								<div class="sk-circle3 sk-circle"></div>
+								<div class="sk-circle4 sk-circle"></div>
+								<div class="sk-circle5 sk-circle"></div>
+								<div class="sk-circle6 sk-circle"></div>
+								<div class="sk-circle7 sk-circle"></div>
+								<div class="sk-circle8 sk-circle"></div>
+								<div class="sk-circle9 sk-circle"></div>
+								<div class="sk-circle10 sk-circle"></div>
+								<div class="sk-circle11 sk-circle"></div>
+								<div class="sk-circle12 sk-circle"></div>
+							</div>
 						</li>
 		                <li>
 		                    <a n:href="Sign:out">
@@ -105,11 +119,13 @@
     
     <!-- Toastr script -->
     <script src="{$basePath}/js/plugins/toastr/toastr.min.js"></script>
+    {snippet flashes}
     <script>
     {foreach $flashes as $flash}
     	toastr.{$flash->type|noescape}({$flash->message});
     {/foreach}
     </script>
+    {/snippet}
 	{block scripts}
 	{/block}
 </body>

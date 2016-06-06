@@ -22,3 +22,40 @@ Date.prototype.nowMySQLdate = function() {
 		   ('0' + (date.getMonth()+1)).slice(-2) + "-" +
 		   ('0' + date.getDate()).slice(-2);
 }
+
+function bindWeekPicker(input) {
+    $(input).datepicker({
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        calendarWeeks: true,
+        autoclose: true,
+        format: 'yyyy-mm-dd',
+        language: 'cs'
+    })
+    .click(function() {
+		var active_tr =	$('.datepicker table td.active.day').parent();
+		active_tr.find('td.active').removeClass('active');
+		active_tr.addClass('active');
+    });
+	
+	$(input).on('change', function (e) {
+		var value = $("#week_from_input").val();
+		var only_int_value = value.replace(/-/g, '');
+
+		if(!isNaN(only_int_value)) {
+			date = new Date()
+			if(value == "") {
+				value = date.nowMySQLdate();
+			}
+			
+			var active_tr =	$('.datepicker table td.active.day').parent();
+			active_tr.find('td.active').removeClass('active');
+			active_tr.addClass('active');
+								
+		    var week_number = date.getWeek(value);
+		    var year = value.substring(0, 4);
+			$("#week_from_input").val("Rok " + year + " - Týden " + week_number);
+		}
+	});
+}

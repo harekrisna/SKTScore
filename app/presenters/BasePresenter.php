@@ -18,4 +18,9 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		
 		$this->person = $this->context->getService('person');
 	}
+
+	public function afterRender() {
+	    if ($this->isAjax() && $this->hasFlashSession())
+	        $this->redrawControl('flashes');
+	}
 }

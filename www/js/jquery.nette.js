@@ -26,28 +26,28 @@ jQuery.extend({
 					jQuery.nette.updateSnippet(i, payload.snippets[i]);
 				}
 			}
+
+			$('.main-ajax-spinner').removeClass('visible');
 		}
 	}
 });
 
 jQuery.ajaxSetup({
 	success: jQuery.nette.success,
-	dataType: "json"
+	dataType: "json",
+    beforeSend: function() {
+    	$('.main-ajax-spinner').addClass('visible');
+    },
 });
 
-/* Volání AJAXu u všech odkazů s třídou ajax */
-$("a.ajax").on("click", function (event) {
-    event.preventDefault();
-    $.get(this.href);
-});
-
-/* AJAXové odeslání formulářů */
-$("form.ajax").on("submit", function () {
-    $(this).ajaxSubmit();
-    return false;
-});
-
-$("form.ajax :submit").on("click", function () {
-    $(this).ajaxSubmit();
-    return false;
+$('body').on('submit', 'form.ajax', function( event ) {
+	$.ajax({
+	    type: "POST",
+	    url: $(this).attr("action"),
+	    data: $(this).serialize(),
+	    success: function(data) {                   
+			$.nette.success(data);
+	    }
+	});
+	event.preventDefault();
 });
