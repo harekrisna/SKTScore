@@ -29,10 +29,13 @@ class ResultPresenter extends BasePresenter {
 		
 		$form->onSuccess[] = function ($form) {
 			$this->flashMessage("Osoba byla úspěšně přidána", 'success');
-			$form->getPresenter()->redirect('Result:setter');
-			$this->sdfsf();
-			$this->sendPaylouad();
+			$this->redrawControl('lolexx');
 		};
+		
+		$form->onError[] = function ($form) {
+			$this->redrawControl('lolexx');	
+		};
+		
 		return $form;
 	}
 }

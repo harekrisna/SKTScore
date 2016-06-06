@@ -44,7 +44,8 @@
             </div>
             <div class="ibox-content">
 	        <div class="">
-			{form personForm, class => "form-horizontal ajax"}
+			{snippet lolexx}
+			{form personForm, class => "form-horizontal"}
                 <script n:if="$form->hasErrors()">
                 $(document).ready(function(){    
 		        {foreach $form->errors as $error}
@@ -56,6 +57,7 @@
                         {input name}{label name, class => "error" }{$form['name']->error}{/label}
                         {input send, class => "btn btn-primary"}
             {/form}
+            {/snippet}
             </div>
             <table class="table table-striped table-bordered table-hover" id="resultsTable" >
             <thead>
@@ -512,6 +514,19 @@
     
     <!-- Page-Level Scripts -->
     <script>
+
+			$( '#frm-personForm' ).submit(function( event ) {
+				$.ajax({
+				    type: "POST",
+				    url: $(this).attr("action"),
+				    data: $(this).serialize(), // serializes the form's elements.
+				    success: function(data)
+				    {
+						console.log(data);
+				    }
+				});
+				event.preventDefault();
+				});
         $(document).ready(function() {
 	        $('#week_from_input').datepicker({
                 todayBtn: "linked",
@@ -527,6 +542,10 @@
 				active_tr.find('td.active').removeClass('active');
 				active_tr.addClass('active');
 	        });
+			
+			
+
+			
 			
 			$('#week_from_input').on('change', function (e) {
 				var value = $("#week_from_input").val();
