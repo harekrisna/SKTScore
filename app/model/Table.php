@@ -16,13 +16,18 @@ abstract class Table extends Nette\Object
     /** @var string */
     protected $tableName;
 
+    /** @var Nette\Security\User */
+    protected $user;
+
     /**
      * @param Nette\Database\Connection $db
+     * @param Nette\Security\User $user
      * @throws \Nette\InvalidStateException
      */
-    public function __construct(Nette\Database\Context $db)
+    public function __construct(Nette\Database\Context $db, Nette\Security\User $user)
     {
         $this->connection = $db;
+        $this->user = $user;
 
         if ($this->tableName === NULL) {
             $class = get_class($this);

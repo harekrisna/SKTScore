@@ -13,13 +13,6 @@ class PersonPresenter extends BasePresenter {
 	/** @var PersonFormFactory @inject */
 	public $factory;
 	
-    protected function startup()  {
-        parent::startup();
-        if (!$this->getUser()->isLoggedIn()) {
-            $this->redirect('Sign:in');
-        }
-    }
-	
 	protected function createComponentPersonForm() {
 		$form = $this->factory->create();
 		

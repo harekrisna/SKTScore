@@ -56,6 +56,13 @@
 	                        <li><a href="dashboard_2.html">Přehled</a></li>
 	                    </ul>
 	                </li>
+					<li n:class="$presenter->isLinkCurrent('Book:*') ? active">
+	                    <a n:href="Book:list"><i class="fa fa-book" style="margin-left: 2.5px;"></i><span class="nav-label">Knihy</span><span class="fa arrow"></a>
+	                    <ul class="nav nav-second-level collapse">
+	                        <li n:class="$presenter->isLinkCurrent('Book:add') ? active"><a n:href="Book:add">Přidat</a></li>
+	                        <li n:class="$presenter->isLinkCurrent('Book:list') ? active"><a n:href="Book:list">Přehled</a></li>
+	                    </ul>
+	                </li>
 	            </ul>
 	        </div>
 	    </nav>
@@ -104,8 +111,8 @@
 			</div>
 			{include content}
 			<div class="footer">
-            	<div class="pull-right">10GB of <strong>250GB</strong> Free.</div>
-				<div><strong>Copyright</strong> Example Company &copy; 2014-2015</div>
+            	<div class="pull-right">300 osob, rozdáno <strong>12000 knih</strong>.</div>
+				<div><strong>Copyright</strong> Prabhupád Bhavan &copy; 2016</div>
 			</div>
         </div>
     </div>
@@ -116,7 +123,8 @@
     <script src="{$basePath}/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>    
     <script src="{$basePath}/js/inspinia.js"></script>
     <script src="{$basePath}/js/plugins/pace/pace.min.js"></script>
-    
+    <script src="{$basePath}/js/jquery.nette.js"></script>
+
     <!-- Toastr script -->
     <script src="{$basePath}/js/plugins/toastr/toastr.min.js"></script>
     {snippet flashes}

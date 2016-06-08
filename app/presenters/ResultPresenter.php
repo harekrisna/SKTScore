@@ -11,14 +11,6 @@ use Tracy\Debugger;
 class ResultPresenter extends BasePresenter {
 	/** @var PersonFormFactory @inject */
 	public $factory;
-		
-    protected function startup()  {
-        parent::startup();
-    
-        if (!$this->getUser()->isLoggedIn()) {
-            $this->redirect('Sign:in');
-        }
-    }
     
 	public function renderSetter()	{
 		$this->template->weeks_in_year = gmdate("W", strtotime("31 December 2016"));

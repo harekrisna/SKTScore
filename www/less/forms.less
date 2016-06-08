@@ -1,6 +1,18 @@
-.ibox-title.empty {
-	padding: 0;
-	min-height: 0;	
+.ibox-title {
+	.ibox-select {
+		width: 200px;
+		height: 25px;
+		margin-top: -3px;
+		margin-left: 10px;
+		padding: 0;
+		padding-left: 3px;
+		float: left;
+	}
+
+	&.empty {
+		padding: 0;
+		min-height: 0;	
+	}
 }
 
 label.error {
@@ -36,4 +48,10 @@ label.error {
 	&.padding-checkbox {
 		padding-top: 14px;
 	}
+}
+
+.form-control {
+	&.tiny { width: 100px; }
+	&.medium { width: 300px; }
+	&.large { width: 400px; }
 }

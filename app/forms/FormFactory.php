@@ -12,9 +12,9 @@ class FormFactory extends Nette\Object
 	/**
 	 * @return Form
 	 */
-	public function create()
-	{
-		return new Form;
+	public function create() {
+		$form = new Form;
+		$form->addProtection('Vypršel časový limit, odešlete formulář znovu');
+		return $form;
 	}
-
 }

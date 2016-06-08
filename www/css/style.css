@@ -30,6 +30,21 @@
   -ms-user-select: none;
   user-select: none;
 }
+.nopadding {
+  padding: 0;
+}
+.table th.controls {
+  width: 10px;
+}
+.ibox-title .ibox-select {
+  width: 200px;
+  height: 25px;
+  margin-top: -3px;
+  margin-left: 10px;
+  padding: 0;
+  padding-left: 3px;
+  float: left;
+}
 .ibox-title.empty {
   padding: 0;
   min-height: 0;
@@ -57,6 +72,15 @@ label.error {
 }
 .form-group.padding-checkbox {
   padding-top: 14px;
+}
+.form-control.tiny {
+  width: 100px;
+}
+.form-control.medium {
+  width: 300px;
+}
+.form-control.large {
+  width: 400px;
 }
 .dropdown-form {
   width: 240px;
