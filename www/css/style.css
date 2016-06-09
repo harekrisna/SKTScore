@@ -34,7 +34,13 @@
   padding: 0;
 }
 .table th.controls {
-  width: 10px;
+  width: 46px;
+}
+.table td.controls a {
+  float: left;
+}
+.table td.controls a:not(:last-child) {
+  margin-right: 3px;
 }
 .ibox-title .ibox-select {
   width: 200px;

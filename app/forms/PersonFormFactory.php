@@ -23,8 +23,9 @@ class PersonFormFactory extends Nette\Object {
 
 	public function create() {
 		$form = $this->factory->create();
-				
-		$form->addText('name', 'Jméno')
+		$data = $form->addContainer("data");
+
+		$data->addText('name', 'Jméno')
 			 ->setRequired('Zadejte jméno prosím.');
 
 	    $form->addSubmit('send', 'Přidat osobu');
@@ -35,11 +36,10 @@ class PersonFormFactory extends Nette\Object {
 
 	public function formSucceeded(Form $form, $values) {
 		try {
-			$this->person->insert(['name' => $values['name'],
-								   'created_by_user_id' => $this->user->getIdentity()->id]);
+			$this->person->insert($values->data);
 		}
 		catch(\App\Model\DuplicateException $e) {
-			$form['name']->addError("Osoba s tímto jménem již existuje.");
+			$form['data']['name']->addError("Osoba s tímto jménem již existuje.");
 		}
 	}
 }

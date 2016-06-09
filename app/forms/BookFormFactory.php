@@ -15,6 +15,8 @@ class BookFormFactory extends Nette\Object {
 	private $category;
 	/** @var User */
 	private $user;
+
+	private $record;
 		
 	public function __construct(FormFactory $factory, \App\Model\Book $book, \App\Model\Category $category) {
 		$this->factory = $factory;
@@ -22,7 +24,9 @@ class BookFormFactory extends Nette\Object {
 		$this->category = $category;
 	}
 
-	public function create() {
+	public function create($record = null) {
+		$this->record = $record;
+
 		$form = $this->factory->create();
 		$data = $form->addContainer('data');
 
@@ -34,7 +38,12 @@ class BookFormFactory extends Nette\Object {
 
 		$data->addSelect('category_id', 'Kategorie', $this->category->findAll()->fetchPairs('id', 'title'));
 
-	    $form->addSubmit('send', 'Přidat knihu');
+	    $form->addSubmit('add', 'Přidat knihu');
+	    $form->addSubmit('edit', 'Uložit změny');
+
+	    if($record != null) {
+	    	$form['data']->setDefaults($record);
+	    }
 
 		$form->onSuccess[] = array($this, 'formSucceeded');
 		return $form;
@@ -42,7 +51,12 @@ class BookFormFactory extends Nette\Object {
 
 	public function formSucceeded(Form $form, $values) {
 		try {
-			$this->book->insert($values->data);
+			if($form->isSubmitted()->name == "add") {
+				$this->book->insert($values->data);
+			}
+			else {
+				$this->book->update($this->record-> id, $values->data);
+			}
 		}
 		catch(\App\Model\DuplicateException $e) {
 			if($e->foreign_key == "title") {

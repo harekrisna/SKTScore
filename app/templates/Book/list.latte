@@ -1,11 +1,14 @@
 {block head}
     <!-- FooTable -->
     <link href="{$basePath}/css/plugins/footable/footable.core.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="{$basePath}/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
 {/block}
 {block content}
 		<div class="row wrapper border-bottom white-bg page-heading slim">
 		    <div class="col-lg-10">
-		        <h2>Knihy</h2>
+		        <h2 n:block="title">Knihy</h2>
 		    </div>
 		</div>
         <div class="wrapper wrapper-content animated fadeInRight">
@@ -24,7 +27,7 @@
                                         <th class="wide noselect">Titul</th>
                                         <th class="noselect">Zkratka</th>
                                         <th class="noselect">Kategorie</th>
-                                        <th data-sort-ignore="true" data-name="Delete" class="controls"></th>
+                                        <th data-sort-ignore="true" data-name="controls" class="controls"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -32,7 +35,10 @@
                                         <td>{$book->title}</td>
                                         <td>{$book->abbreviation}</td>
                                         <td>{if $book->category_id}{$book->category->title}{/if}</td>
-                                        <td><a class="row-delete" n:href="delete, $book->id"><span class="glyphicon glyphicon-remove"></span></a></td>
+                                        <td class="controls">
+                                            <a class="row-delete" n:href="delete, $book->id"><span class="glyphicon glyphicon-remove"></span></a>
+                                            <a class="row-edit" n:href="edit, $book->id"><span class="glyphicon glyphicon-edit"></span></a>
+                                        </td>
                                     </tr>
                                 </tbody>
                                 <tfoot>
@@ -53,31 +59,13 @@
     <!-- FooTable -->
     <script src="{$basePath}/js/plugins/footable/footable.all.min.js"></script>    
     
+    <!-- Sweet alert -->
+    <script src="{$basePath}/js/plugins/sweetalert/sweetalert.min.js"></script>
+
     <!-- Page-Level Scripts -->
     <script>
         $(document).ready(function() {
-            $('#booksTable').footable().on('click', '.row-delete', function(e) {
-                e.preventDefault();
-                swal({
-        title: "Are you sure?",
-        text: "You will not be able to recover this imaginary file!",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes, delete it!",
-        closeOnConfirm: false
-    }, function () {
-        swal("Deleted!", "Your imaginary file has been deleted.", "success");
-    });
-                var table = $('#booksTable').data('footable');
-                var row = $(this).parents('tr:first');
-                $.get(this.href, 
-                    function (payload) { 
-                        $.nette.success(payload);
-                        table.removeRow(row);
-                    }
-                );
-            });
+            initFooTable('#booksTable');
         });
     </script>
 {/block}

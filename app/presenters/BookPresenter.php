@@ -12,6 +12,8 @@ use App\Forms\BookFormFactory;
 class BookPresenter extends BasePresenter {
 	/** @persistent */
     public $category_id;
+    /** @var object */
+    private $record;
 	/** @var Book */
 	private $model;
 	/** @var BookFormFactory @inject */
@@ -20,6 +22,26 @@ class BookPresenter extends BasePresenter {
 	protected function startup() {
 		parent::startup();
 		$this->model = $this->book;
+	}
+	
+	public function renderAdd() {
+		$this->setView("form");
+		$this->template->form = $this['bookForm'];
+		$this->template->form_title = "Přidat knihu";
+	}
+
+	public function actionEdit($record_id) {
+		$this->record = $this->model->get($record_id);
+		
+		if (!$this->record)
+            throw new Nette\Application\BadRequestException("Kniha nenalezena.");
+			
+        $this->template->record = $this->record;
+	}
+
+	public function renderEdit($record_id) {
+		$this->setView("form");
+		$this->template->form_title = "Upravit knihu";
 	}
 
 	public function renderList($category_id) {
@@ -30,11 +52,17 @@ class BookPresenter extends BasePresenter {
 	}
 
 	protected function createComponentBookForm() {
-		$form = $this->factory->create();
+		$form = $this->factory->create($this->record);
 		
 		$form->onSuccess[] = function ($form) {
-			$this->flashMessage("Kniha byla úspěšně přidána", 'success');
-			$form->getPresenter()->redirect('Book:add');
+			if($form->isSubmitted()->name == "add") {
+				$this->flashMessage("Kniha byla úspěšně přidána", 'success');
+				$form->getPresenter()->redirect('Book:add');
+			}
+			else {
+				$this->flashMessage("Kniha byla upravena", 'success');
+				$form->getPresenter()->redirect('Book:list');
+			}
 		};
 
 		return $form;
@@ -57,7 +85,7 @@ class BookPresenter extends BasePresenter {
 	}
 
 	public function actionDelete($id) {
-		//$this->model->delete($id);
+		$this->payload->success = $this->model->delete($id);
 		$this->sendPayload();
 	}
 }

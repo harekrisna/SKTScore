@@ -1,12 +1,30 @@
-<form n:name=$form>
-<ul class=error n:if="$form->ownErrors">
-	<li n:foreach="$form->ownErrors as $error">{$error}</li>
-</ul>
-
-<table>
-<tr n:foreach="$form->controls as $input" n:class="$input->required ? required">
-	<th>{label $input /}</th>
-	<td>{input $input} <span class=error n:ifcontent>{$input->error}</span></td>
-</tr>
-</table>
-</form>
+{block content}
+	<div class="row wrapper border-bottom white-bg page-heading slim">
+	    <div class="col-lg-10">
+	        <h2 n:block="title">{$form_title}</h2>
+	    </div>
+	</div>
+	<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title empty">
+                    </div>
+                    <div class="ibox-content">
+						<form n:name=$form>
+							{foreach $form->controls as $input}
+							<div n:class="form-group">
+								{label $input, class => "col-sm-2 control-label" /}
+								<div class="col-sm-10">
+									{input $input, class => "form-control"} <span class=error n:ifcontent>{$input->error}</span>
+								</div>
+							</div>
+							<div class="hr-line-dashed"></div>
+							{/foreach}
+						</form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}

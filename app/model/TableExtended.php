@@ -17,11 +17,10 @@ abstract class TableExtended extends Table  {
             $exception = new DuplicateException($e->getMessage());
             $exception->foreign_key = substr($e->getMessage(), strpos($e->getMessage(), "for key '") + 9, -1);
             throw $exception;
-		    }
-	  }
+		}
+	}
  	   
-    public function update($id, $data)  {
-                
+    public function update($id, $data) {
         // kontrola, zda se do některého cizího klíče nepřiřazuje prázdný řetězec, pokud ano nastaví se hodnota klíče na NULL                
         $references = $this->connection->getStructure()
                                        ->getBelongsToReference($this->tableName);
@@ -31,9 +30,16 @@ abstract class TableExtended extends Table  {
                $data[$column] = NULL;
            }
         }
-		
-        return $this->getTable()->where(['id' => $id])
-        			                  ->update($data);   			
+
+        try {
+            return $this->getTable()->where(['id' => $id])
+                                    ->update($data);
+
+        } catch (Nette\Database\UniqueConstraintViolationException $e) {
+            $exception = new DuplicateException($e->getMessage());
+            $exception->foreign_key = substr($e->getMessage(), strpos($e->getMessage(), "for key '") + 9, -1);
+            throw $exception;
+        }
     }
 }
 
