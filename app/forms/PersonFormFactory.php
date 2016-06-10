@@ -14,6 +14,7 @@ class PersonFormFactory extends Nette\Object {
 	private $person;
 	/** @var User */
 	private $user;
+	private $record;
 		
 	public function __construct(FormFactory $factory, \App\Model\Person $person, User $user) {
 		$this->factory = $factory;
@@ -21,14 +22,21 @@ class PersonFormFactory extends Nette\Object {
 		$this->user = $user;
 	}
 
-	public function create() {
+	public function create($record = null) {
+		$this->record = $record;
+
 		$form = $this->factory->create();
 		$data = $form->addContainer("data");
 
 		$data->addText('name', 'Jméno')
 			 ->setRequired('Zadejte jméno prosím.');
 
-	    $form->addSubmit('send', 'Přidat osobu');
+	    $form->addSubmit('add', 'Přidat knihu');
+	    $form->addSubmit('edit', 'Uložit změny');
+
+	    if($record != null) {
+	    	$form['data']->setDefaults($record);
+	    }
 
 		$form->onSuccess[] = array($this, 'formSucceeded');
 		return $form;

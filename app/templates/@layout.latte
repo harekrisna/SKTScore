@@ -53,7 +53,7 @@
 	                    <a n:href="add"><i class="fa fa-child" style="margin-left: 2.5px;"></i><span class="nav-label">Osoby</span><span class="fa arrow"></span></a>
 	                    <ul class="nav nav-second-level collapse">
 	                        <li n:class="$presenter->isLinkCurrent('Person:add') ? active"><a n:href="Person:add">Přidat</a></li>
-	                        <li><a href="dashboard_2.html">Přehled</a></li>
+	                        <li n:class="$presenter->isLinkCurrent('Person:list') ? active"><a n:href="Person:list">Přehled</a></li>
 	                    </ul>
 	                </li>
 					<li n:class="$presenter->isLinkCurrent('Book:*') ? active">
