@@ -26,12 +26,15 @@ class PersonFormFactory extends Nette\Object {
 		$this->record = $record;
 
 		$form = $this->factory->create();
+		$form->edit_title = "Změnit údaje";
+		$form->add_title = "Přidat novou osobu";
+		
 		$data = $form->addContainer("data");
 
 		$data->addText('name', 'Jméno')
 			 ->setRequired('Zadejte jméno prosím.');
 
-	    $form->addSubmit('add', 'Přidat knihu');
+	    $form->addSubmit('add', 'Přidat osobu');
 	    $form->addSubmit('edit', 'Uložit změny');
 
 	    if($record != null) {

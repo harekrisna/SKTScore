@@ -1,7 +1,7 @@
 {block content}
 	<div class="row wrapper border-bottom white-bg page-heading slim">
 	    <div class="col-lg-10">
-	        <h2 n:block="title">{$form_title}</h2>
+	        <h2 n:block="title">{$form->add_title}</h2>
 	    </div>
 	</div>
 	<div class="wrapper wrapper-content animated fadeInRight">
@@ -13,7 +13,6 @@
                     <div class="ibox-content">
 						<form n:name=$form class="form-horizontal">
 							{foreach $form->controls as $input}
-							{dump $input}
 							{if $input->control->attrs['type'] != "hidden"}
 								{if $input->control->attrs['type'] == "submit"}
 									{if $presenter->getAction() == "edit" && $input->name == "edit"}
