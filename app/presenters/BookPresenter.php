@@ -26,7 +26,6 @@ class BookPresenter extends BasePresenter {
 	
 	public function renderAdd() {
 		$this->setView("form");
-		$this->template->form = $this['bookForm'];
 		$this->template->form_title = "Přidat knihu";
 	}
 

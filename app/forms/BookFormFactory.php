@@ -55,7 +55,7 @@ class BookFormFactory extends Nette\Object {
 				$this->book->insert($values->data);
 			}
 			else {
-				$this->book->update($this->record-> id, $values->data);
+				$this->book->update($this->record->id, $values->data);
 			}
 		}
 		catch(\App\Model\DuplicateException $e) {

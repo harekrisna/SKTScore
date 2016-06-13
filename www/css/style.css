@@ -137,3 +137,31 @@ label.error {
 #resultsTable .sort-helper {
   display: none;
 }
+#resultsTable .footable-row-detail-name {
+  display: none;
+}
+#resultsTable input.number {
+  width: 100px;
+  height: 27px;
+  margin: 2px 0 0 15px;
+}
+#resultsTable .result-inputs {
+  margin-left: 10px;
+  float: left;
+  margin-right: 50px;
+}
+#resultsTable .result-inputs tr {
+  height: 30px;
+}
+#resultsTable .result-inputs tr th {
+  padding-right: 25px;
+}
+#resultsTable .result-inputs label {
+  margin: 0;
+}
+.footable-row-detail-cell .submit {
+  height: 27px;
+  padding: 3px 3px 3px 8px;
+  width: 80px;
+  color: red !important;
+}

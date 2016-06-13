@@ -43,11 +43,11 @@ class ComplexPresenter extends BasePresenter {
 		
 		$form->onSuccess[] = function ($form) {
 			if($form->isSubmitted()->name == "add") {
-				$this->flashMessage("Záznam byl úspěšně přidán", 'success');
+				$this->flashMessage($form->success_add_message, 'success');
 				$form->getPresenter()->redirect('add');
 			}
 			else {
-				$this->flashMessage("Záznam byl upraven", 'success');
+				$this->flashMessage($form->success_edit_message, 'success');
 				$form->getPresenter()->redirect('list');
 			}
 		};

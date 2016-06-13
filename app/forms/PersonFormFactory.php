@@ -26,8 +26,10 @@ class PersonFormFactory extends Nette\Object {
 		$this->record = $record;
 
 		$form = $this->factory->create();
-		$form->edit_title = "Změnit údaje";
 		$form->add_title = "Přidat novou osobu";
+		$form->edit_title = "Změnit údaje";
+		$form->success_add_message = "Osoba byla přidána";
+		$form->success_edit_message = "Údaje byly upraveny";
 		
 		$data = $form->addContainer("data");
 
@@ -47,7 +49,12 @@ class PersonFormFactory extends Nette\Object {
 
 	public function formSucceeded(Form $form, $values) {
 		try {
-			$this->person->insert($values->data);
+			if($form->isSubmitted()->name == "add") {
+				$this->person->insert($values->data);
+			}
+			else {
+				$this->person->update($this->record->id, $values->data);
+			}
 		}
 		catch(\App\Model\DuplicateException $e) {
 			$form['data']['name']->addError("Osoba s tímto jménem již existuje.");

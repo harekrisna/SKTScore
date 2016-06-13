@@ -30,17 +30,21 @@ function bindWeekPicker(input) {
         forceParse: false,
         calendarWeeks: true,
         autoclose: true,
+        todayHighlight: true,
         format: 'yyyy-mm-dd',
-        language: 'cs'
+        language: 'cs',
     })
     .click(function() {
-		var active_tr =	$('.datepicker table td.active.day').parent();
-		active_tr.find('td.active').removeClass('active');
-		active_tr.addClass('active');
+		var active_tr =	$('.datepicker-dropdown table tr.active');
+		if(Object.keys(active_tr).length == 4) { // objekt je prázdný
+			var active_tr =	$('.datepicker-dropdown table td.today.day').parent();
+			active_tr.find('td.active').removeClass('active');
+			active_tr.addClass('active');
+		}
     });
 	
 	$(input).on('change', function (e) {
-		var value = $("#week_from_input").val();
+		var value = $(input).val();
 		var only_int_value = value.replace(/-/g, '');
 
 		if(!isNaN(only_int_value)) {
@@ -48,14 +52,17 @@ function bindWeekPicker(input) {
 			if(value == "") {
 				value = date.nowMySQLdate();
 			}
-			
-			var active_tr =	$('.datepicker table td.active.day').parent();
+			var active_tr =	$('.datepicker-dropdown table td.active.day').parent();
 			active_tr.find('td.active').removeClass('active');
 			active_tr.addClass('active');
 								
 		    var week_number = date.getWeek(value);
 		    var year = value.substring(0, 4);
-			$("#week_from_input").val("Rok " + year + " - Týden " + week_number);
+			$(input).val("Rok " + year + " - Týden " + week_number);
 		}
 	});
+}
+
+function setWeekPicker(input, year, week_number) {
+	$(input).val("Rok " + year + " - Týden " + week_number);	
 }

@@ -22,7 +22,7 @@
                 <div class="col-lg-12">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title modified">
-            				<input id="week_from_input" class="week-input" />
+            				<input id="week_from_input" class="week-input" onkeydown="return false"/>
                             {*
                             <div class="ibox-tools">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -52,24 +52,50 @@
                                         <th class="noselect" data-type="numeric">Big</th>
                                         <th class="noselect" data-type="numeric">Medium</th>
                                         <th class="noselect" data-type="numeric">Small</th>
-                                        <th data-hide="all">Company</th>
-                                        <th data-hide="all">Completed</th>
-                                        <th data-hide="all">Task</th>
-                                        <th data-hide="all">Date</th>
+                                        <th data-hide="all"></th>
                                     </tr>
                                     {/block}
                                 </thead>
                                 <tbody>
-                                    <tr n:foreach="$persons as $person">
+                                    <tr n:foreach="$persons as $person" id="person-{$person->id}">
                                         <td>{$person->name}</td>
-                                        <td>{$person->id}</td>
-                                        <td>{$person->id}</td>
-                                        <td>{$person->id}</td>
-                                        <td>{$person->id}</td>
-                                        <td><input type="text" value="{$person->id}" /></td>
-                                        <td>{$person->id}</td>
-                                        <td>{$person->id}</td>
-                                        <td>{$person->id}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                        {form personResultsForm-$person->id}
+                                            <table class="result-inputs">
+                                            {foreach $books as $book}
+                                                {if $book->category->title == "Mahá"}
+                                                <tr><th>{label $book->id /}</th><td>{input $book->id, class => "form-control little-number"}</td></tr>
+                                                {/if}
+                                            {/foreach}
+                                            </table>
+                                            <table class="result-inputs">
+                                            {foreach $books as $book}
+                                                {if $book->category->title == "Big"}
+                                                <tr><th>{label $book->id /}</th><td>{input $book->id, class => "form-control little-number"}</td></tr>
+                                                {/if}
+                                            {/foreach}
+                                            </table>
+                                            <table class="result-inputs">
+                                            {foreach $books as $book}
+                                                {if $book->category->title == "Medium"}
+                                                <tr><th>{label $book->id /}</th><td>{input $book->id, class => "form-control little-number"}</td></tr>
+                                                {/if}
+                                            {/foreach}
+                                            </table>
+                                            <table class="result-inputs">
+                                            {foreach $books as $book}
+                                                {if $book->category->title == "Small"}
+                                                <tr><th>{label $book->id /}</th><td>{input $book->id, class => "form-control little-number"}</td></tr>
+                                                {/if}
+                                            {/foreach}
+                                            </table>
+                                            {input person_id}{input save, class => "btn btn-primary submit"}
+                                        {/form}
+                                        </td>
                                     </tr>
                                 </tbody>
                                 <tfoot>
@@ -107,7 +133,29 @@
     <script>
         $(document).ready(function() {
             bindWeekPicker('#week_from_input');
+            setWeekPicker('#week_from_input', {$year}, {$week_number});
             $('#resultsTable').footable();
+
+            $('#resultsTable input[type=number]').keydown(function (e) {
+                // Allow: backspace, delete, tab, escape, enter and .
+                console.log(e.keyCode);
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                     // Allow: Ctrl+A
+                    (e.keyCode == 65 && e.ctrlKey === true) ||
+                     // Allow: Ctrl+C
+                    (e.keyCode == 67 && e.ctrlKey === true) ||
+                     // Allow: Ctrl+X
+                    (e.keyCode == 88 && e.ctrlKey === true) ||
+                     // Allow: home, end, left, right
+                    (e.keyCode >= 35 && e.keyCode <= 39)) {
+                         // let it happen, don't do anything
+                         return;
+                }
+                // Ensure that it is a number and stop the keypress
+                if ((e.shiftKey || ((e.keyCode < 48 || e.keyCode > 57) && e.keyCode != 40)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
         });
     </script>
 {/block}
