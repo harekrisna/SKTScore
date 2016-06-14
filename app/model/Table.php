@@ -100,11 +100,18 @@ abstract class Table extends Nette\Object
         return $this->getTable()->insert($data);
     }
     
-    public function update($ids, $data)
+    public function update($id, $data)
     {
-        return $this->getTable()
-        			->where($ids)
-        			->update($data);
+        if(is_array($id)) {
+            return $this->getTable()
+            			->where($id)
+            			->update($data);
+        }
+        else {
+            return $this->getTable()
+                        ->where(['id' => $id])
+                        ->update($data);   
+        }
     }
     
     public function delete($id)

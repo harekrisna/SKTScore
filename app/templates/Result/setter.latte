@@ -59,37 +59,37 @@
                                 <tbody>
                                     <tr n:foreach="$persons as $person" id="person-{$person->id}">
                                         <td>{$person->name}</td>
+                                        <td>{$distribution->where(['person_id' => $person->id])->sum('quantity')}</td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td></td>
-                                        <td>
-                                        {form personResultsForm-$person->id}
+                                        <td style="display: none">
+                                        {form personResultsForm-$person->id, class => "ajax"}
                                             <table class="result-inputs">
                                             {foreach $books as $book}
                                                 {if $book->category->title == "Mahá"}
-                                                <tr><th>{label $book->id /}</th><td>{input $book->id, class => "form-control little-number"}</td></tr>
+                                                <tr><th>{label results-$book->id /}</th><td>{input results-$book->id, class => "form-control number"}</td></tr>
                                                 {/if}
                                             {/foreach}
                                             </table>
                                             <table class="result-inputs">
                                             {foreach $books as $book}
                                                 {if $book->category->title == "Big"}
-                                                <tr><th>{label $book->id /}</th><td>{input $book->id, class => "form-control little-number"}</td></tr>
+                                                <tr><th>{label results-$book->id /}</th><td>{input results-$book->id, class => "form-control number"}</td></tr>
                                                 {/if}
                                             {/foreach}
                                             </table>
                                             <table class="result-inputs">
                                             {foreach $books as $book}
                                                 {if $book->category->title == "Medium"}
-                                                <tr><th>{label $book->id /}</th><td>{input $book->id, class => "form-control little-number"}</td></tr>
+                                                <tr><th>{label results-$book->id /}</th><td>{input results-$book->id, class => "form-control number"}</td></tr>
                                                 {/if}
                                             {/foreach}
                                             </table>
                                             <table class="result-inputs">
                                             {foreach $books as $book}
                                                 {if $book->category->title == "Small"}
-                                                <tr><th>{label $book->id /}</th><td>{input $book->id, class => "form-control little-number"}</td></tr>
+                                                <tr><th>{label results-$book->id /}</th><td>{input results-$book->id, class => "form-control number"}</td></tr>
                                                 {/if}
                                             {/foreach}
                                             </table>

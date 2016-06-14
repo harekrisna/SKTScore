@@ -20,14 +20,15 @@ class PersonResultsFormFactory extends Nette\Object {
 
 	public function create() {
 		return new Multiplier(function ($person_id) {
-	        $form = $form = $this->factory->create();
+	        $form = $this->factory->create();
+	        $results = $this->form->addContainer("results");
 	        $books = $this->book->findAll();
 	        foreach ($books as $book) {
-	        	$form->addText($book->id, $book->title)
-				     ->setType('number') // <input type=number>
-				     ->setDefaultValue(0)
-				     ->addRule(Form::INTEGER, 'Musí být číslo')
-				     ->addRule(Form::RANGE, 'Musí být v rozsahu %d do %d', array(0, 999));
+	        	$results->addText($book->id, $book->title)
+					    ->setType('number') // <input type=number>
+					    ->setDefaultValue(0)
+					    ->addRule(Form::INTEGER, 'Musí být číslo')
+					    ->addRule(Form::RANGE, 'Musí být v rozsahu %d do %d', array(0, 999));
 	        }
 
 	        $form->addHidden('person_id', $person_id);

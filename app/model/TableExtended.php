@@ -32,8 +32,7 @@ abstract class TableExtended extends Table  {
         }
 
         try {
-            return $this->getTable()->where(['id' => $id])
-                                    ->update($data);
+            return parent::update($id, $data);
 
         } catch (Nette\Database\UniqueConstraintViolationException $e) {
             $exception = new DuplicateException($e->getMessage());

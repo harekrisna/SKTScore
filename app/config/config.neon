@@ -33,3 +33,5 @@ services:
 	person: App\Model\Person
 	book: App\Model\Book
 	category: App\Model\Category
+	distribution: App\Model\Distribution
+	week: App\Model\Week

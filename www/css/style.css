@@ -137,13 +137,15 @@ label.error {
 #resultsTable .sort-helper {
   display: none;
 }
+#resultsTable .footable-row-detail-cell .submit {
+  width: 200px;
+  margin-left: 10px;
+  margin-top: 15px;
+  clear: both;
+  float: left;
+}
 #resultsTable .footable-row-detail-name {
   display: none;
-}
-#resultsTable input.number {
-  width: 100px;
-  height: 27px;
-  margin: 2px 0 0 15px;
 }
 #resultsTable .result-inputs {
   margin-left: 10px;
@@ -156,12 +158,12 @@ label.error {
 #resultsTable .result-inputs tr th {
   padding-right: 25px;
 }
+#resultsTable .result-inputs input.number {
+  width: 100px;
+  height: 27px;
+  margin: 2px 0 0 15px;
+  padding: 3px 3px 3px 8px;
+}
 #resultsTable .result-inputs label {
   margin: 0;
-}
-.footable-row-detail-cell .submit {
-  height: 27px;
-  padding: 3px 3px 3px 8px;
-  width: 80px;
-  color: red !important;
 }

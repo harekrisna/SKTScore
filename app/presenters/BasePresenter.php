@@ -4,6 +4,7 @@ namespace App\Presenters;
 
 use Nette;
 use App\Model;
+use Tracy\Debugger;
 
 
 /**
@@ -16,6 +17,10 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 	protected $book;
 	/** @var Category */
 	protected $category;
+	/** @var Distribution */
+	protected $distribution;
+	/** @var Week */
+	protected $week;
 	
 	protected function startup() {
 		parent::startup();
@@ -27,6 +32,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 		$this->person = $this->context->getService('person');
 		$this->book = $this->context->getService('book');
 		$this->category = $this->context->getService('category');
+		$this->distribution = $this->context->getService('distribution');
+		$this->week = $this->context->getService('week');
 	}
 
 	public function afterRender() {
