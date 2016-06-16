@@ -1,9 +1,15 @@
 parameters:
 
-
 database:
-	dsn: 'mysql:host=sql7.freesqldatabase.com;dbname=sql7122168'
-	user: sql7122168
-	password: PDQluwjZ4X
-	options:
-		lazy: yes
+	freesql:
+		dsn: 'mysql:host=sql7.freesqldatabase.com;dbname=sql7122168'
+		user: sql7122168
+		password: PDQluwjZ4X
+		options:
+			lazy: yes
+	localhost:
+		dsn: 'mysql:host=127.0.0.1;dbname=sktscore'
+		user: root
+		password: root
+		options:
+			lazy: yes

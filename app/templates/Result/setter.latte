@@ -42,6 +42,7 @@
                             </div>
                             *}
                         </div>
+                        {dump $category_distribution}
                         <div class="ibox-content">
                             <table class="table table-striped table-bordered table-hover toggle-arrow-tiny" id="resultsTable" data-page-size="20" >
                                 <thead>
@@ -52,19 +53,22 @@
                                         <th class="noselect" data-type="numeric">Big</th>
                                         <th class="noselect" data-type="numeric">Medium</th>
                                         <th class="noselect" data-type="numeric">Small</th>
+                                        <th class="noselect" data-type="numeric">Body</th>
                                         <th data-hide="all"></th>
                                     </tr>
                                     {/block}
                                 </thead>
                                 <tbody>
                                     <tr n:foreach="$persons as $person" id="person-{$person->id}">
+                                        {var $distribution = $category_distribution[$person->id]}
                                         <td>{$person->name}</td>
-                                        <td>{$distribution->where(['person_id' => $person->id])->sum('quantity')}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td class="maha">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
+                                        <td class="big">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
+                                        <td class="medium">{isset($distribution['Medium']) ? $distribution['Medium'] : "."}</td>
+                                        <td class="small">{isset($distribution['Small']) ? $distribution['Small'] : "."}</td>
+                                        <td class="points">{$book_points[$person->id]}</td>
                                         <td style="display: none">
-                                        {form personResultsForm-$person->id, class => "ajax"}
+                                        {form personResultsForm-$person->id}
                                             <table class="result-inputs">
                                             {foreach $books as $book}
                                                 {if $book->category->title == "Mahá"}
@@ -101,7 +105,7 @@
                                 <tfoot>
                                     
                                     <tr>
-                                        <td colspan="5">
+                                        <td colspan="6">
                                             <ul class="pagination pull-right"></ul>
                                         </td>
                                     </tr>
@@ -155,6 +159,18 @@
                 if ((e.shiftKey || ((e.keyCode < 48 || e.keyCode > 57) && e.keyCode != 40)) && (e.keyCode < 96 || e.keyCode > 105)) {
                     e.preventDefault();
                 }
+            });
+
+            $('#resultsTable form').submit(function( event ) {
+                $.ajax({
+                    type: "POST",
+                    url: $(this).attr("action"),
+                    data: $(this).serialize(),
+                    success: function(data) {                   
+                        $.nette.success(data);
+                    }
+                });
+                event.preventDefault();
             });
         });
     </script>

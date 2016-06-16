@@ -37,21 +37,39 @@ class Distribution extends TableExtended
         }
     }   
 
-    public function getResultsByPersonsAndCategories($week_id) {
-        $result = $this->query("SELECT person_id, category.title AS category_title, SUM( quantity ) AS category_quantity_sum
-                                FROM `distribution`
-                                LEFT JOIN book ON distribution.book_id = book.id
-                                LEFT JOIN category ON book.category_id = category.id
-                                WHERE distribution.week_id = ?
-                                GROUP BY person_id, category_id", $week_id)
-                       ->fetchAll();
+    public function getPersonsCategoriesDistribution($week_id) {
+        $result = $this->findBy(['week_id' => $week_id])
+                       ->group('person_id, book.category.id')
+                       ->select("person_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum");
 
         $score = [];
-
         foreach ($result as $row) {
             $score[$row['person_id']][$row['category_title']] = $row['category_quantity_sum'];
         }
 
-        Debugger::fireLog($score);
+        return $score;
+    }
+
+    public function getPersonsSumPoints($week_id) {
+        $result = $this->findBy(['week_id' => $week_id])
+                       ->group('person_id')
+                       ->select('person_id, SUM(quantity * book.category.point_value) AS points_sum');
+
+        $score = [];
+        foreach ($result as $row) {
+            $score[$row['person_id']] = $row['points_sum'];
+        }
+        
+        return $score;
+    }
+
+    public function getPersonsBooksDistribution($week_id) {
+        $result = $this->findBy(['week_id' => $week_id]);
+        $score = [];
+        foreach ($result as $row) {
+            $score[$row['person_id']][$row['book_id']] = $row['quantity'];
+        }
+        
+        return $score;
     }
 }

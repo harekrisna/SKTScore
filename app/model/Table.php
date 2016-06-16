@@ -76,8 +76,8 @@ abstract class Table extends Nette\Object
         return $this->findBy($by)->limit(1)->fetch();
     }
          
-    public function query($sql) {
-        return $this->connection->query($sql);        
+    public function query($sql, $params = []) {
+        return $this->connection->query($sql, $params);
     } 
     
     /**
