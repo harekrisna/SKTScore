@@ -37,6 +37,7 @@ class Distribution extends TableExtended
         }
     }   
 
+
     public function getPersonsCategoriesDistribution($week_id) {
         $result = $this->findBy(['week_id' => $week_id])
                        ->group('person_id, book.category.id')
@@ -45,6 +46,20 @@ class Distribution extends TableExtended
         $score = [];
         foreach ($result as $row) {
             $score[$row['person_id']][$row['category_title']] = $row['category_quantity_sum'];
+        }
+
+        return $score;
+    }
+
+    public function getPersonCategoriesDistribution($person_id, $week_id) {
+        $result = $this->findBy(['week_id' => $week_id,
+                                 'person_id' => $person_id])
+                       ->group('book.category.id')
+                       ->select("book.category.id AS category_id, SUM(quantity) AS category_quantity_sum");
+
+        $score = [];
+        foreach ($result as $row) {
+            $score[$row['category_id']] = $row['category_quantity_sum'];
         }
 
         return $score;

@@ -27,33 +27,36 @@ class ResultPresenter extends BasePresenter {
 	}
 
 	public function actionSetter() {
-		$week_id = $this->week->getWeekId($this->week_number, $this->year);
-		$book_distribution = $this->distribution->getPersonsBooksDistribution($week_id);
-		$books = $this->book->findAll();
+		if(!$this->isAjax()) {
+			$week_id = $this->week->getWeekId($this->week_number, $this->year);
+			$book_distribution = $this->distribution->getPersonsBooksDistribution($week_id);
+			$books = $this->book->findAll();
 
-		$persons = $this->person->findAll();
-		foreach ($persons as $person) {
-			foreach ($books as $book) {
-				if(isset($book_distribution[$person->id][$book->id])) {
-					$this['personResultsForm'][$person->id]['results'][$book->id]->setDefaultValue($book_distribution[$person->id][$book->id]);
-				}
-				else {
-					$this['personResultsForm'][$person->id]['results'][$book->id]->setDefaultValue(0);
+			$persons = $this->person->findAll();
+			foreach ($persons as $person) {
+				foreach ($books as $book) {
+					if(isset($book_distribution[$person->id][$book->id])) {
+						$this['personResultsForm'][$person->id]['results'][$book->id]->setDefaultValue($book_distribution[$person->id][$book->id]);
+					}
+					else {
+						$this['personResultsForm'][$person->id]['results'][$book->id]->setDefaultValue(0);
+					}
 				}
 			}
 		}
 	}
 
 	public function renderSetter() {
-		//$this->template->weeks_in_year = gmdate("W", strtotime("31 December 2016"));
-		$this->template->week_number = $this->week_number;
-		$this->template->year = $this->year;
-		$this->template->persons = $this->person->findAll();
-		$this->template->books = $this->book->findAll();
-		$week_id = $this->week->getWeekId($this->week_number, $this->year);
-		$this->template->distribution = $this->distribution->findBy(['week_id' => $week_id]);
-		$this->template->category_distribution = $this->distribution->getPersonsCategoriesDistribution($week_id);
-		$this->template->book_points = $this->distribution->getPersonsSumPoints($week_id);
+		if(!$this->isAjax()) {
+			$this->template->week_number = $this->week_number;
+			$this->template->year = $this->year;
+			$this->template->persons = $this->person->findAll();
+			$this->template->books = $this->book->findAll();
+			$week_id = $this->week->getWeekId($this->week_number, $this->year);
+			$this->template->distribution = $this->distribution->findBy(['week_id' => $week_id]);
+			$this->template->category_distribution = $this->distribution->getPersonsCategoriesDistribution($week_id);
+			$this->template->book_points = $this->distribution->getPersonsSumPoints($week_id);
+		}
 	}
 
 	public function createComponentPersonResultsForm() {
@@ -85,8 +88,7 @@ class ResultPresenter extends BasePresenter {
             $this->distribution->insertResult($values->person_id, $week_id, $book_id, $quantity);    
         }
 
-        
-
+		$this->payload->categories_points = $this->distribution->getPersonCategoriesDistribution($values->person_id, $week_id);
         $this->flashMessage("Výsledky byly uloženy", 'success');
         $this->redrawControl('flashes');
     }    
