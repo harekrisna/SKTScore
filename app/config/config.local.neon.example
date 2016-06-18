@@ -1,15 +1,17 @@
 parameters:
 
 database:
-	freesql:
+	remote:
 		dsn: 'mysql:host=innodb.endora.cz;dbname=sktscore'
-		user: allrisk
+		user: bhavan
 		password: basic16
 		options:
 			lazy: yes
+
 	localhost:
-		dsn: 'mysql:host=127.0.0.1;dbname=sktscore'
+		dsn: 'mysql:host=localhost;dbname=sktscore'
 		user: root
 		password: root
 		options:
 			lazy: yes
+			
