@@ -2,9 +2,9 @@ parameters:
 
 database:
 	remote:
-		dsn: 'mysql:host=innodb.endora.cz;dbname=sktscore'
-		user: bhavan
-		password: basic16
+		dsn: 'mysql:host=example;dbname=sktscore'
+		user: example
+		password: example
 		options:
 			lazy: yes
 
