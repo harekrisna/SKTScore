@@ -29,6 +29,6 @@ class Week extends TableExtended
                                'year' => $year])
                      ->fetch();
 
-        return $week->id;
+        return $week ? $week->id : false;
     }    
 }

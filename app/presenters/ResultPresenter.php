@@ -27,7 +27,7 @@ class ResultPresenter extends BasePresenter {
 	}
 
 	public function actionSetter() {
-		if(!$this->isAjax()) {
+		if($this->getSignal() == null) { // při odeslání personResultsForm nedělat nic
 			$week_id = $this->week->getWeekId($this->week_number, $this->year);
 			$book_distribution = $this->distribution->getPersonsBooksDistribution($week_id);
 			$books = $this->book->findAll();
@@ -43,11 +43,16 @@ class ResultPresenter extends BasePresenter {
 					}
 				}
 			}
+
+            if($this->isAjax()) { // ajaxová změna týdne
+                $this->payload->lol = "lol";
+                $this->redrawControl('resultsTable');
+            }
 		}
 	}
 
 	public function renderSetter() {
-		if(!$this->isAjax()) {
+		if($this->getSignal() == null) {
 			$this->template->week_number = $this->week_number;
 			$this->template->year = $this->year;
 			$this->template->persons = $this->person->findAll();
@@ -58,6 +63,18 @@ class ResultPresenter extends BasePresenter {
 			$this->template->book_points = $this->distribution->getPersonsSumPoints($week_id);
 		}
 	}
+
+    public function actionSetWeekYear($week_number, $year) {
+        $this->week_number = $week_number;
+        $this->year = $year;
+        $this->redirect("setter");
+    }
+
+    public function actionSetActualWeekYear() {
+        $this->week_number = date("W");
+        $this->year = date("Y");
+        $this->redirect("setter");
+    }
 
 	public function createComponentPersonResultsForm() {
 		$this->books = $this->book->findAll();
@@ -89,6 +106,8 @@ class ResultPresenter extends BasePresenter {
         }
 
 		$this->payload->categories_points = $this->distribution->getPersonCategoriesDistribution($values->person_id, $week_id);
+        $this->payload->points_sum = $this->distribution->getPersonSumPoints($values->person_id, $week_id);
+        $this->payload->person_id = $values->person_id;
         $this->flashMessage("Výsledky byly uloženy", 'success');
         $this->redrawControl('flashes');
     }    

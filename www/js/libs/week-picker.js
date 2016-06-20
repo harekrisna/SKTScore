@@ -35,34 +35,39 @@ function bindWeekPicker(input) {
         language: 'cs',
     })
     .click(function() {
-		var active_tr =	$('.datepicker-dropdown table tr.active');
-		if(Object.keys(active_tr).length == 4) { // objekt je prázdný
-			var active_tr =	$('.datepicker-dropdown table td.today.day').parent();
-			active_tr.find('td.active').removeClass('active');
-			active_tr.addClass('active');
-		}
+        var active_tr = $('.datepicker-dropdown table tr.active');
+        if(Object.keys(active_tr).length == 4) { // objekt je prázdný
+            var active_tr = $('.datepicker-dropdown table td.today.day').parent();
+            active_tr.find('td.active').removeClass('active');
+            active_tr.addClass('active');
+        }
     });
-	
-	$(input).on('change', function (e) {
-		var value = $(input).val();
-		var only_int_value = value.replace(/-/g, '');
+    
+    $(input).on('change', function (e) {
+        var value = $(input).val();
+        var only_int_value = value.replace(/-/g, '');
 
-		if(!isNaN(only_int_value)) {
-			date = new Date()
-			if(value == "") {
-				value = date.nowMySQLdate();
-			}
-			var active_tr =	$('.datepicker-dropdown table td.active.day').parent();
-			active_tr.find('td.active').removeClass('active');
-			active_tr.addClass('active');
-								
-		    var week_number = date.getWeek(value);
-		    var year = value.substring(0, 4);
-			$(input).val("Rok " + year + " - Týden " + week_number);
-		}
-	});
+        if(!isNaN(only_int_value)) {
+            date = new Date()
+            if(value == "") {
+                value = date.nowMySQLdate();
+            }
+            var active_tr = $('.datepicker-dropdown table td.active.day').parent();
+            active_tr.find('td.active').removeClass('active');
+            active_tr.addClass('active');
+                                
+            var week_number = date.getWeek(value);
+            var year = value.substring(0, 4);
+            setWeekPicker(input, year, week_number);
+            
+            $.get("result/setter", {"week_number": week_number, "year": year}, function(payload) {
+                $.nette.success(payload);
+                $('#resultsTable').footable();
+            });
+        }
+    });
 }
 
 function setWeekPicker(input, year, week_number) {
-	$(input).val("Rok " + year + " - Týden " + week_number);	
+    $(input).val("Rok " + year + " - Týden " + week_number);
 }

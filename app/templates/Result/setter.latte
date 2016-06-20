@@ -22,7 +22,7 @@
                 <div class="col-lg-12">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title modified">
-            				<input id="week_from_input" class="week-input" onkeydown="return false"/>
+            				<input id="week_from_input" class="form-control week-input" onkeydown="return false"/>
                             {*
                             <div class="ibox-tools">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -42,8 +42,7 @@
                             </div>
                             *}
                         </div>
-                        {dump $category_distribution}
-                        <div class="ibox-content">
+                        <div class="ibox-content" n:snippet="resultsTable">
                             <table class="table table-striped table-bordered table-hover toggle-arrow-tiny" id="resultsTable" data-page-size="20" >
                                 <thead>
                                     {block resultTable_head}
@@ -60,13 +59,13 @@
                                 </thead>
                                 <tbody>
                                     <tr n:foreach="$persons as $person" id="person-{$person->id}">
-                                        {var $distribution = $category_distribution[$person->id]}
+                                        {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
                                         <td>{$person->name}</td>
                                         <td class="maha">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
                                         <td class="big">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
                                         <td class="medium">{isset($distribution['Medium']) ? $distribution['Medium'] : "."}</td>
                                         <td class="small">{isset($distribution['Small']) ? $distribution['Small'] : "."}</td>
-                                        <td class="points">{$book_points[$person->id]}</td>
+                                        <td class="points">{isset($book_points[$person->id]) ? $book_points[$person->id] : "."}</td>
                                         <td style="display: none">
                                         {form personResultsForm-$person->id}
                                             <table class="result-inputs">
@@ -103,7 +102,6 @@
                                     </tr>
                                 </tbody>
                                 <tfoot>
-                                    
                                     <tr>
                                         <td colspan="6">
                                             <ul class="pagination pull-right"></ul>
@@ -132,7 +130,7 @@
     <!-- Date picker -->
     <script src="{$basePath}/js/plugins/datapicker/bootstrap-datepicker.js"></script>
     <script src="{$basePath}/js/libs/week-picker.js"></script>
-    
+
     <!-- Page-Level Scripts -->
     <script>
         $(document).ready(function() {
@@ -140,9 +138,8 @@
             setWeekPicker('#week_from_input', {$year}, {$week_number});
             $('#resultsTable').footable();
 
-            $('#resultsTable input[type=number]').keydown(function (e) {
+            $("#snippet--resultsTable").on("keydown", "input[type=number]", function(e) {
                 // Allow: backspace, delete, tab, escape, enter and .
-                console.log(e.keyCode);
                 if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
                      // Allow: Ctrl+A
                     (e.keyCode == 65 && e.ctrlKey === true) ||
@@ -161,14 +158,17 @@
                 }
             });
 
-            $('#resultsTable form').submit(function( event ) {
+            $("#snippet--resultsTable").on("submit", "form", function(event) {
                 $.ajax({
                     type: "POST",
                     url: $(this).attr("action"),
                     data: $(this).serialize(),
                     success: function(payload) {                   
-                        $.nette.success(payload);
-                        
+                        var row = $('tr#person-319');
+                        row.find('td.maha').html(payload.categories_points["Mahá"] ? payload.categories_points["Mahá"] : ".");
+                        row.find('td.big').html(payload.categories_points["Big"] ? payload.categories_points["Big"] : ".");
+                        row.find('td.medium').html(payload.categories_points["Medium"] ? payload.categories_points["Medium"] : ".");
+                        row.find('td.small').html(payload.categories_points["Small"] ? payload.categories_points["Small"] : ".");
                     }
                 });
                 event.preventDefault();
