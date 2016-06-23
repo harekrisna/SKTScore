@@ -114,8 +114,7 @@ abstract class Table extends Nette\Object
         }
     }
     
-    public function delete($id)
-    {
+    public function delete($id) {
         return $this->getTable()
         			->where(array('id' => $id))
         			->delete();

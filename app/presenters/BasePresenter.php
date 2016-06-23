@@ -36,8 +36,13 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 		$this->week = $this->context->getService('week');
 	}
 
-	public function afterRender() {
-	    if ($this->isAjax() && $this->hasFlashSession())
-	        $this->redrawControl('flashes');
+	public function flashMessage($message, $type = 'info') {
+		if ($this->isAjax()) {
+			$this->payload->messages[] = ['message' => $message,
+										  'type' => $type];
+		}
+		else {
+			parent::flashMessage($message, $type);
+		}
 	}
 }

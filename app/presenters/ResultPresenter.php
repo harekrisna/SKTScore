@@ -27,6 +27,9 @@ class ResultPresenter extends BasePresenter {
 	}
 
 	public function actionSetter() {
+
+        $httpRequest = $this->context->getService('httpRequest');
+        Debugger::fireLog($this->getSignal());
 		if($this->getSignal() == null) { // při odeslání personResultsForm nedělat nic
 			$week_id = $this->week->getWeekId($this->week_number, $this->year);
 			$book_distribution = $this->distribution->getPersonsBooksDistribution($week_id);
@@ -45,7 +48,6 @@ class ResultPresenter extends BasePresenter {
 			}
 
             if($this->isAjax()) { // ajaxová změna týdne
-                $this->payload->lol = "lol";
                 $this->redrawControl('resultsTable');
             }
 		}
@@ -85,9 +87,12 @@ class ResultPresenter extends BasePresenter {
             foreach ($this->books as $book) {
                 $results->addText($book->id, $book->title)
                         ->setType('number') // <input type=number>
+                        ->setAttribute('class', "form-control number")
+                        ->setAttribute('max', 9999)
+                        ->setAttribute('maxlength', 4)
                         ->setDefaultValue(0)
                         ->addRule(Form::INTEGER, 'Musí být číslo')
-                        ->addRule(Form::RANGE, 'Musí být v rozsahu %d do %d', array(0, 999));
+                        ->addRule(Form::RANGE, 'Musí být v rozsahu %d do %d', array(0, 9999));
             }
 
             $form->addHidden('person_id', $person_id);
@@ -109,6 +114,6 @@ class ResultPresenter extends BasePresenter {
         $this->payload->points_sum = $this->distribution->getPersonSumPoints($values->person_id, $week_id);
         $this->payload->person_id = $values->person_id;
         $this->flashMessage("Výsledky byly uloženy", 'success');
-        $this->redrawControl('flashes');
+        $this->sendPayload();
     }    
 }

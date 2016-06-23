@@ -28,6 +28,24 @@ jQuery.extend({
 			}
 
 			$('.main-ajax-spinner').removeClass('visible');
+			if(typeof payload.messages !== 'undefined') {
+				for (i = 0; i < payload.messages.length; i++) {
+					switch(payload.messages[i].type) {
+						case "success":
+	 			   			toastr.success(payload.messages[i].message);
+	 			   			break;
+	 			   		case "info":
+	 			   			toastr.info(payload.messages[i].message);
+	 			   			break;
+						case "error":
+	 			   			toastr.error(payload.messages[i].message);
+	 			   			break;
+						case "warning":
+	 			   			toastr.warning(payload.messages[i].message);
+	 			   			break;
+					}
+				}
+			}
 		}
 	}
 });
@@ -51,3 +69,9 @@ $('body').on('submit', 'form.ajax', function( event ) {
 	});
 	event.preventDefault();
 });
+
+function changeUrl(url) {
+    window.history.pushState(
+      null, null, url
+    );
+}

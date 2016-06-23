@@ -1,51 +1,45 @@
+{layout 'book.latte'}
 {block content}
-	<div class="row wrapper border-bottom white-bg page-heading slim">
-	    <div class="col-lg-10">
-	        <h2 n:block="title">{$form_title}</h2>
-	    </div>
-	</div>
-    <div class="wrapper wrapper-content animated fadeInRight">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-title empty">
-                    </div>
-                    <div class="ibox-content">
-                        {form bookForm, class => "form-horizontal"}
-                            <div class="form-group">
-                                {label data-title, class => "col-sm-2 control-label" /}
-                                <div class="col-sm-10">
-                                    <input n:name="data-title" n:class="form-control, large, $form['data-title']->error ? error" />
-                                    {if $form['data-title']->error}{label data-title, class => "error" }{$form['data-title']->error}{/label}{/if}
-                                </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title empty">
+                </div>
+                <div class="ibox-content">
+                    {form bookForm, class => "form-horizontal"}
+                        <div class="form-group">
+                            {label data-title, class => "col-sm-2 control-label" /}
+                            <div class="col-sm-10">
+                                <input n:name="data-title" n:class="form-control, large, $form['data-title']->error ? error" />
+                                {if $form['data-title']->error}{label data-title, class => "error" }{$form['data-title']->error}{/label}{/if}
                             </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group">
-                                {label data-abbreviation, class => "col-sm-2 control-label" /}
-                                <div class="col-sm-10">
-                                    <input n:name="data-abbreviation" n:class="form-control, tiny, $form['data-abbreviation']->error ? error" />
-                                    {if $form['data-abbreviation']->error}{label data-abbreviation, class => "error" }{$form['data-abbreviation']->error}{/label}{/if}
-                                </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            {label data-abbreviation, class => "col-sm-2 control-label" /}
+                            <div class="col-sm-10">
+                                <input n:name="data-abbreviation" n:class="form-control, tiny, $form['data-abbreviation']->error ? error" />
+                                {if $form['data-abbreviation']->error}{label data-abbreviation, class => "error" }{$form['data-abbreviation']->error}{/label}{/if}
                             </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group">
-                                {label data-category_id, class => "col-sm-2 control-label" /}
-                                <div class="col-sm-10">
-                                    {input data-category_id, class => "form-control medium"}
-                                </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            {label data-category_id, class => "col-sm-2 control-label" /}
+                            <div class="col-sm-10">
+                                {input data-category_id, class => "form-control medium"}
                             </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group">
-                                <div class="col-sm-4 col-sm-offset-2">
-                                {if $presenter->getAction() == "edit"}
-                                    {input edit, class => "btn btn-primary"}
-                                {else}
-                                    {input add, class => "btn btn-primary"}
-                                {/if}
-                                </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                            {if $presenter->getAction() == "edit"}
+                                {input edit, class => "btn btn-primary"}
+                            {else}
+                                {input add, class => "btn btn-primary"}
+                            {/if}
                             </div>
-                        {/form}
-                    </div>
+                        </div>
+                    {/form}
                 </div>
             </div>
         </div>

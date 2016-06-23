@@ -30,20 +30,19 @@ function bindWeekPicker(input) {
         forceParse: false,
         calendarWeeks: true,
         autoclose: true,
-        todayHighlight: true,
         format: 'yyyy-mm-dd',
         language: 'cs',
     })
-    .click(function() {
-        var active_tr = $('.datepicker-dropdown table tr.active');
-        if(Object.keys(active_tr).length == 4) { // objekt je prázdný
-            var active_tr = $('.datepicker-dropdown table td.today.day').parent();
+    .click(function() { // při prvním kliknutím na input se zvýrazní vybraný týden
+        active_tr = $(".datepicker-dropdown table tr.active");
+        if(Object.keys(active_tr).length == 4) { // je už něco označené?
+            var active_tr = $(".datepicker-dropdown table td.cw:contains(" + QueryString.week_number + ")").parent();
             active_tr.find('td.active').removeClass('active');
             active_tr.addClass('active');
         }
     });
     
-    $(input).on('change', function (e) {
+    $(input).on('change', function (e) { // při změně týdne ze změní zvýrazněný
         var value = $(input).val();
         var only_int_value = value.replace(/-/g, '');
 
@@ -60,9 +59,21 @@ function bindWeekPicker(input) {
             var year = value.substring(0, 4);
             setWeekPicker(input, year, week_number);
             
+            $('#resultsTable').fadeTo(500, 0, function(){
+               $(this).css("visibility", "hidden");   
+            });
+
+            $('#fountainG').fadeIn();
+            $(input).prop('disabled', true);
+
             $.get("result/setter", {"week_number": week_number, "year": year}, function(payload) {
                 $.nette.success(payload);
                 $('#resultsTable').footable();
+                $('#resultsTable').hide();
+                $('#resultsTable').fadeIn();
+                $('#fountainG').fadeOut();
+                changeUrl("?week_number=" + week_number + "&year=" + year );
+                $(input).prop('disabled', false);
             });
         }
     });

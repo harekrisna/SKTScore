@@ -40,6 +40,16 @@ abstract class TableExtended extends Table  {
             throw $exception;
         }
     }
+
+    public function delete($id) {
+        try {
+            return parent::delete($id);
+
+        } catch (Nette\Database\ForeignKeyConstraintViolationException $e) {
+            return false;
+        }
+        
+    }    
 }
 
 class DuplicateException extends \Exception {

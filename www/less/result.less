@@ -54,12 +54,6 @@
 }
 
 #resultsTable {
-	thead, tfood {
-		th.wide {
-			 width: 50%;
-		}
-	}
-
 	.sort-helper {
 		display: none;
 	}
@@ -72,6 +66,11 @@
 			clear: both;
 			float: left;
 		}
+
+		.disabled {
+			color: #676A6C;
+			background-color: #F3F3F4;
+		}
 	}
 
 	.footable-row-detail-name {
@@ -79,9 +78,8 @@
 	}
 
 	.result-inputs {
-		margin-left: 10px;
 		float: left;
-		margin-right: 50px;
+		margin: 0 50px 20px 10px;
 
 		tr {
 			height: 30px;

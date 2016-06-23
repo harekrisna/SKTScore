@@ -33,7 +33,7 @@ class BookFormFactory extends Nette\Object {
 		$data->addText('title', 'Titul')
 			 ->setRequired('Zadejte titul prosím.');
 
-		$data->addText('abbreviation', 'Zkratka', 4, 4)
+		$data->addText('abbreviation', 'Zkratka', 16, 16)
 			 ->setRequired('Zadejte zkratku prosím.');
 
 		$data->addSelect('category_id', 'Kategorie', $this->category->findAll()->fetchPairs('id', 'title'));

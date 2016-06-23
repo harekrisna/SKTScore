@@ -109,7 +109,7 @@
 					</ul>
         		</nav>
 			</div>
-			{include content}
+			{include main}
 			<div class="footer">
             	<div class="pull-right">300 osob, rozdáno <strong>12000 knih</strong>.</div>
 				<div><strong>Copyright</strong> Prabhupád Bhavan &copy; 2016</div>
@@ -123,11 +123,13 @@
     <script src="{$basePath}/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>    
     <script src="{$basePath}/js/inspinia.js"></script>
     <script src="{$basePath}/js/plugins/pace/pace.min.js"></script>
-    <script src="{$basePath}/js/jquery.nette.js"></script>
-    <script src="{$basePath}/js/main.js"></script>
 
     <!-- Toastr script -->
     <script src="{$basePath}/js/plugins/toastr/toastr.min.js"></script>
+
+    <script src="{$basePath}/js/jquery.nette.js"></script>
+    <script src="{$basePath}/js/main.js"></script>
+
     {snippet flashes}
     <script>
     {foreach $flashes as $flash}

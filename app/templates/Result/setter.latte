@@ -10,7 +10,7 @@
 
     <link href="{$basePath}/css/week-picker.css" rel="stylesheet">
 {/block}
-{block content}
+{block main}
         <div class="row wrapper border-bottom white-bg page-heading">
             <div class="col-lg-12 nopadding-right">
                 <h2 n:block="title">Výsledky 2016</h2>
@@ -42,7 +42,17 @@
                             </div>
                             *}
                         </div>
-                        <div class="ibox-content" n:snippet="resultsTable">
+                        <div class="ibox-content relative" n:snippet="resultsTable">
+                            <div id="fountainG" class="ajax-loading">
+                                <div id="fountainG_1" class="fountainG"></div>
+                                <div id="fountainG_2" class="fountainG"></div>
+                                <div id="fountainG_3" class="fountainG"></div>
+                                <div id="fountainG_4" class="fountainG"></div>
+                                <div id="fountainG_5" class="fountainG"></div>
+                                <div id="fountainG_6" class="fountainG"></div>
+                                <div id="fountainG_7" class="fountainG"></div>
+                                <div id="fountainG_8" class="fountainG"></div>
+                            </div>
                             <table class="table table-striped table-bordered table-hover toggle-arrow-tiny" id="resultsTable" data-page-size="20" >
                                 <thead>
                                     {block resultTable_head}
@@ -61,38 +71,38 @@
                                     <tr n:foreach="$persons as $person" id="person-{$person->id}">
                                         {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
                                         <td>{$person->name}</td>
-                                        <td class="maha">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
-                                        <td class="big">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
-                                        <td class="medium">{isset($distribution['Medium']) ? $distribution['Medium'] : "."}</td>
-                                        <td class="small">{isset($distribution['Small']) ? $distribution['Small'] : "."}</td>
-                                        <td class="points">{isset($book_points[$person->id]) ? $book_points[$person->id] : "."}</td>
+                                        <td data-category="maha">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
+                                        <td data-category="big">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
+                                        <td data-category="medium">{isset($distribution['Medium']) ? $distribution['Medium'] : "."}</td>
+                                        <td data-category="small">{isset($distribution['Small']) ? $distribution['Small'] : "."}</td>
+                                        <td data-category="points">{isset($book_points[$person->id]) ? $book_points[$person->id] : "."}</td>
                                         <td style="display: none">
                                         {form personResultsForm-$person->id}
                                             <table class="result-inputs">
                                             {foreach $books as $book}
                                                 {if $book->category->title == "Mahá"}
-                                                <tr><th>{label results-$book->id /}</th><td>{input results-$book->id, class => "form-control number"}</td></tr>
+                                                <tr><th>{label results-$book->id /}</th><td>{input results-$book->id}</td></tr>
                                                 {/if}
                                             {/foreach}
                                             </table>
                                             <table class="result-inputs">
                                             {foreach $books as $book}
                                                 {if $book->category->title == "Big"}
-                                                <tr><th>{label results-$book->id /}</th><td>{input results-$book->id, class => "form-control number"}</td></tr>
+                                                <tr><th>{label results-$book->id /}</th><td>{input results-$book->id}</td></tr>
                                                 {/if}
                                             {/foreach}
                                             </table>
-                                            <table class="result-inputs">
+                                            <table class="result-inputs" style="margin-bottom: 20px;">
                                             {foreach $books as $book}
                                                 {if $book->category->title == "Medium"}
-                                                <tr><th>{label results-$book->id /}</th><td>{input results-$book->id, class => "form-control number"}</td></tr>
+                                                <tr><th>{label results-$book->id /}</th><td>{input results-$book->id}</td></tr>
                                                 {/if}
                                             {/foreach}
                                             </table>
                                             <table class="result-inputs">
                                             {foreach $books as $book}
                                                 {if $book->category->title == "Small"}
-                                                <tr><th>{label results-$book->id /}</th><td>{input results-$book->id, class => "form-control number"}</td></tr>
+                                                <tr><th>{label results-$book->id /}</th><td>{input results-$book->id}</td></tr>
                                                 {/if}
                                             {/foreach}
                                             </table>
@@ -138,37 +148,40 @@
             setWeekPicker('#week_from_input', {$year}, {$week_number});
             $('#resultsTable').footable();
 
-            $("#snippet--resultsTable").on("keydown", "input[type=number]", function(e) {
-                // Allow: backspace, delete, tab, escape, enter and .
-                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
-                     // Allow: Ctrl+A
-                    (e.keyCode == 65 && e.ctrlKey === true) ||
-                     // Allow: Ctrl+C
-                    (e.keyCode == 67 && e.ctrlKey === true) ||
-                     // Allow: Ctrl+X
-                    (e.keyCode == 88 && e.ctrlKey === true) ||
-                     // Allow: home, end, left, right
-                    (e.keyCode >= 35 && e.keyCode <= 39)) {
-                         // let it happen, don't do anything
-                         return;
-                }
-                // Ensure that it is a number and stop the keypress
-                if ((e.shiftKey || ((e.keyCode < 48 || e.keyCode > 57) && e.keyCode != 40)) && (e.keyCode < 96 || e.keyCode > 105)) {
-                    e.preventDefault();
-                }
-            });
-
             $("#snippet--resultsTable").on("submit", "form", function(event) {
+                var inputs = $(this).find("input");
+                var submit_button = $(this).find("input[type=submit]");
+                var loading;
+
                 $.ajax({
                     type: "POST",
                     url: $(this).attr("action"),
                     data: $(this).serialize(),
+                    beforeSend: function() {
+                        inputs.addClass("disabled")
+                              .prop('disabled', true);
+
+                        submit_button.val("Ukládám.");
+                        var count = 0;
+                        loading = setInterval(function(){
+                            count++;
+                            var dots = new Array(count % 5).join('.');
+                            submit_button.val("Ukládám." + dots);
+                        }, 500);  
+                    },   
                     success: function(payload) {                   
-                        var row = $('tr#person-319');
-                        row.find('td.maha').html(payload.categories_points["Mahá"] ? payload.categories_points["Mahá"] : ".");
-                        row.find('td.big').html(payload.categories_points["Big"] ? payload.categories_points["Big"] : ".");
-                        row.find('td.medium').html(payload.categories_points["Medium"] ? payload.categories_points["Medium"] : ".");
-                        row.find('td.small').html(payload.categories_points["Small"] ? payload.categories_points["Small"] : ".");
+                        $.nette.success(payload);
+                        var row = $('tr#person-' + payload.person_id);
+                        row.find("td[data-category='maha']").html(payload.categories_points["Mahá"] ? payload.categories_points["Mahá"] : ".");
+                        row.find("td[data-category='big']").html(payload.categories_points["Big"] ? payload.categories_points["Big"] : ".");
+                        row.find("td[data-category='medium']").html(payload.categories_points["Medium"] ? payload.categories_points["Medium"] : ".");
+                        row.find("td[data-category='small']").html(payload.categories_points["Small"] ? payload.categories_points["Small"] : ".");
+                        row.find("td[data-category='points']").html(payload.points_sum ? payload.points_sum : ".");
+                        inputs.removeClass("disabled")
+                              .prop('disabled', false);
+
+                        submit_button.val("Uložit");
+                        clearInterval(loading);
                     }
                 });
                 event.preventDefault();
