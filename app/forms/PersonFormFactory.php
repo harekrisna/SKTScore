@@ -50,6 +50,7 @@ class PersonFormFactory extends Nette\Object {
 	public function formSucceeded(Form $form, $values) {
 		try {
 			if($form->isSubmitted()->name == "add") {
+				$values->data['center_id'] = $this->user->getIdentity()->center_id;
 				$this->person->insert($values->data);
 			}
 			else {

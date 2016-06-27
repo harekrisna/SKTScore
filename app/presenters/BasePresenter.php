@@ -11,8 +11,12 @@ use Tracy\Debugger;
  * Base presenter for all application presenters.
  */
 abstract class BasePresenter extends Nette\Application\UI\Presenter {
+	/** @var Admin */
+	protected $admin;
 	/** @var Person */
 	protected $person;
+	/** @var Center */
+	protected $center;
 	/** @var Book */
 	protected $book;
 	/** @var Category */
@@ -21,6 +25,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 	protected $distribution;
 	/** @var Week */
 	protected $week;
+	/** @var User */
+	protected $user;
 	
 	protected function startup() {
 		parent::startup();
@@ -29,11 +35,15 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
             $this->redirect('Sign:in');
         }		
         
+        $this->admin = $this->context->getService('admin');
 		$this->person = $this->context->getService('person');
+		$this->center = $this->context->getService('center');
 		$this->book = $this->context->getService('book');
 		$this->category = $this->context->getService('category');
 		$this->distribution = $this->context->getService('distribution');
 		$this->week = $this->context->getService('week');
+
+		$this->user = $this->getUser()->getIdentity();
 	}
 
 	public function flashMessage($message, $type = 'info') {

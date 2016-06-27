@@ -19,7 +19,6 @@
 	{block head}
 	{/block}
 </head>
-
 <body>
     <div id="wrapper">
 	    <nav class="navbar-default navbar-static-side" role="navigation">
@@ -50,19 +49,26 @@
 	                    </ul>
 	                </li>
 	                <li n:class="$presenter->isLinkCurrent('Person:*') ? active">
-	                    <a n:href="add"><i class="fa fa-child" style="margin-left: 2.5px;"></i><span class="nav-label">Osoby</span><span class="fa arrow"></span></a>
+	                    <a n:href="add"><i class="fa fa-child"></i><span class="nav-label">Osoby</span><span class="fa arrow"></span></a>
 	                    <ul class="nav nav-second-level collapse">
 	                        <li n:class="$presenter->isLinkCurrent('Person:add') ? active"><a n:href="Person:add">Přidat</a></li>
 	                        <li n:class="$presenter->isLinkCurrent('Person:list') ? active"><a n:href="Person:list">Přehled</a></li>
 	                    </ul>
 	                </li>
 					<li n:class="$presenter->isLinkCurrent('Book:*') ? active">
-	                    <a n:href="Book:list"><i class="fa fa-book" style="margin-left: 2.5px;"></i><span class="nav-label">Knihy</span><span class="fa arrow"></a>
+	                    <a n:href="Book:list"><i class="fa fa-book"></i><span class="nav-label">Knihy</span><span class="fa arrow"></a>
 	                    <ul class="nav nav-second-level collapse">
 	                        <li n:class="$presenter->isLinkCurrent('Book:add') ? active"><a n:href="Book:add">Přidat</a></li>
 	                        <li n:class="$presenter->isLinkCurrent('Book:list') ? active"><a n:href="Book:list">Přehled</a></li>
 	                    </ul>
 	                </li>
+                    <li n:if="$user->isInRole('superadmin')" n:class="$presenter->isLinkCurrent('Admin:*') ? active">
+                        <a n:href="Admin:list"><i class="fa fa-users"></i><span class="nav-label">Správci</span><span class="fa arrow"></a>
+                        <ul class="nav nav-second-level collapse">
+                            <li n:class="$presenter->isLinkCurrent('Admin:add') ? active"><a n:href="Admin:add">Přidat</a></li>
+                            <li n:class="$presenter->isLinkCurrent('Admin:list') ? active, $presenter->isLinkCurrent('Admin:edit') ? active"><a n:href="Admin:list">Přehled</a></li>
+                        </ul>
+                    </li>
 	            </ul>
 	        </div>
 	    </nav>

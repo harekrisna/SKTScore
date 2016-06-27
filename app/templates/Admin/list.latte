@@ -13,18 +13,20 @@
                 <div class="ibox-title empty">
                 </div>
                 <div class="ibox-content">
-                    <table class="table table-striped table-bordered table-hover" id="personsTable" data-page-size="20" >
+                    <table class="table table-striped table-bordered table-hover" id="usersTable" data-page-size="20" >
                         <thead>
                             <tr>
-                                <th class="wide noselect">Jméno</th>
+                                <th class="wide noselect">Jméno správce</th>
+                                <th class="noselect">Uživatelské jméno</th>
                                 <th class="noselect">Centrum</th>
                                 <th data-sort-ignore="true" data-name="controls" class="controls"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr n:foreach="$records as $record">
-                                <td>{$record->name}</td>
-                                <td>{isset($record->center->title) ? $record->center->title}</td>
+                                <td>{$record->fullname}</td>
+                                <td>{$record->username}</td>
+                                <td>{isset($record->center_id) ? $record->center->title}</td>
                                 <td class="controls">
                                     <a class="row-delete" n:href="delete, $record->id"><span class="glyphicon glyphicon-remove"></span></a>
                                     <a class="row-edit" n:href="edit, $record->id"><span class="glyphicon glyphicon-edit"></span></a>
@@ -45,7 +47,7 @@
     </div>
 {/block}
 {block scripts}
-    <!-- FooTable -->
+    <!-- FooTable --> 
     <script src="{$basePath}/js/plugins/footable/footable.all.min.js"></script>    
     
     <!-- Sweet alert -->
@@ -54,7 +56,7 @@
     <!-- Page-Level Scripts -->
     <script>
         $(document).ready(function() {
-            initFooTable('#personsTable', "Osoba byla smazána.", "Nelze smazat osobu dokud má přiřazené výsledky.");
+            initFooTable('#usersTable');
         });
     </script>
 {/block}

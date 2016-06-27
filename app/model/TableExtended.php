@@ -6,9 +6,11 @@ use Tracy\Debugger;
 
 abstract class TableExtended extends Table  { 
 
-    public function insert($data)	{
+    public function insert($data, $add_create_by = true)	{
         try {
-            $data['created_by_user_id'] = $this->user->getIdentity()->id;
+            if($add_create_by) {
+                $data['created_by_user_id'] = $this->user->getIdentity()->id;
+            }
             
             return $this->getTable()
                         ->insert($data);

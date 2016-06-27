@@ -15,11 +15,17 @@ $(document).ready(function () {
 			};
 		}
 	}(jQuery));
+
+   if (typeof jQuery.validator !== "undefined") {
+      jQuery.extend(jQuery.validator.messages, {
+          required: "Toto pole je povinné.",
+      });
+  }
 });
 
 function initFooTable(table, success_message = "Záznam byl smazán.", error_message = "Záznam se nepodařilo smazat.") {
 	$(table).footable();
-
+  
 	$(table).on('click', '.row-delete', function (event) {
 		var invoker = this;
 		event.preventDefault();
@@ -31,9 +37,11 @@ function initFooTable(table, success_message = "Záznam byl smazán.", error_mes
 	        confirmButtonColor: "#DD6B55",
 	        confirmButtonText: "Ano, smazat!",
 	        cancelButtonText: "Zrušit!",
-	        closeOnConfirm: false
+	        closeOnConfirm: false,
+          inputValue: table  // způsob jak dostat do anonymní funkce parametr table
 	    }, function () {
-	        var table = $('#booksTable').data('footable');
+          var table = this.inputValue;  
+	        var table = $(table).data('footable');
 	        var row = $(invoker).parents('tr:first');
 	        $.get(invoker.href, 
 	            function (payload) { 

@@ -4,6 +4,7 @@ namespace App\Model;
 
 use Nette;
 use Nette\Security\Passwords;
+use Tracy\Debugger;
 
 
 /**
@@ -21,7 +22,6 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 
 	/** @var Nette\Database\Context */
 	private $database;
-
 
 	public function __construct(Nette\Database\Context $database)
 	{
@@ -56,6 +56,7 @@ class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
 		}
 
 		$arr = $row->toArray();
+
 		unset($arr[self::COLUMN_PASSWORD_HASH]);
 		return new Nette\Security\Identity($row[self::COLUMN_ID], $row[self::COLUMN_ROLE], $arr);
 	}

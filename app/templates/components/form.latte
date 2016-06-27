@@ -1,0 +1,57 @@
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title empty">
+                </div>
+                <div class="ibox-content">
+					<form n:name=$form class="form-horizontal">
+						{foreach $form->controls as $input}
+                            {if $input instanceof Nette\Forms\Controls\TextInput}
+                                <div n:class="form-group">
+                                    {label $input, class => "col-sm-2 control-label" /}
+                                    <div class="col-sm-10">
+                                        <input n:name="$input" n:class="form-control, large, $input->error ? error" />
+                                        {if $input->error}{label $input, class => "error" }{$input->error}{/label}{/if}
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                            {/if}
+
+                            {if $input instanceof Nette\Forms\Controls\SelectBox}
+                                <div class="form-group">
+                                    {label $input, class => "col-sm-2 control-label" /}
+                                    <div class="col-sm-10">
+                                        {input $input, class => "form-control medium"}
+                                    </div>
+                                </div>
+                            {/if}
+
+							{if $input instanceof Nette\Forms\Controls\HiddenField}
+                                {input $input}
+                            {/if}
+
+							{if $input instanceof Nette\Forms\Controls\SubmitButton}
+								{if ($presenter->getAction() == "edit" && $input->name == "edit") || $presenter->getAction() == "add" && $input->name == "add"}
+								<div n:class="form-group">
+									{label $input, class => "col-sm-2 control-label" /}
+									<div class="col-sm-4 col-sm-offset-2">
+	                                    {input $input, class => "btn btn-primary"}
+									</div>
+								</div>
+								{/if}
+                            {/if}
+						{/foreach}
+					</form>
+                </div>
+            </div>
+        </div>
+    </div>
+{block scripts}    
+    <!-- Jquery Validate -->
+    <script src="{$basePath}/js/plugins/validate/jquery.validate.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#frm-form").validate();
+        });
+    </script>
+{/block} 

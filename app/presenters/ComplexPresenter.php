@@ -13,9 +13,9 @@ class ComplexPresenter extends BasePresenter {
     protected $record;
 	/** @var Book */
 	protected $model;
-	
+
 	public function renderAdd() {
-		$this->setView("../components/add-form");
+		$this->setView("form");
 		$this->template->form = $this['form'];
 		$this->template->form_title = "Přidat záznam";
 	}
@@ -29,7 +29,7 @@ class ComplexPresenter extends BasePresenter {
 	}
 
 	public function renderEdit($record_id) {
-		$this->setView("../components/edit-form");
+		$this->setView("form");
 		$this->template->form = $this['form'];
 		$this->template->form_title = "Upravit záznam";
 	}

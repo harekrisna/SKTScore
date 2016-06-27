@@ -1,0 +1,15 @@
+{layout '../@layout.latte'}
+{block main}
+	<div class="row wrapper border-bottom white-bg page-heading">
+	    <div class="col-lg-10">
+	        <h2 n:block="title">Správci</h2>
+            <ol class="breadcrumb">
+                <li n:class="$presenter->isLinkCurrent('Admin:add') ? active"><a n:href="Admin:add">Přidat</a></li>
+                <li n:class="$presenter->isLinkCurrent('Admin:list') ? active"><a n:href="Admin:list">Přehled</a></li>
+            </ol>
+	    </div>
+	</div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        {include content}            
+    </div>
+{/block}

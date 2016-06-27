@@ -1,32 +1,37 @@
-{block main}
-	<div class="row wrapper border-bottom white-bg page-heading slim">
-	    <div class="col-lg-10">
-	        <h2 n:block="title">Přidat osobu</h2>
-	    </div>
-	</div>
-    <div class="wrapper wrapper-content animated fadeInRight">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-title empty">
-                    </div>
-                    <div class="ibox-content">
-                        {form form, class => "form-horizontal"}
-                            <div class="form-group">
-                                {label data-name, class => "col-sm-2 control-label" /}
-                                <div class="col-sm-10">
-                                     <input n:name="data-name" n:class="form-control, large, $form['data-name']->error ? error" />
-                                     {if $form['data-name']->error}{label data-name, class => "error" }{$form['data-name']->error}{/label}{/if}
-                                </div>
+{layout 'layout.latte'}
+{block content}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title empty">
+                </div>
+                <div class="ibox-content">
+                    {form form, class => "form-horizontal"}
+                        <div class="form-group">
+                            {label data-name, class => "col-sm-2 control-label" /}
+                            <div class="col-sm-10">
+                                 <input n:name="data-name" n:class="form-control, large, $form['data-name']->error ? error" />
+                                 {if $form['data-name']->error}{label data-name, class => "error" }{$form['data-name']->error}{/label}{/if}
                             </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group">
-                                <div class="col-sm-4 col-sm-offset-2">
-                                    {input send, class => "btn btn-primary"}
-                                </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Centrum</label>
+                            <div class="col-sm-10">
+                                 <p class="form-control-static">{$center_title}</p>
                             </div>
-                        {/form}
-                    </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                {if $presenter->getAction() == "add"}
+                                    {input add, class => "btn btn-primary"}
+                                {/if}
+                                {if $presenter->getAction() == "edit"}
+                                    {input edit, class => "btn btn-primary"}
+                                {/if}
+                            </div>
+                        </div>
+                    {/form}
                 </div>
             </div>
         </div>

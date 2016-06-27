@@ -26,6 +26,12 @@
             -ms-transform: rotate(-90deg);
             -o-transform: rotate(-90deg);
         }
+
+        .login-error {
+            color: #CC5965;
+            margin-bottom: 10px;
+        }
+
     </style>
 </head>
 
@@ -42,7 +48,9 @@
             </p>
             <p>Přihlášení do systému</p>
 			{form signInForm, class => m-t, role => form}
-			    {control $form errors}
+			    {if $form->hasErrors()}
+                    <div class="login-error">{$form->errors[0]}</div>
+                {/if}
                 <div class="form-group">
 	                {input username, class => form-control, placeholder => "Uživatelské jméno"}
                 </div>

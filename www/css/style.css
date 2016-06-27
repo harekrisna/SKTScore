@@ -6,6 +6,9 @@
   width: 64px;
   height: 64px;
 }
+.metismenu .fa {
+  margin-left: 2.5px;
+}
 ol.breadcrumb li.active {
   font-weight: bold;
 }
@@ -257,6 +260,9 @@ label.error {
 }
 .form-control.large {
   width: 400px;
+}
+.form-control-static {
+  font-size: 14px;
 }
 .dropdown-form {
   width: 240px;

@@ -25,12 +25,15 @@ services:
 	- App\Model\UserManager
 	- App\Forms\FormFactory
 	- App\Forms\SignFormFactory
+	- App\Forms\AdminFormFactory
 	- App\Forms\PersonFormFactory
 	- App\Forms\PersonResultsFormFactory
 	- App\Forms\BookFormFactory
 	router: App\RouterFactory::createRouter
 
+	admin: App\Model\Admin
 	person: App\Model\Person
+	center: App\Model\Center
 	book: App\Model\Book
 	category: App\Model\Category
 	distribution: App\Model\Distribution

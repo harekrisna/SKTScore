@@ -30,10 +30,10 @@ class SignFormFactory extends Nette\Object
 	{
 		$form = $this->factory->create();
 		$form->addText('username', 'Username:')
-			->setRequired('Please enter your username.');
+			 ->setRequired('Please enter your username.');
 
 		$form->addPassword('password', 'Password:')
-			->setRequired('Please enter your password.');
+			 ->setRequired('Please enter your password.');
 
 		$form->addCheckbox('remember', 'Keep me signed in');
 
@@ -46,16 +46,12 @@ class SignFormFactory extends Nette\Object
 
 	public function formSucceeded(Form $form, $values)
 	{
-		if ($values->remember) {
-			$this->user->setExpiration('14 days', FALSE);
-		} else {
-			$this->user->setExpiration('20 minutes', TRUE);
-		}
+		$this->user->setExpiration('60 minutes', TRUE);
 
 		try {
 			$this->user->login($values->username, $values->password);
 		} catch (Nette\Security\AuthenticationException $e) {
-			$form->addError('The username or password you entered is incorrect.');
+			$form->addError('Nesprávné uživatelské jméno nebo heslo.');
 		}
 	}
 
