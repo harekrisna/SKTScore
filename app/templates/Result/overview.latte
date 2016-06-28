@@ -17,6 +17,7 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-title modified">
         				<input id="week_from_input" class="form-control week-input" onkeydown="return false"/>
+                        <input id="week_to_input" class="form-control week-input" onkeydown="return false"/>
                     </div>
                     <div class="ibox-content relative" n:snippet="resultsTable">
                         <div id="fountainG" class="ajax-loading">
@@ -126,50 +127,122 @@
     <!-- Page-Level Scripts -->
     <script>
         $(document).ready(function() {
-            bindWeekPicker('#week_from_input');
-            setWeekPicker('#week_from_input', {$year}, {$week_number});
             $('#resultsTable').footable();
 
-            $("#snippet--resultsTable").on("submit", "form", function(event) {
-                var inputs = $(this).find("input");
-                var submit_button = $(this).find("input[type=submit]");
-                var loading;
+            var weekIntervalPicker = function(input_from, input_to) {
+                var week_from, 
+                    week_to, 
+                    year_from, 
+                    year_to;
 
-                $.ajax({
-                    type: "POST",
-                    url: $(this).attr("action"),
-                    data: $(this).serialize(),
-                    beforeSend: function() {
-                        inputs.addClass("disabled")
-                              .prop('disabled', true);
+                var selected_week_number;
+                
+                var self = this;
 
-                        submit_button.val("Ukládám.");
-                        var count = 0;
-                        loading = setInterval(function(){
-                            count++;
-                            var dots = new Array(count % 5).join('.');
-                            submit_button.val("Ukládám." + dots);
-                        }, 500);  
-                    },   
-                    success: function(payload) {                   
-                        $.nette.success(payload);
-                        if(!payload.error) {
-                            var row = $('tr#person-' + payload.person_id);
-                            row.find("td[data-category='maha']").html(payload.categories_points["Mahá"] ? payload.categories_points["Mahá"] : ".");
-                            row.find("td[data-category='big']").html(payload.categories_points["Big"] ? payload.categories_points["Big"] : ".");
-                            row.find("td[data-category='medium']").html(payload.categories_points["Medium"] ? payload.categories_points["Medium"] : ".");
-                            row.find("td[data-category='small']").html(payload.categories_points["Small"] ? payload.categories_points["Small"] : ".");
-                            row.find("td[data-category='points']").html(payload.points_sum ? payload.points_sum : ".");
+                this.setFrom = function(year, week_number) {
+                    $(input_from).val("Rok " + year + " - Týden " + week_number);
+                    year_from = year;
+                    week_from = week_number;
+
+                    var date = new Date();
+                    var monday_date = date.getMondayOfWeek(week_number, year);
+                    var monday_mysql = date.convertDateToMySQLdate(monday_date);
+                    $(input_to).datepicker('setStartDate', monday_mysql);
+                }
+                
+                this.setTo = function(year, week_number) {
+                    $(input_to).val("Rok " + year + " - Týden " + week_number);
+                    year_to = year;
+                    week_to = week_number;
+
+                    var date = new Date();
+                    var sunday_date = date.getSundayOfWeek(week_number, year);
+                    var sunday_mysql = date.convertDateToMySQLdate(sunday_date);
+                    $(input_from).datepicker('setEndDate', sunday_mysql);
+                }
+
+                function redrawActiveWeek() {
+                    var active_tr = $(".datepicker-dropdown table td.cw:contains(" + selected_week_number + ")").parent();
+                    active_tr.find('td.active').removeClass('active');
+                    active_tr.addClass('active');
+                    
+                    // odstranění hover efektu nad neaktivnímy týdny
+                    active_tr = $(".datepicker-dropdown table tbody tr").each(function() {
+                        var cells = $(this).find('td.disabled');
+                        if(cells.length > 0) {
+                            var first_cell = $(this).find('td:first-child');
+                            first_cell.addClass('disabled');
                         }
-                        inputs.removeClass("disabled")
-                              .prop('disabled', false);
+                    });
+                }
 
-                        submit_button.val("Uložit");
-                        clearInterval(loading);
-                    }
+                function initDatePicker(input) {
+                    $(input).datepicker({
+                        keyboardNavigation: false,
+                        forceParse: false,
+                        calendarWeeks: true,
+                        autoclose: true,
+                        format: 'yyyy-mm-dd',
+                        language: 'cs',
+                    })
+                    .click(function() { // při kliknutí na input se zvýrazní vybraný týden
+                        if('#' + this.id == input_from) {
+                            selected_week_number = week_from;
+                        }
+                        else if('#' + this.id == input_to) {
+                            selected_week_number = week_to;
+                        }
+                        redrawActiveWeek();
+                    })
+
+                    .keyup(function() { // při kliknutí na input se zvýrazní vybraný týden
+                        redrawActiveWeek();
+                    });
+
+
+                    $(input).on('change', function (e) { // při změně týdne ze změní zvýrazněný
+                        var value = $(input).val();
+                        var only_int_value = value.replace(/-/g, '');
+
+                        if(!isNaN(only_int_value)) {
+                            date = new Date()
+                            if(value == "") {
+                                value = date.nowMySQLdate();
+                            }
+
+                            var active_tr = $('.datepicker-dropdown table td.active.day').parent();
+                            active_tr.find('td.active').removeClass('active');
+                            active_tr.addClass('active');
+                                                
+                            var week_number = date.getWeek(value);
+                            var year = value.substring(0, 4);
+
+                            if('#' + this.id == input_from) {
+                                self.setFrom(year, week_number);
+                            }
+                            else if('#' + this.id == input_to) {
+                                self.setTo(year, week_number);
+                            }
+
+                            console.log("From: " + year_from + " " + week_from);
+                            console.log("To: " + year_to + " " + week_to);
+                        }
+                    });
+                }
+
+                initDatePicker(input_from);
+                initDatePicker(input_to);
+
+                // zvýraznění týdne při přeskakování na další a předchozí stránky datepickeru
+                $('body').on('click', '.datepicker-dropdown th.prev, .datepicker-dropdown th.next', function(){
+                    redrawActiveWeek();
                 });
-                event.preventDefault();
-            });
+            }
+
+            var picker = new weekIntervalPicker('#week_from_input', '#week_to_input');
+            picker.setFrom({$year}, {$week_number});
+            picker.setTo({$year}, {$week_number});
+
         });
     </script>
 {/block}

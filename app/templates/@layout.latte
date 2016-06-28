@@ -45,7 +45,7 @@
 	                    <a n:href="setter"><i class="fa fa-th-large"></i><span class="nav-label">Výsledky</span><span class="fa arrow"></span></a>
 	                    <ul class="nav nav-second-level collapse">
 	                        <li n:class="$presenter->isLinkCurrent('Result:setter') ? active"><a n:href="Result:setActualWeekYear">Zadávání</a></li>
-	                        <li><a href="dashboard_2.html">Přehled</a></li>
+	                        <li n:class="$presenter->isLinkCurrent('Result:overview') ? active"><a n:href="Result:overview">Přehled</a></li>
 	                    </ul>
 	                </li>
 	                <li n:class="$presenter->isLinkCurrent('Person:*') ? active">
