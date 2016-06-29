@@ -15,8 +15,12 @@ class ResultPresenter extends BasePresenter {
     private $year;
 
 	public function actionSetter($week, $year) {
+		if($week == null) $week = date('W');
+        if($year == null) $year = date('Y');
+        
         $this->week = $week;
         $this->year = $year;
+        
 		if($this->getSignal() == null) { // při odeslání personResultsForm nedělat nic
 			$book_distribution = $this->distribution->getPersonsBooksDistribution($week, $year);
 			$books = $this->book->findAll();
@@ -39,14 +43,14 @@ class ResultPresenter extends BasePresenter {
 		}
 	}
 
-	public function renderSetter($week, $year) {
+	public function renderSetter() {
 		if($this->getSignal() == null) {
-            $this->template->week = $week;
-            $this->template->year = $year;
+            $this->template->week = $this->week;
+            $this->template->year = $this->year;
 			$this->template->persons = $this->person->findBy(['center_id' => $this->user->center_id]);
 			$this->template->books = $this->book->findAll();
-            $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistribution($week, $year);
-            $this->template->book_points = $this->distribution->getPersonsSumPoints($week, $year);
+            $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistribution($this->week, $this->year);
+            $this->template->book_points = $this->distribution->getPersonsSumPoints($this->week, $this->year);
 		}
 	}
 

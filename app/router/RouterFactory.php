@@ -18,9 +18,7 @@ class RouterFactory
 		$router = new RouteList;
 		$router[] = new Route('<presenter>/<action>[/<id>]', array(
             'presenter' => 'Result',
-            'action'    => 'setter',
-            'week' => date('W'),
-            'year' => date('Y'),
+            'action'    => 'setter'
     	));	
     	
 		return $router;
