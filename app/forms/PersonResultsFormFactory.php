@@ -26,6 +26,7 @@ class PersonResultsFormFactory extends Nette\Object {
 	        foreach ($books as $book) {
 	        	$results->addText($book->id, $book->title)
 					    ->setType('number') // <input type=number>
+					    ->setAttribute('min', 0)
 					    ->setDefaultValue(0)
 					    ->addRule(Form::INTEGER, 'Musí být číslo')
 					    ->addRule(Form::RANGE, 'Musí být v rozsahu %d do %d', array(0, 999));

@@ -16,7 +16,13 @@ class RouterFactory
 	public static function createRouter()
 	{
 		$router = new RouteList;
-		$router[] = new Route('<presenter>/<action>[/<id>]', 'Result:setter');
+		$router[] = new Route('<presenter>/<action>[/<id>]', array(
+            'presenter' => 'Result',
+            'action'    => 'setter',
+            'week' => date('W'),
+            'year' => date('Y'),
+    	));	
+    	
 		return $router;
 	}
 

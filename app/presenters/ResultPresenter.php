@@ -75,11 +75,12 @@ class ResultPresenter extends BasePresenter {
                 $results->addText($book->id, $book->title)
                         ->setType('number') // <input type=number>
                         ->setAttribute('class', "form-control number")
+                        ->setAttribute('min', 0)
                         ->setAttribute('max', 9999)
                         ->setAttribute('maxlength', 4)
                         ->setDefaultValue(0)
                         ->addCondition(Form::FILLED)
-                            ->addRule(Form::INTEGER, $book->title.'Musí být číslo')
+                            ->addRule(Form::INTEGER, 'Musí být číslo')
                             ->addRule(Form::RANGE, 'Musí být v rozsahu %d do %d', array(0, 9999));
             }
 
