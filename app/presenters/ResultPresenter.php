@@ -10,26 +10,15 @@ use Tracy\Debugger;
 
 
 class ResultPresenter extends BasePresenter {
-	/** @persistent */
-    public $week_number;
-	/** @persistent */
-    public $year;
     public $books;
-    
+    private $week;
+    private $year;
 
-	protected function startup() {
-		parent::startup();
-		if($this->week_number == "")
-			$this->week_number = date("W");
-
-		if($this->year == "")
-			$this->year = date("Y");
-	}
-
-	public function actionSetter() {
+	public function actionSetter($week, $year) {
+        $this->week = $week;
+        $this->year = $year;
 		if($this->getSignal() == null) { // při odeslání personResultsForm nedělat nic
-			$week_id = $this->week->getWeekId($this->week_number, $this->year);
-			$book_distribution = $this->distribution->getPersonsBooksDistribution($week_id);
+			$book_distribution = $this->distribution->getPersonsBooksDistribution($week, $year);
 			$books = $this->book->findAll();
 
 			$persons = $this->person->findBy(['center_id' => $this->user->center_id]);
@@ -50,60 +39,30 @@ class ResultPresenter extends BasePresenter {
 		}
 	}
 
-	public function renderSetter() {
+	public function renderSetter($week, $year) {
 		if($this->getSignal() == null) {
-			$this->template->week_number = $this->week_number;
-			$this->template->year = $this->year;
+            $this->template->week = $week;
+            $this->template->year = $year;
 			$this->template->persons = $this->person->findBy(['center_id' => $this->user->center_id]);
 			$this->template->books = $this->book->findAll();
-			$week_id = $this->week->getWeekId($this->week_number, $this->year);
-			$this->template->distribution = $this->distribution->findBy(['week_id' => $week_id]);
-			$this->template->category_distribution = $this->distribution->getPersonsCategoriesDistribution($week_id);
-			$this->template->book_points = $this->distribution->getPersonsSumPoints($week_id);
+            $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistribution($week, $year);
+            $this->template->book_points = $this->distribution->getPersonsSumPoints($week, $year);
 		}
 	}
 
-    public function actionOverview() {
-        if($this->getSignal() == null) { // při odeslání personResultsForm nedělat nic
-            $week_id = $this->week->getWeekId($this->week_number, $this->year);
-            $book_distribution = $this->distribution->getPersonsBooksDistribution($week_id);
-            $books = $this->book->findAll();
-
-            $persons = $this->person->findBy(['center_id' => $this->user->center_id]);
-            foreach ($persons as $person) {
-                foreach ($books as $book) {
-                    if(isset($book_distribution[$person->id][$book->id])) {
-                        $this['personResultsForm'][$person->id]['results'][$book->id]->setDefaultValue($book_distribution[$person->id][$book->id]);
-                    }
-                    else {
-                        $this['personResultsForm'][$person->id]['results'][$book->id]->setDefaultValue(0);
-                    }
-                }
-            }
-
-            if($this->isAjax()) { // ajaxová změna týdne
-                $this->redrawControl('resultsTable');
-            }
+    public function renderOverview($week_from, $year_from, $week_to, $year_to) {
+        $this->template->week_from = $week_from;
+        $this->template->year_from = $year_from;
+        $this->template->week_to = $week_to;
+        $this->template->year_to = $year_to;
+        $this->template->persons = $this->person->findAll();
+        $this->template->books = $this->book->findAll();
+        $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->book_points = $this->distribution->getPersonsSumPointsInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->book_distribution = $this->distribution->getPersonsBooksDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        if($this->isAjax()) {
+            $this->redrawControl('overviewTable');
         }
-    }
-
-    public function renderOverview() {
-        if($this->getSignal() == null) {
-            $this->template->week_number = $this->week_number;
-            $this->template->year = $this->year;
-            $this->template->persons = $this->person->findBy(['center_id' => $this->user->center_id]);
-            $this->template->books = $this->book->findAll();
-            $week_id = $this->week->getWeekId($this->week_number, $this->year);
-            $this->template->distribution = $this->distribution->findBy(['week_id' => $week_id]);
-            $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistribution($week_id);
-            $this->template->book_points = $this->distribution->getPersonsSumPoints($week_id);
-        }
-    }
-
-    public function actionSetActualWeekYear() {
-        $this->week_number = date("W");
-        $this->year = date("Y");
-        $this->redirect("setter");
     }
 
 	public function createComponentPersonResultsForm() {
@@ -134,14 +93,14 @@ class ResultPresenter extends BasePresenter {
 	}
 
     public function saveResults(Form $form, $values) {
-        $week_id = $this->week->getOrCreateWeekId($this->week_number, $this->year);
-
+        Debugger::fireLog($this->week);
+        Debugger::fireLog($this->year);
         foreach ($values->results as $book_id => $quantity) {
-            $this->distribution->insertResult($values->person_id, $week_id, $book_id, $quantity);    
+            $this->distribution->insertResult($values->person_id, $this->week, $this->year, $book_id, $quantity);    
         }
 
-		$this->payload->categories_points = $this->distribution->getPersonCategoriesDistribution($values->person_id, $week_id);
-        $this->payload->points_sum = $this->distribution->getPersonSumPoints($values->person_id, $week_id);
+		$this->payload->categories_points = $this->distribution->getPersonCategoriesDistribution($values->person_id, $this->week, $this->year);
+        $this->payload->points_sum = $this->distribution->getPersonSumPoints($values->person_id, $this->week, $this->year);
         $this->payload->person_id = $values->person_id;
         $this->flashMessage("Výsledky byly uloženy", 'success');
         $this->sendPayload();

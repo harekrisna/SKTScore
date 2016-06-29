@@ -33,9 +33,10 @@
 
 .ibox-title.modified {
 	padding-top: 10px;
+	overflow: auto;
 	
 	.ibox-tools {
-		width: 50px;
+		width: 42px;
 		float: right;
 		padding-top: 4px;
 	}
@@ -53,7 +54,11 @@
 	}
 }
 
-#resultsTable {
+.score-table {
+	th.numeric {
+		width: 8.33%;
+	}
+
 	.sort-helper {
 		display: none;
 	}
@@ -77,7 +82,7 @@
 		display: none;
 	}
 
-	.result-inputs {
+	.result-detail {
 		float: left;
 		margin: 0 50px 20px 10px;
 

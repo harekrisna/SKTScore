@@ -47,7 +47,7 @@
                             <div id="fountainG_7" class="fountainG"></div>
                             <div id="fountainG_8" class="fountainG"></div>
                         </div>
-                        <table class="table table-striped table-bordered table-hover toggle-arrow-tiny" id="resultsTable" data-page-size="20" >
+                        <table class="table table-striped table-bordered table-hover toggle-arrow-tiny score-table" id="resultsTable" data-page-size="20" >
                             <thead>
                                 {block resultTable_head}
                                 <tr>
@@ -56,6 +56,7 @@
                                     <th class="noselect" data-type="numeric">Big</th>
                                     <th class="noselect" data-type="numeric">Medium</th>
                                     <th class="noselect" data-type="numeric">Small</th>
+                                    <th class="noselect" data-type="numeric">Mag</th>
                                     <th class="noselect" data-type="numeric">Body</th>
                                     <th data-hide="all"></th>
                                 </tr>
@@ -69,38 +70,39 @@
                                     <td data-category="big">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
                                     <td data-category="medium">{isset($distribution['Medium']) ? $distribution['Medium'] : "."}</td>
                                     <td data-category="small">{isset($distribution['Small']) ? $distribution['Small'] : "."}</td>
+                                    <td data-category="mag">{isset($distribution['Mag']) ? $distribution['Mag'] : "."}</td>
                                     <td data-category="points">{isset($book_points[$person->id]) ? $book_points[$person->id] : "."}</td>
                                     <td style="display: none">
                                     {form personResultsForm-$person->id}
-                                        <table class="result-inputs">
+                                        <table class="result-detail">
                                         {foreach $books as $book}
                                             {if $book->category->title == "Mahá"}
                                             <tr><th>{label results-$book->id /}</th><td>{input results-$book->id}</td></tr>
                                             {/if}
                                         {/foreach}
                                         </table>
-                                        <table class="result-inputs">
+                                        <table class="result-detail">
                                         {foreach $books as $book}
                                             {if $book->category->title == "Big"}
                                             <tr><th>{label results-$book->id /}</th><td>{input results-$book->id}</td></tr>
                                             {/if}
                                         {/foreach}
                                         </table>
-                                        <table class="result-inputs">
+                                        <table class="result-detail">
                                         {foreach $books as $book}
                                             {if $book->category->title == "Medium"}
                                             <tr><th>{label results-$book->id /}</th><td>{input results-$book->id}</td></tr>
                                             {/if}
                                         {/foreach}
                                         </table>
-                                        <table class="result-inputs">
+                                        <table class="result-detail">
                                         {foreach $books as $book}
                                             {if $book->category->title == "Small"}
                                             <tr><th>{label results-$book->id /}</th><td>{input results-$book->id}</td></tr>
                                             {/if}
                                         {/foreach}
                                         </table>
-                                        <table class="result-inputs">
+                                        <table class="result-detail">
                                         {foreach $books as $book}
                                             {if $book->category->title == "Mag"}
                                             <tr><th>{label results-$book->id /}</th><td>{input results-$book->id}</td></tr>
@@ -114,7 +116,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="6">
+                                    <td colspan="7">
                                         <ul class="pagination pull-right"></ul>
                                     </td>
                                 </tr>
@@ -144,10 +146,74 @@
     <!-- Page-Level Scripts -->
     <script>
         $(document).ready(function() {
-            bindWeekPicker('#week_from_input');
-            setWeekPicker('#week_from_input', {$year}, {$week_number});
-            $('#resultsTable').footable();
+            // ajaxová obsluha inputu pro výběr týdne
+            function bindWeekPicker(input) {
+                $(input).datepicker({
+                    todayBtn: "linked",
+                    keyboardNavigation: false,
+                    forceParse: false,
+                    calendarWeeks: true,
+                    autoclose: true,
+                    format: 'yyyy-mm-dd',
+                    language: 'cs',
+                })
+                .click(function() { // při prvním kliknutím na input se zvýrazní vybraný týden
+                    active_tr = $(".datepicker-dropdown table tr.active");
+                    if(Object.keys(active_tr).length == 4) { // je už něco označené?
+                        var active_tr = $(".datepicker-dropdown table td.cw:contains(" + QueryString.week + ")").parent();
+                        active_tr.find('td.active').removeClass('active');
+                        active_tr.addClass('active');
+                    }
+                });
+                
+                $(input).on('change', function (e) { // při změně týdne ze změní zvýrazněný
+                    var value = $(input).val();
+                    var only_int_value = value.replace(/-/g, '');
 
+                    if(!isNaN(only_int_value)) {
+                        date = new Date()
+                        if(value == "") {
+                            value = date.nowMySQLdate();
+                        }
+                        var active_tr = $('.datepicker-dropdown table td.active.day').parent();
+                        active_tr.find('td.active').removeClass('active');
+                        active_tr.addClass('active');
+                                            
+                        var week_number = date.getWeek(value);
+                        var year = value.substring(0, 4);
+                        setWeekPicker(input, year, week_number);
+                        
+                        $('#resultsTable').fadeTo(500, 0, function(){
+                           $(this).css("visibility", "hidden");   
+                        });
+
+                        $('#fountainG').fadeIn();
+                        $(input).prop('disabled', true);
+
+                        $.get("result/setter", {"week": week_number, "year": year}, function(payload) {
+                            $.nette.success(payload);
+                            $('#resultsTable').footable();
+                            $('#resultsTable').hide();
+                            $('#resultsTable').fadeIn();
+                            $('#fountainG').fadeOut();
+                            changeUrl("?week=" + week_number + "&year=" + year );
+                            $(input).prop('disabled', false);
+                        });
+                    }
+                });
+            }
+
+            function setWeekPicker(input, year, week_number) {
+                $(input).val("Rok " + year + " - týden " + week_number);
+            }
+
+            bindWeekPicker('#week_from_input');
+            setWeekPicker('#week_from_input', {$year}, {$week});
+
+            
+            $('#resultsTable').footable();
+            
+            //  ajaxvá obsluha uložení výsledků osoby
             $("#snippet--resultsTable").on("submit", "form", function(event) {
                 var inputs = $(this).find("input");
                 var submit_button = $(this).find("input[type=submit]");
@@ -177,6 +243,7 @@
                             row.find("td[data-category='big']").html(payload.categories_points["Big"] ? payload.categories_points["Big"] : ".");
                             row.find("td[data-category='medium']").html(payload.categories_points["Medium"] ? payload.categories_points["Medium"] : ".");
                             row.find("td[data-category='small']").html(payload.categories_points["Small"] ? payload.categories_points["Small"] : ".");
+                            row.find("td[data-category='mag']").html(payload.categories_points["Mag"] ? payload.categories_points["Mag"] : ".");
                             row.find("td[data-category='points']").html(payload.points_sum ? payload.points_sum : ".");
                         }
                         inputs.removeClass("disabled")

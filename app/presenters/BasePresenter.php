@@ -24,7 +24,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 	/** @var Distribution */
 	protected $distribution;
 	/** @var Week */
-	protected $week;
+	protected $week_model;
 	/** @var User */
 	protected $user;
 	
@@ -41,7 +41,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 		$this->book = $this->context->getService('book');
 		$this->category = $this->context->getService('category');
 		$this->distribution = $this->context->getService('distribution');
-		$this->week = $this->context->getService('week');
+		$this->week_model = $this->context->getService('week');
 
 		$this->user = $this->getUser()->getIdentity();
 	}
@@ -54,5 +54,10 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 		else {
 			parent::flashMessage($message, $type);
 		}
+	}
+
+	public function beforeRender() {
+		$this->template->this_week = date("W");
+        $this->template->this_year = date("Y");
 	}
 }

@@ -231,6 +231,16 @@ ol.breadcrumb li.active {
 label.error {
   margin-bottom: 0px;
 }
+.week-input-container {
+  width: 280px;
+  float: left;
+}
+label.tiny-label {
+  width: 41px;
+  margin-top: 5px;
+  margin-left: 10px;
+  float: left;
+}
 .i-checks .radiolist label {
   cursor: pointer;
   line-height: 20px;
@@ -293,9 +303,10 @@ label.error {
 }
 .ibox-title.modified {
   padding-top: 10px;
+  overflow: auto;
 }
 .ibox-title.modified .ibox-tools {
-  width: 50px;
+  width: 42px;
   float: right;
   padding-top: 4px;
 }
@@ -309,39 +320,42 @@ label.error {
 .week-number a:nth-child(-n+9) {
   width: 15px;
 }
-#resultsTable .sort-helper {
+.score-table th.numeric {
+  width: 8.33%;
+}
+.score-table .sort-helper {
   display: none;
 }
-#resultsTable .footable-row-detail-cell .submit {
+.score-table .footable-row-detail-cell .submit {
   width: 200px;
   margin-left: 10px;
   margin-top: 15px;
   clear: both;
   float: left;
 }
-#resultsTable .footable-row-detail-cell .disabled {
+.score-table .footable-row-detail-cell .disabled {
   color: #676A6C;
   background-color: #F3F3F4;
 }
-#resultsTable .footable-row-detail-name {
+.score-table .footable-row-detail-name {
   display: none;
 }
-#resultsTable .result-inputs {
+.score-table .result-detail {
   float: left;
   margin: 0 50px 20px 10px;
 }
-#resultsTable .result-inputs tr {
+.score-table .result-detail tr {
   height: 30px;
 }
-#resultsTable .result-inputs tr th {
+.score-table .result-detail tr th {
   padding-right: 25px;
 }
-#resultsTable .result-inputs input.number {
+.score-table .result-detail input.number {
   width: 100px;
   height: 27px;
   margin: 2px 0 0 15px;
   padding: 3px 3px 3px 8px;
 }
-#resultsTable .result-inputs label {
+.score-table .result-detail label {
   margin: 0;
 }
