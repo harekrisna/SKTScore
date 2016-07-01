@@ -56,9 +56,12 @@ class Distribution extends TableExtended
     }
 
     public function getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to) {
-        $result = $this->getTable()->select("person_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum")
-                                   ->where('(week >= ? AND year >= ?) AND (week <= ? AND year <= ?)', $week_from, $year_from, $week_to, $year_to)
-                                   ->group('person_id, book.category.id');
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select("person_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum, concat(year, week) AS yearweek")
+                                   ->group('person_id, book.category.id')
+                                   ->having('yearweek >= ? AND yearweek <= ?', $yearweek_from, $yearweek_to);
 
         $score = [];
         foreach ($result as $row) {
@@ -98,9 +101,12 @@ class Distribution extends TableExtended
     }
 
     public function getPersonsSumPointsInterval($week_from, $year_from, $week_to, $year_to) {
-        $result = $this->getTable()->select('person_id, SUM(quantity * book.category.point_value) AS points_sum')
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select('person_id, SUM(quantity * book.category.point_value) AS points_sum, concat(year, week) AS yearweek')
                                    ->group('person_id')
-                                   ->where('(week >= ? AND year >= ?) AND (week <= ? AND year <= ?)', $week_from, $year_from, $week_to, $year_to);
+                                   ->having('yearweek >= ? AND yearweek <= ?', $yearweek_from, $yearweek_to);
                        
 
         $score = [];
@@ -110,6 +116,23 @@ class Distribution extends TableExtended
         
         return $score;
     }
+
+    public function getPersonsWeeksDistribution($week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select('person_id, COUNT(DISTINCT(concat(week, year))) AS weeks_count, concat(year, week) AS yearweek')
+                                   ->group('person_id')
+                                   ->having('yearweek >= ? AND yearweek <= ?', $yearweek_from, $yearweek_to);
+                       
+
+        $score = [];
+        foreach ($result as $row) {
+            $score[$row['person_id']] = $row['weeks_count'];
+        }
+        
+        return $score;
+    }    
 
     public function getPersonSumPoints($person_id, $week, $year) {
         $points_sum = $this->findBy(['week' => $week,
@@ -132,9 +155,12 @@ class Distribution extends TableExtended
     }
 
     public function getPersonsBooksDistributionInterval($week_from, $year_from, $week_to, $year_to) {
-        $result = $this->getTable()->select('person_id, book_id, SUM(quantity) AS quantity')
-                                   ->where('(week >= ? AND year >= ?) AND (week <= ? AND year <= ?)', $week_from, $year_from, $week_to, $year_to)
-                                   ->group('person_id, book_id');
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select('person_id, book_id, SUM(quantity) AS quantity, concat(year, week) AS yearweek')
+                                   ->group('person_id, book_id')
+                                   ->having('yearweek >= ? AND yearweek <= ?', $yearweek_from, $yearweek_to);
 
         $score = [];
         foreach ($result as $row) {

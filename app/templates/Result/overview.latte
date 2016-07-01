@@ -40,6 +40,7 @@
                             <thead>
                                 <tr>
                                     <th class="wide noselect">Jméno</th>
+                                    <th class="noselect numeric thin" data-type="numeric" data-sort-ignore="true">Wk</th>
                                     <th class="noselect numeric" data-type="numeric">Mahá</th>
                                     <th class="noselect numeric" data-type="numeric">Big</th>
                                     <th class="noselect numeric" data-type="numeric">Medium</th>
@@ -53,6 +54,7 @@
                                 <tr n:foreach="$persons as $person" id="person-{$person->id}">
                                     {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
                                     <td>{$person->name}</td>
+                                    <td data-category="wk" class="center">{isset($weeks_distribution[$person->id]) ? $weeks_distribution[$person->id] : "."}</td>
                                     <td data-category="maha">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
                                     <td data-category="big">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
                                     <td data-category="medium">{isset($distribution['Medium']) ? $distribution['Medium'] : "."}</td>
@@ -100,12 +102,37 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="7">
+                                    <td colspan="8">
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#result_list">Zobrazit výsledkovou listinu</button>
                                         <ul class="pagination pull-right"></ul>
                                     </td>
                                 </tr>
                             </tfoot>
                         </table>
+                        <div class="modal inmodal fade" id="result_list" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                        <h4 class="modal-title">Výsledky {$score_title}</h4>
+                                        <small class="font-bold">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</small>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Lorem Ipsum is simply dummy</strong> text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown
+                                            printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
+                                            remaining essentially unchanged.</p>
+                                        <p><strong>Lorem Ipsum is simply dummy</strong> text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown
+                                            printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
+                                            remaining essentially unchanged.</p>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -143,7 +170,7 @@
                 var self = this;
 
                 this.setFrom = function(year, week_number) {
-                    $(input_from).val("Rok " + year + " - týden " + week_number);
+                    $(input_from).val("Rok " + year + ": týden " + week_number);
                     year_from = year;
                     week_from = week_number;
 
@@ -154,7 +181,7 @@
                 }
                 
                 this.setTo = function(year, week_number) {
-                    $(input_to).val("Rok " + year + " - týden " + week_number);
+                    $(input_to).val("Rok " + year + ": týden " + week_number);
                     year_to = year;
                     week_to = week_number;
 
@@ -165,7 +192,10 @@
                 }
 
                 function redrawActiveWeek() {
-                    var active_tr = $(".datepicker-dropdown table td.cw:contains(" + selected_week_number + ")").parent();
+                    var active_tr = $(".datepicker-dropdown table td.cw").filter(function() {
+                        return $(this).text() === selected_week_number;
+                    }).parent();
+
                     active_tr.find('td.active').removeClass('active');
                     active_tr.addClass('active');
                     
