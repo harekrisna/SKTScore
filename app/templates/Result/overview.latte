@@ -10,6 +10,7 @@
     <link href="{$basePath}/css/plugins/footable/footable.core.css" rel="stylesheet">
 
     <link href="{$basePath}/css/week-picker.css" rel="stylesheet">
+    <link href="{$basePath}/css/scoretable-print.css" rel="stylesheet" media="print">
 {/block}
 {block content}
         <div class="row">
@@ -25,7 +26,8 @@
                             <input id="week_to_input" class="form-control week-input" onkeydown="return false"/>
                         </div>
                     </div>
-                    <div class="ibox-content relative" n:snippet="overviewTable">
+                    {snippet overviewTable}
+                    <div class="ibox-content relative">
                         <div id="fountainG" class="ajax-loading">
                             <div id="fountainG_1" class="fountainG"></div>
                             <div id="fountainG_2" class="fountainG"></div>
@@ -40,13 +42,14 @@
                             <thead>
                                 <tr>
                                     <th class="wide noselect">Jméno</th>
+                                    <th class="noselect">Centrum</th>
                                     <th class="noselect numeric thin" data-type="numeric" data-sort-ignore="true">Wk</th>
                                     <th class="noselect numeric" data-type="numeric">Mahá</th>
                                     <th class="noselect numeric" data-type="numeric">Big</th>
                                     <th class="noselect numeric" data-type="numeric">Medium</th>
                                     <th class="noselect numeric" data-type="numeric">Small</th>
                                     <th class="noselect numeric" data-type="numeric">Mag</th>
-                                    <th class="noselect numeric" data-type="numeric">Body</th>
+                                    <th class="noselect numeric" data-type="numeric" data-sort-initial="descending">Body</th>
                                     <th data-hide="all"></th>
                                 </tr>
                             </thead>
@@ -54,6 +57,7 @@
                                 <tr n:foreach="$persons as $person" id="person-{$person->id}">
                                     {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
                                     <td>{$person->name}</td>
+                                    <td>{$person->center->title}</td>
                                     <td data-category="wk" class="center">{isset($weeks_distribution[$person->id]) ? $weeks_distribution[$person->id] : "."}</td>
                                     <td data-category="maha">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
                                     <td data-category="big">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
@@ -102,7 +106,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="8">
+                                    <td colspan="9">
                                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#result_list">Zobrazit výsledkovou listinu</button>
                                         <ul class="pagination pull-right"></ul>
                                     </td>
@@ -115,25 +119,52 @@
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                                         <h4 class="modal-title">Výsledky {$score_title}</h4>
-                                        <small class="font-bold">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</small>
                                     </div>
                                     <div class="modal-body">
-                                        <p><strong>Lorem Ipsum is simply dummy</strong> text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown
-                                            printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
-                                            remaining essentially unchanged.</p>
-                                        <p><strong>Lorem Ipsum is simply dummy</strong> text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown
-                                            printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting,
-                                            remaining essentially unchanged.</p>
+                                        <table class="score-tableprint footable">
+                                            <caption>Knihy</caption>
+                                            <thead>
+                                                <tr>
+                                                    <th data-type="numeric"   style="border-radius: 2px;">Pos</th>
+                                                    <th>Jméno</th>
+                                                    <th>Centrum</th>
+                                                    <th data-type="numeric">Wk</th>
+                                                    <th data-type="numeric">Mah</th>
+                                                    <th data-type="numeric">Big</th>
+                                                    <th data-type="numeric">Med</th>
+                                                    <th data-type="numeric">Sml</th>
+                                                    <th data-type="numeric">Mag</th>
+                                                    <th data-type="numeric">Mahá & Big</th>
+                                                    <th data-type="numeric" data-sort-initial="descending">Body</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr n:foreach="$persons as $person" n:if="isset($book_points[$person->id])">
+                                                    {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
+                                                    <td></td>
+                                                    <td class="left">{$person->name}</td>
+                                                    <td class="left">{$person->center->title}</td>
+                                                    <td>{isset($weeks_distribution[$person->id]) ? $weeks_distribution[$person->id] : "."}</td>
+                                                    <td>{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
+                                                    <td>{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
+                                                    <td>{isset($distribution['Medium']) ? $distribution['Medium'] : "."}</td>
+                                                    <td>{isset($distribution['Small']) ? $distribution['Small'] : "."}</td>
+                                                    <td>{isset($distribution['Mag']) ? $distribution['Mag'] : "."}</td>
+                                                    <td>{isset($mahabig_distribution[$person->id]) ? $mahabig_distribution[$person->id] : "."}</td>
+                                                    <td>{isset($book_points[$person->id]) ? $book_points[$person->id] : "."}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                        <button type="button" class="btn btn-white" data-dismiss="modal">Zavřít</button>
+                                        <button type="button" class="btn btn-primary" onclick="printScoreTable();">Tisknout</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    {/snippet}
                 </div>
             </div>
         </div>
@@ -156,6 +187,21 @@
 
     <!-- Page-Level Scripts -->
     <script>
+        function redrawScoreTablePrint() {
+            $('.score-tableprint').footable();
+
+            // manuální renderování pořadí
+            var position = 1;
+            $('.score-tableprint > tbody > tr').each(function() {
+                var td = $(this).find('td:first-child');
+                td.html(position++);
+            });
+        }
+
+        function printScoreTable() { 
+            window.print();
+        }
+
         $(document).ready(function() {
             $('#overviewTable').footable();
 
@@ -269,10 +315,11 @@
                                                     "year_from": year_from,
                                                     "week_to": week_to, 
                                                     "year_to": year_to,
-                                              }, 
+                                                   }, 
                                 function(payload) {
                                     $.nette.success(payload);
                                     $('#overviewTable').footable();
+                                    redrawScoreTablePrint();
                                     $('#overviewTable').hide();
                                     $('#overviewTable').fadeIn();
                                     $('#fountainG').fadeOut();
@@ -296,6 +343,8 @@
             var picker = new weekIntervalPicker('#week_from_input', '#week_to_input');
             picker.setFrom({$year_from}, {$week_from});
             picker.setTo({$year_to}, {$week_to});
+            
+            redrawScoreTablePrint();
         });
     </script>
 {/block}

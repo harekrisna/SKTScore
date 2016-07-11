@@ -1,0 +1,73 @@
+@page {
+    size:  auto;   /* auto is the initial value */
+    margin: 0mm;  /* this affects the margin in the printer settings */
+}
+
+html {
+    background-color: #FFFFFF; 
+    margin: 0px;  /* this affects the margin on the html before sending to printer */
+}
+
+body {
+    margin: 0 5mm 0 5mm; /* margin you want for the content */
+}
+
+.modal-lg {
+    width: 100% !important;
+}
+
+.modal-header {
+  border: none;
+  padding: 5mm 0 2mm 0 !important;
+}
+
+.modal-footer {
+  display: none;
+}
+
+.modal-body {
+    padding: 0 0mm 0 5mm;
+    background-color: transparent;
+}
+
+#wrapper {
+    display: none;
+}
+
+#result_list {
+    display: block !important;
+    width: 100% !important;
+}
+
+.footable-sort-indicator {
+    display: none !important;
+}
+
+.modal-title {
+    text-align: center;
+    margin-left: 6mm;
+}
+
+.score-tableprint {
+    width: 100% !important;
+    background-color: #FFFFFF;
+    border: 1px #000000 solid;
+}
+
+.score-tableprint caption {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.score-tableprint thead {
+    border-bottom: 1px #000000 solid;
+}
+
+.score-tableprint tbody tr {
+    border-bottom: 1px #000000 dotted !important; 
+}
+
+.score-tableprint th, .score-tableprint td {
+    text-align: center;
+}

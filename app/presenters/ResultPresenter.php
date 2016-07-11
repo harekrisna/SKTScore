@@ -63,16 +63,17 @@ class ResultPresenter extends BasePresenter {
         $this->template->books = $this->book->findAll();
         $this->template->weeks_distribution = $this->distribution->getPersonsWeeksDistribution($week_from, $year_from, $week_to, $year_to);
         $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->mahabig_distribution = $this->distribution->getPersonsMahaBigDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->book_points = $this->distribution->getPersonsSumPointsInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->book_distribution = $this->distribution->getPersonsBooksDistributionInterval($week_from, $year_from, $week_to, $year_to);
         if($year_from != $year_to) {
-            $score_title = $year_from." týden ".$week_from." - ".$year_to." týden ".$week_to;
+            $score_title = $year_from.": týden ".$week_from." - ".$year_to." týden ".$week_to;
         }
         else if($week_from != $week_to) {
-            $score_title = $year_from." týden ".$week_from." - ".$week_to;
+            $score_title = $year_from.": týden ".$week_from." - ".$week_to;
         }
         else {
-            $score_title = $year_from." týden ".$week_from; 
+            $score_title = $year_from.": týden ".$week_from; 
         }
 
         $this->template->score_title = $score_title;
