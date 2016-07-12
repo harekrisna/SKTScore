@@ -87,4 +87,9 @@ class BookPresenter extends BasePresenter {
 		$this->payload->success = $this->model->delete($id);
 		$this->sendPayload();
 	}
+
+    public function handleSetBookPriorityType($book_id, $type) {
+        $this->book->setBookTypePriority($book_id, $type);
+        $this->sendPayload();
+    }	
 }

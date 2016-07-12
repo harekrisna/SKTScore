@@ -22,6 +22,10 @@ ol.breadcrumb li.active {
 .footable tfood th.wide {
   width: 30%;
 }
+.footable thead th.medium,
+.footable tfood th.medium {
+  width: 90px;
+}
 .footable thead th.thin,
 .footable tfood th.thin {
   width: 10px;
@@ -66,6 +70,7 @@ ol.breadcrumb li.active {
 }
 .table td.controls a {
   float: left;
+  color: #2F4050;
 }
 .table td.controls a:not(:last-child) {
   margin-right: 3px;
@@ -337,6 +342,9 @@ label.tiny-label {
 }
 .week-number a:nth-child(-n+9) {
   width: 15px;
+}
+.footable .footable-row-detail-cell:hover {
+  background-color: #FFFFFF;
 }
 .score-table th.numeric {
   width: 8.33%;

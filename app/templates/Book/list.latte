@@ -22,15 +22,25 @@
                                 <th class="wide noselect">Titul</th>
                                 <th class="noselect">Zkratka</th>
                                 <th class="noselect">Kategorie</th>
+                                <th class="noselect medium">Typ</th>
                                 <th data-sort-ignore="true" data-name="controls" class="controls"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr n:foreach="$books as $book">
+                                {var priority = $book->related("book_priority")->where(["user_id" => $user->identity->id])->fetch()["priority"]}
                                 <td>{$book->title}</td>
                                 <td>{$book->abbreviation}</td>
                                 <td>{if $book->category_id}{$book->category->title}{/if}</td>
-                                <td class="controls">
+                                <td>
+                                    <form name="change_type">
+                                        <select name="type" onchange="change_book_priority_type(this, {$book->id})">
+                                            <option value="primary"{if $priority == "primary"} selected{/if}>Hlavní</option>
+                                            <option value="secondary"{if $priority == "secondary"} selected{/if}>Vedlejší</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td class="controls"> 
                                     <a class="row-edit" n:href="edit, $book->id"><span class="glyphicon glyphicon-edit"></span></a>
                                     <a class="row-delete" n:href="delete, $book->id"><span class="glyphicon glyphicon-remove"></span></a>
                                 </td>
@@ -61,5 +71,10 @@
         $(document).ready(function() {
             initFooTable('#booksTable', "Kniha byla smazána.", "Nelze smazat knihu dokud je ve výsledcích.");
         });
+
+        function change_book_priority_type(select, book_id) {
+            var type = $(select).val();
+            $.get({link setBookPriorityType!}, {"book_id": book_id, "type": type});
+        }
     </script>
 {/block}

@@ -76,7 +76,7 @@ class ResultPresenter extends BasePresenter {
             $score_title = $year_from.": týden ".$week_from; 
         }
 
-        $this->template->score_title = $score_title;
+        $this->template->score_title = $score_title;  
 
         if($this->isAjax()) {
             $this->redrawControl('overviewTable');
