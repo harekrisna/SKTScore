@@ -80,6 +80,7 @@ class ResultPresenter extends BasePresenter {
 
         if($this->isAjax()) {
             $this->redrawControl('overviewTable');
+            $this->redrawControl('printTable');
         }
     }
 
