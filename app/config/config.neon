@@ -35,6 +35,7 @@ services:
 	person: App\Model\Person
 	center: App\Model\Center
 	book: App\Model\Book
+	book_priority: App\Model\BookPriority
 	category: App\Model\Category
 	distribution: App\Model\Distribution
 	week: App\Model\Week

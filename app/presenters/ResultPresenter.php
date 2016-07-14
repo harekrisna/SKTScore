@@ -48,19 +48,66 @@ class ResultPresenter extends BasePresenter {
             $this->template->week = $this->week;
             $this->template->year = $this->year;
 			$this->template->persons = $this->person->findBy(['center_id' => $this->user->center_id]);
-			$this->template->books = $this->book->findAll();
+            $this->template->primary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
+                                                                           'priority' => "primary"]);
+
+            $this->template->secondary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
+                                                                             'priority' => "secondary"]);
+
             $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistribution($this->week, $this->year);
             $this->template->book_points = $this->distribution->getPersonsSumPoints($this->week, $this->year);
 		}
 	}
 
-    public function renderOverview($week_from, $year_from, $week_to, $year_to) {
+    public function renderPersonsOverview($week_from, $year_from, $week_to, $year_to) {
         $this->template->week_from = $week_from;
         $this->template->year_from = $year_from;
         $this->template->week_to = $week_to;
         $this->template->year_to = $year_to;
         $this->template->persons = $this->person->findAll();
         $this->template->books = $this->book->findAll();
+        $this->template->primary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
+                                                                       'priority' => "primary"]);
+
+        $this->template->secondary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
+                                                                         'priority' => "secondary"]);
+
+        $this->template->weeks_distribution = $this->distribution->getPersonsWeeksDistribution($week_from, $year_from, $week_to, $year_to);
+        $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->mahabig_distribution = $this->distribution->getPersonsMahaBigDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->book_points = $this->distribution->getPersonsSumPointsInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->book_distribution = $this->distribution->getPersonsBooksDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        if($year_from != $year_to) {
+            $score_title = $year_from.": týden ".$week_from." - ".$year_to." týden ".$week_to;
+        }
+        else if($week_from != $week_to) {
+            $score_title = $year_from.": týden ".$week_from." - ".$week_to;
+        }
+        else {
+            $score_title = $year_from.": týden ".$week_from; 
+        }
+
+        $this->template->score_title = $score_title;  
+
+        if($this->isAjax()) {
+            $this->redrawControl('overviewTable');
+            $this->redrawControl('printTable');
+        }
+    }
+
+    public function renderBooksOverview($week_from, $year_from, $week_to, $year_to) {
+        $this->template->week_from = $week_from;
+        $this->template->year_from = $year_from;
+        $this->template->week_to = $week_to;
+        $this->template->year_to = $year_to;
+        $this->template->persons = $this->person->findAll();
+        $this->template->books = $this->book->findAll();
+        $this->template->primary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
+                                                                       'priority' => "primary"]);
+
+        $this->template->secondary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
+                                                                         'priority' => "secondary"]);
+        
         $this->template->weeks_distribution = $this->distribution->getPersonsWeeksDistribution($week_from, $year_from, $week_to, $year_to);
         $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->mahabig_distribution = $this->distribution->getPersonsMahaBigDistributionInterval($week_from, $year_from, $week_to, $year_to);

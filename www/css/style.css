@@ -78,6 +78,27 @@ ol.breadcrumb li.active {
 .modal-lg {
   width: 1000px;
 }
+.panel-body .panel-heading {
+  padding: 0;
+}
+.panel-body .panel-title {
+  margin-top: 0;
+  padding-top: 5px;
+  font-weight: normal;
+}
+.panel-body .panel-title a {
+  display: block;
+  width: 100%;
+  padding: 5px 15px 10px;
+}
+.panel-body .panel-group {
+  margin-bottom: 0;
+}
+.panel-body .panel-filler {
+  line-height: 0px;
+  margin-top: -10px;
+  visibility: hidden;
+}
 #fountainG {
   position: absolute;
   top: 40%;
@@ -354,10 +375,7 @@ label.tiny-label {
 }
 .score-table .footable-row-detail-cell .submit {
   width: 200px;
-  margin-left: 10px;
-  margin-top: 15px;
-  clear: both;
-  float: left;
+  margin-left: 15px;
 }
 .score-table .footable-row-detail-cell .disabled {
   color: #676A6C;
@@ -368,18 +386,37 @@ label.tiny-label {
 }
 .score-table .result-detail {
   float: left;
-  margin: 0 50px 20px 10px;
+  margin: 0 20px 0px 15px;
 }
 .score-table .result-detail tr {
   height: 30px;
 }
 .score-table .result-detail tr th {
-  padding-right: 25px;
+  width: 250px;
+  font-weight: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 15px;
+  display: block;
+  float: left;
+}
+.score-table .result-detail tr th label {
+  width: 250px;
+  font-weight: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 5px;
+}
+.score-table .result-detail tr td {
+  display: block;
+  float: left;
 }
 .score-table .result-detail input.number {
   width: 100px;
   height: 27px;
-  margin: 2px 0 0 15px;
+  margin: 2px 0 0 0;
   padding: 3px 3px 3px 8px;
 }
 .score-table .result-detail label {
