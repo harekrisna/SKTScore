@@ -26,6 +26,7 @@ services:
 	- App\Forms\FormFactory
 	- App\Forms\SignFormFactory
 	- App\Forms\AdminFormFactory
+	- App\Forms\CenterFormFactory
 	- App\Forms\PersonFormFactory
 	- App\Forms\PersonResultsFormFactory
 	- App\Forms\BookFormFactory

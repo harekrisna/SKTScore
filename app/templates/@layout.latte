@@ -63,6 +63,13 @@
 	                        <li n:class="$presenter->isLinkCurrent('Book:list') ? active"><a n:href="Book:list">Přehled</a></li>
 	                    </ul>
 	                </li>
+                    <li n:if="$user->isInRole('superadmin')" n:class="$presenter->isLinkCurrent('Center:*') ? active">
+                        <a n:href="Center:list"><i class="fa fa-institution"></i><span class="nav-label">Centra</span><span class="fa arrow"></a>
+                        <ul class="nav nav-second-level collapse">
+                            <li n:class="$presenter->isLinkCurrent('Center:add') ? active"><a n:href="Center:add">Přidat</a></li>
+                            <li n:class="$presenter->isLinkCurrent('Center:list') ? active, $presenter->isLinkCurrent('Center:edit') ? active"><a n:href="Center:list">Přehled</a></li>
+                        </ul>
+                    </li>
                     <li n:if="$user->isInRole('superadmin')" n:class="$presenter->isLinkCurrent('Admin:*') ? active">
                         <a n:href="Admin:list"><i class="fa fa-users"></i><span class="nav-label">Správci</span><span class="fa arrow"></a>
                         <ul class="nav nav-second-level collapse">

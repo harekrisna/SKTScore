@@ -102,16 +102,13 @@ class ResultPresenter extends BasePresenter {
         $this->template->year_to = $year_to;
         $this->template->persons = $this->person->findAll();
         $this->template->books = $this->book->findAll();
-        $this->template->primary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
-                                                                       'priority' => "primary"]);
-
-        $this->template->secondary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
-                                                                         'priority' => "secondary"]);
+        $this->template->centers = $this->center->findAll();
         
         $this->template->weeks_distribution = $this->distribution->getPersonsWeeksDistribution($week_from, $year_from, $week_to, $year_to);
         $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->mahabig_distribution = $this->distribution->getPersonsMahaBigDistributionInterval($week_from, $year_from, $week_to, $year_to);
-        $this->template->book_points = $this->distribution->getPersonsSumPointsInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->books_sum_distribution = $this->distribution->getBooksSumDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->centers_distribution = $this->distribution->getBooksCentersDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->book_distribution = $this->distribution->getPersonsBooksDistributionInterval($week_from, $year_from, $week_to, $year_to);
         if($year_from != $year_to) {
             $score_title = $year_from.": týden ".$week_from." - ".$year_to." týden ".$week_to;

@@ -45,12 +45,12 @@
                                     <th class="wide noselect">Jméno</th>
                                     <th class="noselect">Centrum</th>
                                     <th class="noselect numeric thin" data-type="numeric" data-sort-ignore="true">Wk</th>
-                                    <th class="noselect numeric" data-type="numeric">Mahá</th>
-                                    <th class="noselect numeric" data-type="numeric">Big</th>
-                                    <th class="noselect numeric" data-type="numeric">Medium</th>
-                                    <th class="noselect numeric" data-type="numeric">Small</th>
-                                    <th class="noselect numeric" data-type="numeric">Mag</th>
-                                    <th class="noselect numeric" data-type="numeric" data-sort-initial="descending">Body</th>
+                                    <th class="noselect category" data-type="numeric">Mahá</th>
+                                    <th class="noselect category" data-type="numeric">Big</th>
+                                    <th class="noselect category" data-type="numeric">Medium</th>
+                                    <th class="noselect category" data-type="numeric">Small</th>
+                                    <th class="noselect category" data-type="numeric">Mag</th>
+                                    <th class="noselect category" data-type="numeric" data-sort-initial="descending">Body</th>
                                     <th data-hide="all"></th>
                                 </tr>
                             </thead>
@@ -214,7 +214,7 @@
         $(document).ready(function() {
             $('#overviewTable').footable();
 
-            var weekIntervalPicker = function(input_from, input_to) {
+            var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
                 var week_from, 
                     week_to, 
                     year_from, 
@@ -319,7 +319,7 @@
                             $(input_from).prop('disabled', true);
                             $(input_to).prop('disabled', true);
 
-                            $.get({link overview}, {"week_from": week_from, 
+                            $.get(ajax_handler, {"week_from": week_from, 
                                                     "year_from": year_from,
                                                     "week_to": week_to, 
                                                     "year_to": year_to,
@@ -351,7 +351,7 @@
 
             var picker = new weekIntervalPicker('#week_from_input', '#week_to_input');
             picker.setFrom({$year_from}, {$week_from});
-            picker.setTo({$year_to}, {$week_to});
+            picker.setTo({$year_to}, {$week_to}, {link personsOverview});
             
             redrawScoreTablePrint();
         });

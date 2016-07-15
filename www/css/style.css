@@ -367,7 +367,7 @@ label.tiny-label {
 .footable .footable-row-detail-cell:hover {
   background-color: #FFFFFF;
 }
-.score-table th.numeric {
+.score-table th.category {
   width: 8.33%;
 }
 .score-table .sort-helper {
