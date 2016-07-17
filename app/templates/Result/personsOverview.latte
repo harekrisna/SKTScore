@@ -55,7 +55,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr n:foreach="$persons as $person" id="person-{$person->id}">
+                                <tr n:foreach="$persons as $person" n:if="isset($category_distribution[$person->id])" id="person-{$person->id}">
                                     {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
                                     <td>{$person->name}</td>
                                     <td>{$person->center->title}</td>
@@ -159,7 +159,7 @@
                                                     <td>{isset($distribution['Small']) ? $distribution['Small'] : "."}</td>
                                                     <td>{isset($distribution['Mag']) ? $distribution['Mag'] : "."}</td>
                                                     <td>{isset($mahabig_distribution[$person->id]) ? $mahabig_distribution[$person->id] : "."}</td>
-                                                    <td>{isset($book_points[$person->id]) ? $book_points[$person->id] : "."}</td>
+                                                    <td data-value="{$book_points[$person->id]}">{$book_points[$person->id]|number}</td>
                                                 </tr>
                                             </tbody>
                                         </table>

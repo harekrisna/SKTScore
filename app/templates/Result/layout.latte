@@ -5,8 +5,8 @@
 	        <h2 n:block="title">Výsledky</h2>
             <ol class="breadcrumb">
                 <li n:class="$presenter->isLinkCurrent('Result:setter') ? active"><a n:href="Result:setter">Zadávání</a></li>
-                <li n:class="$presenter->isLinkCurrent('Result:personsOverview') ? active"><a n:href="Result:personsOverview">Osoby</a></li>
-                <li n:class="$presenter->isLinkCurrent('Result:booksOverview') ? active"><a n:href="Result:booksOverview">Knihy</a></li>
+                <li n:class="$presenter->isLinkCurrent('Result:personsOverview') ? active"><a n:href="Result:personsOverview, $this_week, $this_year, $this_week, $this_year">Osoby</a></li>
+                <li n:class="$presenter->isLinkCurrent('Result:booksOverview') ? active"><a n:href="Result:booksOverview, $this_week, $this_year, $this_week, $this_year">Knihy</a></li>
             </ol>
 	    </div>
 	</div>

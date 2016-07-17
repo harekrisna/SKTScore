@@ -131,7 +131,7 @@ class Distribution extends TableExtended
 
         $score = [];
         foreach ($result as $row) {
-            $score[$row['person_id']] = $row['points_sum'];
+            $score[$row['person_id']] = floatval($row['points_sum']);
         }
         
         return $score;
