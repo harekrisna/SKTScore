@@ -74,9 +74,20 @@ class ResultPresenter extends BasePresenter {
 
         $this->template->weeks_distribution = $this->distribution->getPersonsWeeksDistribution($week_from, $year_from, $week_to, $year_to);
         $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->category_sum_distribution = $this->distribution->getCategoriesDistributionSumInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->mahabig_distribution = $this->distribution->getPersonsMahaBigDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->mahabig_sum_distribution = $this->distribution->getMahaBigSumDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->book_points = $this->distribution->getPersonsSumPointsInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->allsum_points = $this->distribution->getAllSumPointsInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->allsum_points_ceil = $this->distribution->getAllSumPointsCeilInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->book_distribution = $this->distribution->getPersonsBooksDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        
+        $this->template->centers = $this->center->findAll();
+        $this->template->centers_categories_distribution = $this->distribution->getCentersCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->centers_mahabig_distribution = $this->distribution->getCentersMahaBigDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->centers_sum_distribution = $this->distribution->getCentersSumPointsInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->centers_sum_distribution_ceil = $this->distribution->getCentersSumPointsCeilInterval($week_from, $year_from, $week_to, $year_to);
+
         if($year_from != $year_to) {
             $score_title = $year_from.": týden ".$week_from." - ".$year_to." týden ".$week_to;
         }
@@ -88,6 +99,7 @@ class ResultPresenter extends BasePresenter {
         }
 
         $this->template->score_title = $score_title;  
+        $this->template->centers_count_weeks = $week_to - $week_from + 1;
 
         if($this->isAjax()) {
             $this->redrawControl('overviewTable');
@@ -104,27 +116,16 @@ class ResultPresenter extends BasePresenter {
         $this->template->books = $this->book->findAll();
         $this->template->centers = $this->center->findAll();
         
-        $this->template->weeks_distribution = $this->distribution->getPersonsWeeksDistribution($week_from, $year_from, $week_to, $year_to);
         $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->mahabig_distribution = $this->distribution->getPersonsMahaBigDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->books_sum_distribution = $this->distribution->getBooksSumDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->centers_distribution = $this->distribution->getBooksCentersDistributionInterval($week_from, $year_from, $week_to, $year_to);
-        $this->template->book_distribution = $this->distribution->getPersonsBooksDistributionInterval($week_from, $year_from, $week_to, $year_to);
-        if($year_from != $year_to) {
-            $score_title = $year_from.": týden ".$week_from." - ".$year_to." týden ".$week_to;
-        }
-        else if($week_from != $week_to) {
-            $score_title = $year_from.": týden ".$week_from." - ".$week_to;
-        }
-        else {
-            $score_title = $year_from.": týden ".$week_from; 
-        }
-
-        $this->template->score_title = $score_title;  
+        $this->template->centers_sum_distribution = $this->distribution->getCentersSumDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->book_distribution = $this->distribution->getBooksPersonsDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->allsum_books = $this->distribution->getAllSumBooksInterval($week_from, $year_from, $week_to, $year_to);
 
         if($this->isAjax()) {
             $this->redrawControl('overviewTable');
-            $this->redrawControl('printTable');
         }
     }
 

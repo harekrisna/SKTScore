@@ -12,6 +12,10 @@
 // prvek hlavního menu
 .metismenu .fa { 
 	margin-left: 2.5px;
+
+	&.fa-child {
+		margin-left: 4px;
+	}
 }
 
 // sekundární navigace pod nadpisem (aktivní prvek)
@@ -30,7 +34,7 @@ ol.breadcrumb li.active {
 .footable {
 	thead, tfood {
 		th.wide {
-			width: 30%;
+			width: 30% !important;
 		}
 
 		th.medium {
@@ -39,6 +43,10 @@ ol.breadcrumb li.active {
 
 		th.thin {
 			width: 10px;
+		}
+
+		th span.footable-sort-indicator {
+			display: inline !important;
 		}
 	}
 
@@ -71,14 +79,7 @@ ol.breadcrumb li.active {
 	}
 }
 
-.noselect {
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
+
 
 .nopadding {
 	padding: 0;

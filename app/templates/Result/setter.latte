@@ -150,7 +150,7 @@
 
             function redrawActiveWeek() {
                 var active_tr = $(".datepicker-dropdown table td.cw").filter(function() { // najdeme řádek obsahující číslo vybraného týdne
-                    return $(this).text() === selected_week_number;
+                    return $(this).text() == selected_week_number;
                 }).parent();
 
                 active_tr.find('td.active').removeClass('active');
@@ -178,7 +178,6 @@
                     language: 'cs',
                 })
                 .click(function() { // při kliknutí na input se zvýrazní vybraný týden
-                    console.log(selected_week_number);
                     redrawActiveWeek();
                 })
 

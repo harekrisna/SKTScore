@@ -9,6 +9,9 @@
 .metismenu .fa {
   margin-left: 2.5px;
 }
+.metismenu .fa.fa-child {
+  margin-left: 4px;
+}
 ol.breadcrumb li.active {
   font-weight: bold;
 }
@@ -20,7 +23,7 @@ ol.breadcrumb li.active {
 }
 .footable thead th.wide,
 .footable tfood th.wide {
-  width: 30%;
+  width: 30% !important;
 }
 .footable thead th.medium,
 .footable tfood th.medium {
@@ -29,6 +32,10 @@ ol.breadcrumb li.active {
 .footable thead th.thin,
 .footable tfood th.thin {
   width: 10px;
+}
+.footable thead th span.footable-sort-indicator,
+.footable tfood th span.footable-sort-indicator {
+  display: inline !important;
 }
 .footable tbody td.center {
   text-align: center;
@@ -50,14 +57,6 @@ ol.breadcrumb li.active {
 .main-ajax-spinner.visible {
   opacity: 1;
   transition: 0.6s;
-}
-.noselect {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 }
 .nopadding {
   padding: 0;
@@ -370,6 +369,16 @@ label.tiny-label {
 .score-table th.category {
   width: 8.33%;
 }
+.score-table th.center-title {
+  width: 100px;
+}
+.score-table td.empty {
+  font-size: 14px;
+  text-align: center;
+}
+.score-table td.empty:hover {
+  background-color: #F9F9F9;
+}
 .score-table .sort-helper {
   display: none;
 }
@@ -410,6 +419,7 @@ label.tiny-label {
   margin-top: 5px;
 }
 .score-table .result-detail tr td {
+  width: 100px;
   display: block;
   float: left;
 }
@@ -421,6 +431,9 @@ label.tiny-label {
 }
 .score-table .result-detail label {
   margin: 0;
+}
+.score-table tfoot .tfoot-button {
+  margin-bottom: 0;
 }
 .print-button {
   margin-bottom: 0 !important;
@@ -443,4 +456,31 @@ label.tiny-label {
 .score-tableprint th,
 .score-tableprint td {
   text-align: center;
+}
+.score-tableprint th.position-column {
+  width: 30px;
+}
+.score-tableprint th.title-column {
+  text-align: left;
+  padding-left: 15px;
+}
+.score-tableprint th.score-column {
+  width: 50px;
+}
+.score-tableprint th.mahabig-column {
+  width: 80px;
+}
+.score-tableprint th.points-column {
+  width: 70px;
+}
+.score-tableprint tfoot {
+  font-weight: bold;
+  border-top: 1px #7D7D7D solid;
+}
+.score-tableprint tfoot .total {
+  text-align: left;
+  padding-left: 10px;
+}
+.tableprint_delimiter {
+  height: 30px;
 }

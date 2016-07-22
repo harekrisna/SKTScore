@@ -55,11 +55,13 @@ class Distribution extends TableExtended
         return $score;
     }
 
+
+    // pole osob s polem kategorie s hodnotou kolik rozdal v této kategorii
     public function getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to) {
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select("person_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum, concat(year, week) AS yearweek")
+        $result = $this->getTable()->select("person_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum")
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
                                    ->group('person_id, book.category.id');
 
@@ -71,7 +73,24 @@ class Distribution extends TableExtended
         return $score;
     }    
 
+    // pole osob s polem kategorie s hodnotou kolik rozdal v této kategorii
+    public function getCategoriesDistributionSumInterval($week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
+        $result = $this->getTable()->select("person_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum")
+                                   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->group('book.category.id');
+
+        $score = [];
+        foreach ($result as $row) {
+            $score[$row['category_title']] = $row['category_quantity_sum'];
+        }
+
+        return $score;
+    }
+
+    // pole osob se součtem mahá a big
     public function getPersonsMahaBigDistributionInterval($week_from, $year_from, $week_to, $year_to) {
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
@@ -89,6 +108,18 @@ class Distribution extends TableExtended
         return $score;
     }  
 
+    // celkový součet mahá a big v daném období
+    public function getMahaBigSumDistributionInterval($week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select("SUM(quantity) AS mahabig_quantity_sum")
+                                   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('book.category.title = ? OR book.category.title = ?', "Mahá", "Big")
+                                   ->fetch();
+
+        return $result['mahabig_quantity_sum'];
+    } 
 
     public function getPersonCategoriesDistribution($person_id, $week, $year) {
         $result = $this->findBy(['week' => $week,
@@ -119,7 +150,7 @@ class Distribution extends TableExtended
         return $score;
     }
 
-    // vrátí pole osob se součtem bodů v časovém intervalu
+    // pole osob se součtem bodů v časovém intervalu
     public function getPersonsSumPointsInterval($week_from, $year_from, $week_to, $year_to) {
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
@@ -135,6 +166,47 @@ class Distribution extends TableExtended
         }
         
         return $score;
+    }
+
+    // nezaokrouhlený součet bodů všech osob v časovém intervalu
+    public function getAllSumPointsInterval($week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select('SUM(quantity * book.category.point_value) AS points_sum')
+                                   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->fetch();
+
+        return $result['points_sum'];
+    }
+
+    // nezaokrouhlený součet bodů všech osob v časovém intervalu
+    public function getAllSumBooksInterval($week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select('SUM(quantity) AS quantity_sum')
+                                   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->fetch();
+
+        return $result['quantity_sum'];
+    }
+
+    // správně zaokrouhlený součet bodů všech osob v časovém intervalu
+    public function getAllSumPointsCeilInterval($week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select('person_id, ROUND(SUM(quantity * book.category.point_value)) AS points_sum')
+                                   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->group('person_id');
+                       
+        $total_sum_points = 0;
+        foreach ($result as $row) {
+            $total_sum_points += $row['points_sum'];
+        }
+        
+        return $total_sum_points;
     }
 
     // vrátí pole osob s počtem týdnů, které v daném období rozdávala
@@ -191,6 +263,23 @@ class Distribution extends TableExtended
         return $score;
     }
 
+    // pole knih s polem center s polem osoba_id a množství rozdaných knih
+    public function getBooksPersonsDistributionInterval($week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select('person_id, book_id, person.center_id AS center_id, SUM(quantity) AS quantity, concat(year, week) AS yearweek')
+                                   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->group('book_id, person_id');
+        $score = [];
+        foreach ($result as $row) {
+            $score[$row['book_id']][$row['center_id']][] = ["person_id" => $row['person_id'],
+                                                            "quantity" => $row['quantity']];
+        }
+        
+        return $score;
+    }
+
     // pole knih s polem center s hodnotou počtu rozdaných knih
     public function getBooksCentersDistributionInterval($week_from, $year_from, $week_to, $year_to) {
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
@@ -208,6 +297,101 @@ class Distribution extends TableExtended
         return $score;
     }    
 
+
+    // pole center s hodnotou: "zaokrouhlený celkový počet bodů"
+    public function getCentersSumPointsCeilInterval($week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select('person_id, person.center_id AS center_id, ROUND(SUM(quantity * book.category.point_value)) AS points_sum')
+                                   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->group('person_id');
+        
+        $score = [];
+        foreach ($result as $row) {
+            if(empty($score[$row['center_id']])) {
+               $score[$row['center_id']] = 0;
+            }
+            $score[$row['center_id']] += $row['points_sum'];
+        }
+        
+        return $score;
+    }   
+
+
+    // pole center s hodnotou: "nezaokrouhlený celkový počet bodů"
+    public function getCentersSumPointsInterval($week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select('person_id, person.center_id AS center_id, SUM(quantity * book.category.point_value) AS points_sum')
+                                   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->group('person_id');
+        
+        $score = [];
+        foreach ($result as $row) {
+            if(empty($score[$row['center_id']])) {
+               $score[$row['center_id']] = 0;
+            }
+            $score[$row['center_id']] += $row['points_sum'];
+        }
+        
+        return $score;
+    }  
+    
+
+    // pole center s polem kategorií s hodnotou počet rozdaný knih v této kategorii
+    public function getCentersCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select('person.center_id AS center_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum')
+                                   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->group('center_id, category_title');
+        
+        $score = [];
+        foreach ($result as $row) {
+            $score[$row['center_id']][$row['category_title']] = $row['category_quantity_sum'];
+        }
+
+        return $score;
+    } 
+
+
+    // pole center s počtem rozdaných mahá a big knih
+    public function getCentersMahaBigDistributionInterval($week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select('person.center_id AS center_id, book.category.title AS category_title, SUM(quantity) AS mahabig_sum')
+                                   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('book.category.title = ? OR book.category.title = ?', "Mahá", "Big")
+                                   ->group('center_id');
+        
+        $score = [];
+        foreach ($result as $row) {
+            $score[$row['center_id']] = $row['mahabig_sum'];
+        }
+
+        return $score;
+    } 
+
+    // pole center s hodnotou: "celkový počet rozdaných knih"
+    public function getCentersSumDistributionInterval($week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select('center_id, SUM(quantity) AS quantity')
+                                   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->group('person.center_id');
+
+        $score = [];
+        foreach ($result as $row) {
+            $score[$row['center_id']] = $row['quantity'];
+        }
+        
+        return $score;
+    }   
 
     // pole knih s hodnotou: "celkový počet rozdaných knih"
     public function getBooksSumDistributionInterval($week_from, $year_from, $week_to, $year_to) {

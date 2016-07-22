@@ -65,6 +65,19 @@
 		width: 8.33%;
 	}
 
+	th.center-title {
+		width: 100px;
+	}
+
+	td.empty {
+		font-size: 14px;
+		text-align: center;
+
+		&:hover {
+			background-color: #F9F9F9;
+		}
+	}
+
 	.sort-helper {
 		display: none;
 	}
@@ -113,6 +126,7 @@
 			}
 
 			td {
+				width: 100px;
 				display: block;
 				float: left;
 			}
@@ -128,7 +142,11 @@
 		label {
 			margin: 0;
 		}
-	}	
+	}
+
+	tfoot .tfoot-button {
+		margin-bottom: 0;
+	}
 }
 
 .print-button {

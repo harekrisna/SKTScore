@@ -41,6 +41,7 @@ body {
 
 .footable-sort-indicator {
     display: none !important;
+    font-size: 0 !important;
 }
 
 .modal-title {
@@ -73,6 +74,39 @@ button.close {
     border-bottom: 1px #000000 dotted !important; 
 }
 
+.score-tableprint tbody tr td:last-child, .score-tableprint tfoot tr td:last-child {
+    padding-right: 5px;
+}
+
 .score-tableprint th, .score-tableprint td {
     text-align: center;
+}
+
+.score-tableprint th.position-column {
+    width: 30px;
+}
+
+.score-tableprint th.title-column {
+    text-align: left;
+    padding-left: 15px;
+}
+
+.score-tableprint th.score-column {
+    width: 40px;
+}
+
+.score-tableprint th.mahabig-column {
+    width: 80px;
+}
+
+.score-tableprint th.points-column {
+    width: 70px;
+}
+
+.score-tableprint tfoot {
+    border-top: 1px #000000 solid;
+}
+
+h4 {
+    margin-bottom: 10px !important;
 }
