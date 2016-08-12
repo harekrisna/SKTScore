@@ -1,6 +1,11 @@
 .datepicker.dropdown-menu .datepicker-days table.table-condensed tbody td.cw {
   font-weight: bold;
 }
+
+.datepicker.dropdown-menu .datepicker-days table.table-condensed tbody td.cw:not(.disabled) {
+  cursor: pointer;
+}
+
 .datepicker.dropdown-menu .datepicker-days table.table-condensed tbody tr:not(.active):hover td:not(.disabled) {
   background-color: #dddddd;
   border-radius: 0;
