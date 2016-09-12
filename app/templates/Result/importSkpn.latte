@@ -1,0 +1,107 @@
+{layout 'layout.latte'}
+{block head}
+    <link href="{$basePath}/css/plugins/iCheck/custom.css" rel="stylesheet">
+{/block}
+{block content}
+   <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title empty">
+                </div>
+                <div class="ibox-content">
+                    {form parseSkpnForm, class => "form-horizontal"}
+                        <div class="form-group">
+                            {label import_source, class => "col-sm-2 control-label" /}
+                            <div class="col-sm-10">
+                                {input import_source, class => "form-control import-source"}
+                                {if $form->hasErrors()}
+                                    {foreach $form->errors as $error}
+                                        {label import_source, class => "error"}
+                                            {$error}
+                                        {/label}
+                                        <br />
+                                    {/foreach}
+                                {/if}
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                {input import, class => "btn btn-primary"}
+                            </div>
+                        </div>
+                    {/form}
+                </div>
+                <div class="ibox-content">
+                {if isset($parseForm) && $parseForm->isSuccess()}
+                    {form importSkpnForm, class => "form-horizontal"}
+                    <div class="form-group">
+                        {label year, class => "col-sm-2 control-label" /}
+                        <div class="col-sm-2">
+                            {input year, class => "form-control"}
+                        </div>
+                        {label week, class => "col-sm-2 control-label",  style => "width: 100px;" /}
+                        <div class="col-sm-2">
+                            {input week, class => "form-control"}
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Pořadí</th>
+                                    <th>Jméno</th>
+                                    <th>Mahá</th>
+                                    <th>Big</th>
+                                    <th>Medium</th>
+                                    <th>Small</th>
+                                    <th>Mag</th>
+                                    <th>Books</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr n:foreach="$persons_score as $score">
+                                <td><input type="checkbox"  checked class="i-checks" name="input[]"></td>
+                                <td>{$score['position']}</td>
+                                <td>{$score['name']}</td>
+                                <td>{$score['maha']}</td>
+                                <td>{$score['big']}</td>
+                                <td>{$score['medium']}</td>
+                                <td>{$score['small']}</td>
+                                <td>{$score['mag']}</td>
+                                <td>{$score['books']}</td>
+                                <td>{$score['points']}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <div class="col-sm-4 col-sm-offset-2">
+                            {input import, class => "btn btn-primary"}
+                        </div>
+                    </div>
+                    {/form}
+                {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+{block scripts}
+    <!-- iCheck -->
+    <script src="{$basePath}/js/plugins/iCheck/icheck.min.js"></script>
+
+    <!-- Page-Level Scripts -->
+    <script>
+        $(document).ready(function(){
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+        });
+    </script>
+{/block}
