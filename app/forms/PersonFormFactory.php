@@ -12,13 +12,16 @@ class PersonFormFactory extends Nette\Object {
 	private $factory;
 	/** @var Person */
 	private $person;
+	/** @var Center */
+	private $center;	
 	/** @var User */
 	private $user;
 	private $record;
 		
-	public function __construct(FormFactory $factory, \App\Model\Person $person, User $user) {
+	public function __construct(FormFactory $factory, \App\Model\Person $person, \App\Model\Center $center, User $user) {
 		$this->factory = $factory;
 		$this->person = $person;
+		$this->center = $center;
 		$this->user = $user;
 	}
 
@@ -32,6 +35,18 @@ class PersonFormFactory extends Nette\Object {
 		$form->success_edit_message = "Údaje byly upraveny";
 		
 		$data = $form->addContainer("data");
+		
+        if($this->user->isInRole('superadmin')) { // super admin smí přidávat osoby do jakéhokoliv centra
+            $center_items = $this->center->findAll()->fetchPairs('id', 'title');
+        }
+        else { // ostatní uživatelé smí přidávat osoby pouze do svého centra
+            $center_id = $user->getIdentity()->center_id;
+            $center_title = $this->center->get($center_id)['title'];
+
+            $center_items = [$center_id => $center_title];
+        }
+
+		$data->addSelect("center_id", "Centrum", $center_items);
 
 		$data->addText('name', 'Jméno')
 			 ->setRequired('Zadejte jméno prosím.');
@@ -50,7 +65,10 @@ class PersonFormFactory extends Nette\Object {
 	public function formSucceeded(Form $form, $values) {
 		try {
 			if($form->isSubmitted()->name == "add") {
-				$values->data['center_id'] = $this->user->getIdentity()->center_id;
+				if(!$this->user->isInRole("superadmin")) {
+					$values->data['center_id'] = $this->user->getIdentity()->center_id;
+				}
+
 				$this->person->insert($values->data);
 			}
 			else {

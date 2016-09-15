@@ -38,11 +38,11 @@
                     <div class="form-group">
                         {label year, class => "col-sm-2 control-label" /}
                         <div class="col-sm-2">
-                            {input year, class => "form-control"}
+                            {input year, class => "form-control", readonly => "readonly"}
                         </div>
                         {label week, class => "col-sm-2 control-label",  style => "width: 100px;" /}
                         <div class="col-sm-2">
-                            {input week, class => "form-control"}
+                            {input week, class => "form-control", readonly => "readonly"}
                         </div>
                     </div>
                     <div class="hr-line-dashed"></div>
@@ -53,6 +53,7 @@
                                     <th></th>
                                     <th>Pořadí</th>
                                     <th>Jméno</th>
+                                    <th>Přiřadit k</th>
                                     <th>Mahá</th>
                                     <th>Big</th>
                                     <th>Medium</th>
@@ -64,16 +65,18 @@
                             </thead>
                             <tbody>
                             <tr n:foreach="$persons_score as $score">
-                                <td><input type="checkbox"  checked class="i-checks" name="input[]"></td>
+                                {var container = "person-".$iterator->counter}
+                                <td><input n:name="$container.'-do_import'" checked class="i-checks"></td>
                                 <td>{$score['position']}</td>
-                                <td>{$score['name']}</td>
-                                <td>{$score['maha']}</td>
-                                <td>{$score['big']}</td>
-                                <td>{$score['medium']}</td>
-                                <td>{$score['small']}</td>
-                                <td>{$score['mag']}</td>
-                                <td>{$score['books']}</td>
-                                <td>{$score['points']}</td>
+                                <td>{$score['name']}{input $container."-skpn_alias"}</td>
+                                <td class="no-padding">{input $container."-person_id", class => "form-control small in-table"}</td>
+                                <td>{$score['maha']}{input $container."-maha"}</td>
+                                <td>{$score['big']}{input $container."-big"}</td>
+                                <td>{$score['medium']}{input $container."-medium"}</td>
+                                <td>{$score['small']}{input $container."-small"}</td>
+                                <td>{$score['mag']}{input $container."-mag"}</td>
+                                <td>{$score['books']}{input $container."-books"}</td>
+                                <td>{$score['points']}{input $container."-points"}</td>
                             </tr>
                             </tbody>
                         </table>

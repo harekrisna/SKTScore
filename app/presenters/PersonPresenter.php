@@ -17,18 +17,13 @@ class PersonPresenter extends ComplexPresenter {
 		$this->model = $this->person;
 	}
 
-    public function renderAdd() {
-        parent::renderAdd();
-        $this->template->center_title = $this->center->get($this->user->center_id)
-                                                     ->title;
-    }    
-
-    public function renderEdit($record_id) {
-        parent::renderEdit($record_id);
-        $this->template->center_title = isset($this->record->center_id) ? $this->record->center->title : "";
-    }
-
     public function renderList() {
-        $this->template->records = $this->model->findBy(['center_id' => $this->user->center_id]);
+        if($this->getUser()->isInRole('superadmin')) {
+            $this->template->records = $this->model->findAll()
+                                                   ->order('center.title');
+        }
+        else {
+            $this->template->records = $this->model->findBy(['center_id' => $this->user->center_id]);
+        }
     }
 }

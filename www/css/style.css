@@ -317,11 +317,19 @@ textarea.form-control.import-source {
 .form-control.tiny {
   width: 100px;
 }
+.form-control.small {
+  width: 200px;
+}
 .form-control.medium {
   width: 300px;
 }
 .form-control.large {
   width: 400px;
+}
+.form-control.in-table {
+  height: 28px;
+  padding: 1px 5px;
+  margin: 5px;
 }
 .form-control-static {
   font-size: 14px;
