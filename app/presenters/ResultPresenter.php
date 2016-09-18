@@ -265,7 +265,13 @@ class ResultPresenter extends BasePresenter {
 
     public function importSkpnData(Form $form, $values) {
         $values = $form->getHttpData();
-        Debugger::fireLog($values['person']);
+        $year = $values['year'];
+        $week = $values['week'];
+        $persons = $values['person'];
+        foreach ($persons as $person) {
+            Debugger::fireLog($person);
+            //$this->distribution->insertResult($values->person_id, $this->week, $this->year, $book_id, $quantity);    
+        }
         exit;
     }
 
