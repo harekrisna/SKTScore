@@ -7,6 +7,7 @@ use App\Model;
 use Nette\Application\UI\Form;
 use Nette\Application\UI\Multiplier;
 use Tracy\Debugger;
+use Nette\Forms\Controls;
 
 
 class ResultPresenter extends BasePresenter {
@@ -58,6 +59,10 @@ class ResultPresenter extends BasePresenter {
             $this->template->book_points = $this->distribution->getPersonsSumPoints($this->week, $this->year);
 		}
 	}
+
+    public function renderImportSkpn() {
+        
+    }
 
     public function renderPersonsOverview($week_from, $year_from, $week_to, $year_to) {
         $this->template->week_from = $week_from;
@@ -158,8 +163,6 @@ class ResultPresenter extends BasePresenter {
 	}
 
     public function saveResults(Form $form, $values) {
-        Debugger::fireLog($this->week);
-        Debugger::fireLog($this->year);
         foreach ($values->results as $book_id => $quantity) {
             $this->distribution->insertResult($values->person_id, $this->week, $this->year, $book_id, $quantity);    
         }
@@ -169,7 +172,102 @@ class ResultPresenter extends BasePresenter {
         $this->payload->person_id = $values->person_id;
         $this->flashMessage("Výsledky byly uloženy", 'success');
         $this->sendPayload();
+    }
+
+    public function createComponentParseSkpnForm() {
+        $form = new Form; 
+        $form->addTextArea("import_source","Import source")
+             ->setRequired("Žádný zdroj pro inport!");
+        $form->addSubmit('import', 'Načíst data');
+        
+        /*
+        $renderer = (new \App\Forms\BootstrapFormRenderer);
+        $form->setRenderer($renderer);
+
+        // make form and controls compatible with Twitter Bootstrap
+        $form->getElementPrototype()->class('form-horizontal');
+        */
+
+        $form->onSuccess[] = array($this, 'parseSkpnFile');
+        return $form;
+    }
+
+    public function createComponentImportSkpnForm() {
+        $form = new Form; 
+        $form->addText("year","Rok");
+        $form->addText("week","Týden");
+
+        $form->addSubmit('import', 'Importovat výsledky do databáze');
+
+        $form->onSuccess[] = array($this, 'importSkpnData');
+        return $form;
+    }
+
+    public function parseSkpnFile(Form $form, $values) {
+        $source = trim($values['import_source']);
+
+        $lines = explode("\n", $source); // parsování textu na pole řádků
+        $lines = array_filter($lines, 'trim'); // remove any extra \r characters left behind
+
+        preg_match_all('!\d+!', $lines[0], $matches); // vytažení čísel z prvního řádku (obsahuje rok a týden)
+
+        if($matches == [[]]) { // pokud nenajdeme žádné čísla, je to chyba
+            $form->addError("Při zpracovávání došlo k chybě. Pravděpodobně špatný formát vstupu.");
+        }
+        else {
+            $firsl_line_matches = $matches[0];
+            $this['importSkpnForm']['year']->setValue($firsl_line_matches[0]);
+            $this['importSkpnForm']['week']->setValue($firsl_line_matches[1]);
+
+            $cvs_persons = $this->person->findBy(['center.abbreviation' => "CVS"])
+                                        ->fetchPairs('id', 'name');
+            
+            $this->template->parseForm = $form;
+
+            $score_data_lines = array_slice($lines, 3, -2); // pole s řádky výsledků
+            $persons_score = [];
+
+            $person_index = 1;
+            $persons_container = $this['importSkpnForm']->addContainer('person');
+
+            foreach ($score_data_lines as $line) {
+                $line = trim($line);
+                preg_match('/^(\d+) (.+?(?=CZ))CZ +\d +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.)/', $line, $matches);
+                $score = [];
+                $score['position'] = $matches[1];
+                $score['name'] = trim($matches[2]);
+                $score['maha'] = $matches[3];
+                $score['big'] = $matches[4];
+                $score['medium'] = $matches[5];
+                $score['small'] = $matches[6];
+                $score['mag'] = $matches[7];
+                $score['books'] = $matches[8];
+                $score['points'] = $matches[9];
+
+                $persons_score[] = $score;
+                $container = $persons_container->addContainer($person_index);
+                $container->addHidden('skpn_alias')->setValue($score['name']);
+                $container->addCheckbox('do_import');
+                $container->addSelect('person_id', "", $cvs_persons)->setPrompt('--- vyber osobu ---');
+                $container->addHidden('maha')->setValue($score['maha']);
+                $container->addHidden('big')->setValue($score['big']);
+                $container->addHidden('medium')->setValue($score['medium']);
+                $container->addHidden('small')->setValue($score['small']);
+                $container->addHidden('mag')->setValue($score['mag']);
+                $container->addHidden('books')->setValue($score['books']);
+                $container->addHidden('points')->setValue($score['points']);
+                $person_index++;
+            }
+
+            $this->template->persons_score = $persons_score;
+        }
     }  
+
+    public function importSkpnData(Form $form, $values) {
+        $values = $form->getHttpData();
+        Debugger::fireLog($values['person']);
+        exit;
+    }
 
     public function sendError(Form $form) {
         $this->payload->error = true;
