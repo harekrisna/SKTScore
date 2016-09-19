@@ -233,6 +233,11 @@ class ResultPresenter extends BasePresenter {
             foreach ($score_data_lines as $line) {
                 $line = trim($line);
                 preg_match('/^(\d+) (.+?(?=CZ))CZ +\d +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.)/', $line, $matches);
+                if($matches == []) {
+	            	$form->addError("Při zpracovávání došlo k chybě. Pravděpodobně chybí počet týdnů (Wk).");
+	            	return;
+                }
+                
                 $score = [];
                 $score['position'] = $matches[1];
                 $score['name'] = trim($matches[2]);
@@ -248,7 +253,9 @@ class ResultPresenter extends BasePresenter {
                 $container = $persons_container->addContainer($person_index);
                 $container->addHidden('skpn_alias')->setValue($score['name']);
                 $container->addCheckbox('do_import');
-                $container->addSelect('person_id', "", $cvs_persons)->setPrompt('--- vyber osobu ---');
+                $container->addSelect('person_id', "", $cvs_persons)
+                		  ->setPrompt('--- vyber osobu ---');
+                
                 $container->addHidden('maha')->setValue($score['maha']);
                 $container->addHidden('big')->setValue($score['big']);
                 $container->addHidden('medium')->setValue($score['medium']);
@@ -268,11 +275,33 @@ class ResultPresenter extends BasePresenter {
         $year = $values['year'];
         $week = $values['week'];
         $persons = $values['person'];
+        
+        $maha_book = $this->book->findBy(['title' => 'Mahá'])->fetch();
+        $big_book = $this->book->findBy(['title' => 'Big'])->fetch();
+        $medium_book = $this->book->findBy(['title' => 'Medium'])->fetch();
+        $small_book = $this->book->findBy(['title' => 'Small'])->fetch();
+        $mag_book = $this->book->findBy(['title' => 'Mag'])->fetch();
+        
         foreach ($persons as $person) {
-            Debugger::fireLog($person);
-            //$this->distribution->insertResult($values->person_id, $this->week, $this->year, $book_id, $quantity);    
+	        if(isset($person['do_import']) && $person['do_import'] == "on") {		        
+            	if($person['person_id'] != "") {
+	            	if($person['maha'] == ".") $person['maha'] == "0";
+			        if($person['big'] == ".") $person['big'] == "0";
+			        if($person['medium'] == ".") $person['medium'] == "0";
+			        if($person['small'] == ".") $person['small'] == "0";
+			        if($person['mag'] == ".") $person['mag'] == "0";
+			        
+        			$this->distribution->insertResult($person['person_id'], $week, $year, $maha_book->id, $person['maha']);
+        			$this->distribution->insertResult($person['person_id'], $week, $year, $big_book->id, $person['big']);
+        			$this->distribution->insertResult($person['person_id'], $week, $year, $medium_book->id, $person['medium']);
+        			$this->distribution->insertResult($person['person_id'], $week, $year, $small_book->id, $person['small']);
+        			$this->distribution->insertResult($person['person_id'], $week, $year, $mag_book->id, $person['mag']);
+            	}
+            }  
         }
-        exit;
+        
+        $this->flashMessage("Výsledky byly úspěšně importovány.", 'success');
+        $this->redirect("personsOverview", $week, $year, $week, $year);
     }
 
     public function sendError(Form $form) {

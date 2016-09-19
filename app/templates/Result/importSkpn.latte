@@ -69,7 +69,7 @@
                                 <td><input n:name="$container.'-do_import'" checked class="i-checks"></td>
                                 <td>{$score['position']}</td>
                                 <td>{$score['name']}{input $container."-skpn_alias"}</td>
-                                <td class="no-padding">{input $container."-person_id", class => "form-control small in-table"}</td>
+                                <td class="no-padding">{input $container."-person_id", class => "form-control small in-table", required => ""}</td>
                                 <td>{$score['maha']}{input $container."-maha"}</td>
                                 <td>{$score['big']}{input $container."-big"}</td>
                                 <td>{$score['medium']}{input $container."-medium"}</td>
@@ -87,6 +87,20 @@
                             {input import, class => "btn btn-primary"}
                         </div>
                     </div>
+                    <script>
+	                    $("form#frm-importSkpnForm input:checkbox").on('ifChanged', function(e) {
+						    var isChecked = e.currentTarget.checked;
+						    var select = $(this).closest('tr').find('select');
+						    if(isChecked == true) {
+								select.removeAttr('disabled');	
+								select.prop('required', 'required');   
+						    }
+						    else {
+							    select.prop('disabled', 'disabled');
+							    select.removeAttr('required');
+						    }
+						});
+					</script>
                     {/form}
                 {/if}
                 </div>
