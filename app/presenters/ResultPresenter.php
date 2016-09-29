@@ -15,6 +15,11 @@ class ResultPresenter extends BasePresenter {
     private $week;
     private $year;
 
+    public function beforeRender() {
+        parent::beforeRender();
+        $this->template->addFilter('decimalNumber', $this->context->getService("filters")->decimalNumber);
+    }
+
 	public function actionSetter($week, $year) {
 		if($week == null) $week = date('W');
         if($year == null) $year = date('Y');
@@ -256,6 +261,13 @@ class ResultPresenter extends BasePresenter {
                 $container->addSelect('person_id', "", $cvs_persons)
                 		  ->setPrompt('--- vyber osobu ---');
                 
+                $person = $this->person->findBy(['skpn_alias' => $score['name']])
+                                       ->fetch();
+                    
+                if(isset($person->id)) {
+                    $container['person_id']->setDefaultValue($person->id);
+                }
+                
                 $container->addHidden('maha')->setValue($score['maha']);
                 $container->addHidden('big')->setValue($score['big']);
                 $container->addHidden('medium')->setValue($score['medium']);
@@ -283,7 +295,7 @@ class ResultPresenter extends BasePresenter {
         $mag_book = $this->book->findBy(['title' => 'Mag'])->fetch();
         
         foreach ($persons as $person) {
-	        if(isset($person['do_import']) && $person['do_import'] == "on") {		        
+	        if(isset($person['do_import']) && $person['do_import'] == "on") {
             	if($person['person_id'] != "") {
 	            	if($person['maha'] == ".") $person['maha'] == "0";
 			        if($person['big'] == ".") $person['big'] == "0";
@@ -296,6 +308,14 @@ class ResultPresenter extends BasePresenter {
         			$this->distribution->insertResult($person['person_id'], $week, $year, $medium_book->id, $person['medium']);
         			$this->distribution->insertResult($person['person_id'], $week, $year, $small_book->id, $person['small']);
         			$this->distribution->insertResult($person['person_id'], $week, $year, $mag_book->id, $person['mag']);
+
+                    $persons_alias = $this->person->findBy(['skpn_alias' => $person['skpn_alias']]);
+
+                    foreach ($persons_alias as $person_alias) {
+                        $this->person->update($person_alias->id, ['skpn_alias' => NULL]);
+                    }
+
+                    $this->person->update($person['person_id'], ['skpn_alias' => $person['skpn_alias']]);
             	}
             }  
         }

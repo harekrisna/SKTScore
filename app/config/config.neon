@@ -33,6 +33,7 @@ services:
 	router: App\RouterFactory::createRouter
 
 	admin: App\Model\Admin
+	filters: App\Templates\Filters
 	person: App\Model\Person
 	center: App\Model\Center
 	book: App\Model\Book
