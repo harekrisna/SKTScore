@@ -143,7 +143,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="9">
-                                        <button type="button" class="btn btn-primary tfoot-button" data-toggle="modal" data-target="#result_list">Zobrazit výsledkovou listinu</button>
+                                        <button id="resultsTablePrintout_button" type="button" class="btn btn-primary tfoot-button">Zobrazit výsledkovou listinu</button>
                                         <ul class="pagination pull-right"></ul>
                                     </td>
                                 </tr>
@@ -159,85 +159,8 @@
                                         <h4 class="modal-title">Výsledky {$score_title}</h4>
                                     </div>
                                     <div class="modal-body">
-	                                    {snippet printTable}
-                                        <table class="score-tableprint footable" id="tableprint_persons">
-                                            <thead>
-                                                <tr>
-                                                    <th class="position-column" data-type="numeric" data-sort-ignore="true">Pos</th>
-                                                    <th class="title-column" data-sort-ignore="true">Jméno</th>
-                                                    <th class="title-column" data-sort-ignore="true">Centrum</th>
-                                                    <th class="score-column" data-type="numeric" data-sort-ignore="true">Wk</th>
-                                                    <th class="score-column" data-type="numeric" data-sort-ignore="true">Mah</th>
-                                                    <th class="score-column" data-type="numeric" data-sort-ignore="true">Big</th>
-                                                    <th class="score-column" data-type="numeric" data-sort-ignore="true">Med</th>
-                                                    <th class="score-column" data-type="numeric" data-sort-ignore="true">Sml</th>
-                                                    <th class="score-column" data-type="numeric" data-sort-ignore="true">Mag</th>
-                                                    <th class="mahabig-column" data-type="numeric" data-sort-ignore="true">Mahá & Big</th>
-                                                    <th class="points-column" data-type="numeric" data-sort-initial="descending"><span class="points-print-title">Body</span></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr n:foreach="$persons as $person" n:if="isset($book_points[$person->id])">
-                                                    {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
-                                                    <td></td>
-                                                    <td class="left">{$person->name}</td>
-                                                    <td class="left">{$person->center->title}</td>
-                                                    <td>{isset($weeks_distribution[$person->id]) ? $weeks_distribution[$person->id] : "."}</td>
-                                                    <td>{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
-                                                    <td>{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
-                                                    <td>{isset($distribution['Medium']) ? $distribution['Medium'] : "."}</td>
-                                                    <td>{isset($distribution['Small']) ? $distribution['Small'] : "."}</td>
-                                                    <td>{isset($distribution['Mag']) ? $distribution['Mag'] : "."}</td>
-                                                    <td>{isset($mahabig_distribution[$person->id]) ? $mahabig_distribution[$person->id] : "."}</td>
-                                                    <td data-value="{$book_points[$person->id]}">{$book_points[$person->id]|number}</td>
-                                                </tr>
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <td></td>
-                                                    <td class="total" colspan="3">Celkem</td>
-                                                    <td>{isset($category_sum_distribution['Mahá']) ? $category_sum_distribution['Mahá'] : "0"}</td>
-                                                    <td>{isset($category_sum_distribution['Big']) ? $category_sum_distribution['Big'] : "0"}</td>
-                                                    <td>{isset($category_sum_distribution['Medium']) ? $category_sum_distribution['Medium'] : "0"}</td>
-                                                    <td>{isset($category_sum_distribution['Small']) ? $category_sum_distribution['Small'] : "0"}</td>
-                                                    <td>{isset($category_sum_distribution['Mag']) ? $category_sum_distribution['Mag'] : "0"}</td>
-                                                    <td>{$mahabig_sum_distribution}</td>
-                                                    <td>{$allsum_points_ceil}</td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                        <div class="tableprint_delimiter"></div>
-                                        <table class="score-tableprint footable" id="tableprint_centers">
-                                            <thead>
-                                                <tr>
-                                                    <th class="position-column" data-type="numeric" data-sort-ignore="true">Pos</th>
-                                                    <th class="title-column" data-sort-ignore="true">Centrum</th>
-                                                    <th class="score-column" data-type="numeric" data-sort-ignore="true">Wk</th>
-                                                    <th class="score-column" data-type="numeric" data-sort-ignore="true">Mah</th>
-                                                    <th class="score-column" data-type="numeric" data-sort-ignore="true">Big</th>
-                                                    <th class="score-column" data-type="numeric" data-sort-ignore="true">Med</th>
-                                                    <th class="score-column" data-type="numeric" data-sort-ignore="true">Sml</th>
-                                                    <th class="score-column" data-type="numeric" data-sort-ignore="true">Mag</th>
-                                                    <th class="mahabig-column" data-type="numeric" data-sort-ignore="true">Mahá & Big</th>
-                                                    <th class="points-column" data-type="numeric" data-sort-initial="descending"><span class="points-print-title">Body</span></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr n:foreach="$centers as $center" n:if="isset($centers_sum_distribution_ceil[$center->id])">
-                                                    <td></td>
-                                                    <td class="left">{$center->title}</td>
-                                                    <td>{$centers_count_weeks}</td>
-                                                    <td>{isset($centers_categories_distribution[$center->id]['Mahá']) ? $centers_categories_distribution[$center->id]['Mahá'] : "."}</td>
-                                                    <td>{isset($centers_categories_distribution[$center->id]['Big']) ? $centers_categories_distribution[$center->id]['Big'] : "."}</td>
-                                                    <td>{isset($centers_categories_distribution[$center->id]['Medium']) ? $centers_categories_distribution[$center->id]['Medium'] : "."}</td>
-                                                    <td>{isset($centers_categories_distribution[$center->id]['Small']) ? $centers_categories_distribution[$center->id]['Small'] : "."}</td>
-                                                    <td>{isset($centers_categories_distribution[$center->id]['Mag']) ? $centers_categories_distribution[$center->id]['Mag'] : "."}</td>
-                                                    <td>{isset($centers_mahabig_distribution[$center->id]) ? $centers_mahabig_distribution[$center->id] : "."}</td>
-                                                    <td data-value="{$centers_sum_distribution[$center->id]}">{$centers_sum_distribution_ceil[$center->id]|number}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        {/snippet}
+                                        
+                                        
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-white" data-dismiss="modal">Zavřít</button>
@@ -435,6 +358,10 @@
             picker.setTo({$year_to}, {$week_to}, {link personsOverview});
             
             redrawScoreTablePrint();
+
+            $('#resultsTablePrintout_button').click(function() {
+                window.open({link resultsTablePrintout, $week_from, $year_from, $week_to, $year_to}, 'Náhled pro tisk', 'width=900, height=700, scrollbars=yes').focus();
+            });
         });
     </script>
 {/block}
