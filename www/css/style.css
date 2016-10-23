@@ -21,6 +21,20 @@ ol.breadcrumb li.active {
 .nopadding-right {
   padding-right: 0;
 }
+.footable td.center {
+  text-align: center;
+}
+.footable td.left {
+  text-align: left;
+  padding-left: 10px;
+}
+.footable td.right {
+  text-align: right;
+  padding-right: 10px;
+}
+.footable td.bold {
+  font-weight: bold;
+}
 .footable thead th.wide,
 .footable tfood th.wide {
   width: 30% !important;
@@ -36,17 +50,6 @@ ol.breadcrumb li.active {
 .footable thead th span.footable-sort-indicator,
 .footable tfood th span.footable-sort-indicator {
   display: inline !important;
-}
-.footable tbody td.center {
-  text-align: center;
-}
-.footable tbody td.left {
-  text-align: left;
-  padding-left: 10px;
-}
-.footable tbody td.right {
-  text-align: right;
-  padding-right: 10px;
 }
 .main-ajax-spinner {
   opacity: 0;
@@ -477,6 +480,7 @@ textarea.form-control.import-source {
 }
 .score-tableprint {
   width: 100%;
+  max-width: 880px;
   background-color: #FFFFFF;
   border: 1px #7D7D7D solid;
 }

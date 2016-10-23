@@ -82,12 +82,12 @@
                                     <td>{$person->name}</td>
                                     <td>{$person->center->title}</td>
                                     <td data-category="wk" class="center">{isset($weeks_distribution[$person->id]) ? $weeks_distribution[$person->id] : "."}</td>
-                                    <td data-category="maha">{isset($distribution['Mahá']) ? $distribution['Mahá']|decimalNumber}</td>
-                                    <td data-category="big">{isset($distribution['Big']) ? $distribution['Big']|decimalNumber}</td>
-                                    <td data-category="medium">{isset($distribution['Medium']) ? $distribution['Medium']|decimalNumber}</td>
-                                    <td data-category="small">{isset($distribution['Small']) ? $distribution['Small']|decimalNumber}</td>
-                                    <td data-category="mag">{isset($distribution['Mag']) ? $distribution['Mag']|decimalNumber}</td>
-                                    <td data-category="points">{isset($book_points[$person->id]) ? $book_points[$person->id]|noescape|decimalNumber : "."}</td>
+                                    <td data-category="maha" class="center">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
+                                    <td data-category="big" class="center">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
+                                    <td data-category="medium" class="center">{isset($distribution['Medium']) ? $distribution['Medium'] : "."}</td>
+                                    <td data-category="small" class="center">{isset($distribution['Small']) ? $distribution['Small'] : "."}</td>
+                                    <td data-category="mag" class="center">{isset($distribution['Mag']) ? $distribution['Mag'] : "."}</td>
+                                    <td data-category="points" class="center"{if isset($book_points[$person->id])} title="{$book_points[$person->id]}">{$book_points[$person->id]|number:0}{else}>.{/if}</td>
                                     <td style="display: none">
                                     {form personResultsForm-$person->id}
                                         <div class="panel-body">
@@ -134,16 +134,16 @@
                             <tfoot>
                                 <tr>
                                     <td colspan="3">TOTAL</td>
-                                    <td><div class="number-integer">{isset($category_sum_distribution['Mahá']) ? $category_sum_distribution['Mahá'] : "0"}</div></td>
-                                    <td><div class="number-integer">{isset($category_sum_distribution['Big']) ? $category_sum_distribution['Big'] : "0"}</div></td>
-                                    <td><div class="number-integer">{isset($category_sum_distribution['Medium']) ? $category_sum_distribution['Medium'] : "0"}</div></td>
-                                    <td><div class="number-integer">{isset($category_sum_distribution['Small']) ? $category_sum_distribution['Small'] : "0"}</div></td>
-                                    <td><div class="number-integer">{isset($category_sum_distribution['Mag']) ? $category_sum_distribution['Mag'] : "0"}</div></td>
-                                    <td>{$allsum_points|noescape|decimalNumber}</td>
+                                    <td class="center bold">{isset($category_sum_distribution['Mahá']) ? $category_sum_distribution['Mahá'] : "0"}</td>
+                                    <td class="center bold">{isset($category_sum_distribution['Big']) ? $category_sum_distribution['Big'] : "0"}</td>
+                                    <td class="center bold">{isset($category_sum_distribution['Medium']) ? $category_sum_distribution['Medium'] : "0"}</td>
+                                    <td class="center bold">{isset($category_sum_distribution['Small']) ? $category_sum_distribution['Small'] : "0"}</td>
+                                    <td class="center bold">{isset($category_sum_distribution['Mag']) ? $category_sum_distribution['Mag'] : "0"}</td>
+                                    <td class="center bold">{$allsum_points}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="9">
-                                        <button id="resultsTablePrintout_button" type="button" class="btn btn-primary tfoot-button">Zobrazit výsledkovou listinu</button>
+                                        <button onclick="window.open({link resultsTablePrintout, $week_from, $year_from, $week_to, $year_to}, 'Náhled pro tisk', 'width=900, height=700, scrollbars=yes').focus()" type="button" class="btn btn-primary tfoot-button">Zobrazit výsledkovou listinu</button>
                                         <ul class="pagination pull-right"></ul>
                                     </td>
                                 </tr>
@@ -324,10 +324,10 @@
                             $(input_to).prop('disabled', true);
 
                             $.get(ajax_handler, {"week_from": week_from, 
-                                                    "year_from": year_from,
-                                                    "week_to": week_to, 
-                                                    "year_to": year_to,
-                                                   }, 
+                                                 "year_from": year_from,
+                                                 "week_to": week_to, 
+                                                 "year_to": year_to,
+                                                }, 
                                 function(payload) {
                                     $.nette.success(payload);
                                     $('#overviewTable').footable();
@@ -358,10 +358,6 @@
             picker.setTo({$year_to}, {$week_to}, {link personsOverview});
             
             redrawScoreTablePrint();
-
-            $('#resultsTablePrintout_button').click(function() {
-                window.open({link resultsTablePrintout, $week_from, $year_from, $week_to, $year_to}, 'Náhled pro tisk', 'width=900, height=700, scrollbars=yes').focus();
-            });
         });
     </script>
 {/block}
