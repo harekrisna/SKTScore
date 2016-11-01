@@ -61,8 +61,8 @@ button.close {
 }
 
 .score-tableprint caption {
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 26px;
+    color: #676a6c;
     text-align: center;
 }
 

@@ -32,6 +32,9 @@ class ResultPresenter extends BasePresenter {
 			$books = $this->book->findAll();
 
 			$persons = $this->person->findBy(['center_id' => $this->user->center_id]);
+			if($this->getUser()->isInRole('superadmin'))
+				$persons = $this->person->findAll();
+			
 			foreach ($persons as $person) {
 				foreach ($books as $book) {
 					if(isset($book_distribution[$person->id][$book->id])) {
@@ -54,6 +57,10 @@ class ResultPresenter extends BasePresenter {
             $this->template->week = $this->week;
             $this->template->year = $this->year;
 			$this->template->persons = $this->person->findBy(['center_id' => $this->user->center_id]);
+			if($this->getUser()->isInRole('superadmin'))
+				$this->template->persons = $this->person->findAll();
+
+			
             $this->template->primary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
                                                                            'priority' => "primary"]);
 
@@ -119,17 +126,8 @@ class ResultPresenter extends BasePresenter {
     public function renderResultsTablePrintout($week_from, $year_from, $week_to, $year_to) {
         $this->setLayout("layout.printout");
 
-        $this->template->week_from = $week_from;
-        $this->template->year_from = $year_from;
-        $this->template->week_to = $week_to;
-        $this->template->year_to = $year_to;
         $this->template->persons = $this->person->findAll();
         $this->template->books = $this->book->findAll();
-        $this->template->primary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
-                                                                       'priority' => "primary"]);
-
-        $this->template->secondary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
-                                                                         'priority' => "secondary"]);
 
         $this->template->weeks_distribution = $this->distribution->getPersonsWeeksDistribution($week_from, $year_from, $week_to, $year_to);
         $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
@@ -139,7 +137,6 @@ class ResultPresenter extends BasePresenter {
         $this->template->book_points = $this->distribution->getPersonsSumPointsInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->allsum_points = $this->distribution->getAllSumPointsInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->allsum_points_ceil = $this->distribution->getAllSumPointsCeilInterval($week_from, $year_from, $week_to, $year_to);
-        $this->template->book_distribution = $this->distribution->getPersonsBooksDistributionInterval($week_from, $year_from, $week_to, $year_to);
         
         $this->template->centers = $this->center->findAll();
         $this->template->centers_categories_distribution = $this->distribution->getCentersCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
@@ -267,42 +264,58 @@ class ResultPresenter extends BasePresenter {
             $firsl_line_matches = $matches[0];
             $this['importSkpnForm']['year']->setValue($firsl_line_matches[0]);
             $this['importSkpnForm']['week']->setValue($firsl_line_matches[1]);
-
-            $cvs_persons = $this->person->findBy(['center.abbreviation' => "CVS"])
-                                        ->fetchPairs('id', 'name');
+			
+			$persons_pairs = $this->person->findAll();
+            
+            if($this->user->id == 5) 
+            	$persons_pairs = $this->person->findBy(['center.title' => "CVS Lužce"]);
+            
+			$persons_pairs = $persons_pairs->order('name ASC')
+            			  				   ->fetchPairs('id', 'name');
             
             $this->template->parseForm = $form;
-
             $score_data_lines = array_slice($lines, 3, -2); // pole s řádky výsledků
             $persons_score = [];
 
             $person_index = 1;
             $persons_container = $this['importSkpnForm']->addContainer('person');
-
+			
+			
             foreach ($score_data_lines as $line) {
                 $line = trim($line);
-                preg_match('/^(\d+) (.+?(?=CZ))CZ +\d +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.)/', $line, $matches);
-                if($matches == []) {
-	            	$form->addError("Při zpracovávání došlo k chybě. Pravděpodobně chybí počet týdnů (Wk).");
-	            	return;
+                
+                if(strpos($line, "------") !== false) {
+	                continue;
                 }
                 
                 $score = [];
+                
+                preg_match('/^(\d+) (.+?(?=(CZ|Prabhupad Bhavan)))(CZ|Prabhupad Bhavan) +\d +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.)/', $line, $matches);
+               
+                if($matches == []) { // Pravděpodobně chybí počet týdnů (Wk). zkusíme rozpársovat bez toho
+	                preg_match('/^(\d+) (.+?(?=(CZ|Prabhupad Bhavan)))(CZ|Prabhupad Bhavan) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.) +(\d+|\.)/', $line, $matches);
+	                
+	                if($matches == []) {
+		            	$form->addError("Při zpracovávání došlo k chybě.");
+		            	return;
+		            }
+                }
+          
                 $score['position'] = $matches[1];
                 $score['name'] = trim($matches[2]);
-                $score['maha'] = $matches[3];
-                $score['big'] = $matches[4];
-                $score['medium'] = $matches[5];
-                $score['small'] = $matches[6];
-                $score['mag'] = $matches[7];
-                $score['books'] = $matches[8];
-                $score['points'] = $matches[9];
-
+                $score['maha'] = $matches[5];
+                $score['big'] = $matches[6];
+                $score['medium'] = $matches[7];
+                $score['small'] = $matches[8];
+                $score['mag'] = $matches[9];
+                $score['books'] = $matches[10];
+                $score['points'] = $matches[11];
+                
                 $persons_score[] = $score;
                 $container = $persons_container->addContainer($person_index);
                 $container->addHidden('skpn_alias')->setValue($score['name']);
                 $container->addCheckbox('do_import');
-                $container->addSelect('person_id', "", $cvs_persons)
+                $container->addSelect('person_id', "", $persons_pairs)
                 		  ->setPrompt('--- vyber osobu ---');
                 
                 $person = $this->person->findBy(['skpn_alias' => $score['name']])

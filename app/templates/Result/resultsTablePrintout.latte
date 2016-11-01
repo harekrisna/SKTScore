@@ -1,5 +1,15 @@
+{block head}
+    <!-- FooTable -->
+    <link href="{$basePath}/css/plugins/footable/footable.core.css" rel="stylesheet">
+    
+    <!-- FooTable -->
+    <script src="{$basePath}/js/plugins/footable/footable.all.min.js"></script>
+    
+    <link href="{$basePath}/css/scoretable-print.css?v=1.0" rel="stylesheet" media="print">
+{/block}
 {block content}
-<table class="score-tableprint footable" id="tableprint_persons">
+<table class="score-tableprint footable" id="tableprint_persons" data-page-size="99999999999">
+	<caption>Rok {$score_title}</caption>
     <thead>
         <tr>
             <th class="position-column" data-type="numeric" data-sort-ignore="true">Pos</th>
@@ -72,8 +82,32 @@
             <td>{isset($centers_categories_distribution[$center->id]['Small']) ? $centers_categories_distribution[$center->id]['Small'] : "."}</td>
             <td>{isset($centers_categories_distribution[$center->id]['Mag']) ? $centers_categories_distribution[$center->id]['Mag'] : "."}</td>
             <td>{isset($centers_mahabig_distribution[$center->id]) ? $centers_mahabig_distribution[$center->id] : "."}</td>
-            <td data-value="{$centers_sum_distribution[$center->id]}">{$centers_sum_distribution_ceil[$center->id]|number}</td>
+            <td data-value="{$centers_sum_distribution[$center->id]}">{$centers_sum_distribution_ceil[$center->id]}</td>
         </tr>
     </tbody>
 </table>
+<script>
+	$(document).ready(function() {
+    	$('#tableprint_persons').footable();
+    	$('#tableprint_centers').footable();
+    	renumberScoreTableOrder('#tableprint_persons');
+    	renumberScoreTableOrder('#tableprint_centers');
+    });
+    
+    function renumberScoreTableOrder(table) { 
+        // manuální renderování pořadí
+        var position = 0;
+        var last_person_sumpoints = 99999;
+        $(table + ' > tbody > tr').each(function() {
+            var person_sumpoints = $(this).find('td:last-child').data("value");
+            var td = $(this).find('td:first-child');
+            if(last_person_sumpoints > person_sumpoints) {
+                position += 1;
+            }
+
+            td.html(position);
+            last_person_sumpoints = person_sumpoints;
+        });
+    }
+</script>
 {/block}

@@ -485,8 +485,10 @@ textarea.form-control.import-source {
   border: 1px #7D7D7D solid;
 }
 .score-tableprint caption {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 26px;
+  color: #676a6c;
+  text-align: center;
+  margin: 10px 0 20px 0;
 }
 .score-tableprint thead {
   border-bottom: 1px #7D7D7D solid;
@@ -524,4 +526,7 @@ textarea.form-control.import-source {
 }
 .tableprint_delimiter {
   height: 30px;
+}
+#tableprint_centers {
+  margin-bottom: 10px;
 }

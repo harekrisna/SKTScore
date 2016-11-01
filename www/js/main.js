@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
 	;(function($){
 		if($.fn.datepicker){
@@ -60,6 +59,7 @@ function initFooTable(table, success_message = "Záznam byl smazán.", error_mes
 }
 
 $("body").on("keydown", "input[type=number]", function(e) {
+	/*
     // Allow: backspace, delete, tab, escape, enter and .
     if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
          // Allow: Ctrl+A
@@ -80,6 +80,7 @@ $("body").on("keydown", "input[type=number]", function(e) {
 
     if(this.value.length == 4 && e.keyCode != 40)
     	e.preventDefault();
+    */ 
 });
 
 var QueryString = function () {

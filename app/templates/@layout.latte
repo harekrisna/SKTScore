@@ -46,6 +46,10 @@
 	                </li>
 	                <li n:class="$presenter->isLinkCurrent('Person:*') ? active">
 	                    <a n:href="Person:list" title="Osoby"><i class="fa fa-child"></i><span class="nav-label">Osoby</span><span class="fa arrow"></span></a>
+	                    <ul class="nav nav-second-level collapse">
+	                        <li n:class="$presenter->isLinkCurrent('Person:add') ? active"><a n:href="Person:add">Přidat</a></li>
+	                        <li n:class="$presenter->isLinkCurrent('Person:list') ? active"><a n:href="Person:list">Přehled</a></li>
+	                    </ul>
 	                </li>
 					<li n:class="$presenter->isLinkCurrent('Book:*') ? active">
 	                    <a n:href="Book:list"><i class="fa fa-book"></i><span class="nav-label">Knihy</span><span class="fa arrow"></a>

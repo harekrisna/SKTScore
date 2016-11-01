@@ -40,7 +40,7 @@ class PersonFormFactory extends Nette\Object {
             $center_items = $this->center->findAll()->fetchPairs('id', 'title');
         }
         else { // ostatní uživatelé smí přidávat osoby pouze do svého centra
-            $center_id = $user->getIdentity()->center_id;
+            $center_id = $this->user->getIdentity()->center_id;
             $center_title = $this->center->get($center_id)['title'];
 
             $center_items = [$center_id => $center_title];

@@ -5,7 +5,7 @@
 	        <h2 n:block="title">Výsledky</h2>
             <ol class="breadcrumb">
                 <li n:class="$presenter->isLinkCurrent('Result:setter') ? active"><a n:href="Result:setter">Zadávání</a></li>
-                <li n:class="$presenter->isLinkCurrent('Result:importSkpn') ? active"><a n:href="Result:importSkpn">Import z SKPN</a></li>
+                <li n:if="$user->isInRole('superadmin') || $user->id == 5" n:class="$presenter->isLinkCurrent('Result:importSkpn') ? active"><a n:href="Result:importSkpn">Import z SKPN</a></li>
                 <li n:class="$presenter->isLinkCurrent('Result:personsOverview') ? active"><a n:href="Result:personsOverview, $this_week, $this_year, $this_week, $this_year">Osoby</a></li>
                 <li n:class="$presenter->isLinkCurrent('Result:booksOverview') ? active"><a n:href="Result:booksOverview, $this_week, $this_year, $this_week, $this_year">Knihy</a></li>
             </ol>
