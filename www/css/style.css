@@ -488,7 +488,12 @@ textarea.form-control.import-source {
   font-size: 26px;
   color: #676a6c;
   text-align: center;
-  margin: 10px 0 20px 0;
+  margin: 5px 0 10px 0;
+}
+.score-tableprint caption input.editable_title {
+  width: 100%;
+  border: 0;
+  text-align: center;
 }
 .score-tableprint thead {
   border-bottom: 1px #7D7D7D solid;
