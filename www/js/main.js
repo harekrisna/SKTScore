@@ -27,9 +27,17 @@ function initFooTable(table, success_message = "Záznam byl smazán.", error_mes
   
 	$(table).on('click', '.row-delete', function (event) {
 		var invoker = this;
+    var delete_name = $(invoker).data('delete_name');
+    if(delete_name == undefined) {
+       delete_name = " ";
+    }
+    else {
+       delete_name = " \"" + delete_name + "\" ";
+    }
+
 		event.preventDefault();
 	    swal({
-	        title: "Opravdu si přejete záznam smazat?",
+	        title: "Opravdu si přejete záznam" + delete_name +"smazat?",
 	        text: "Tato operace je nevratná!",
 	        type: "warning",
 	        showCancelButton: true,

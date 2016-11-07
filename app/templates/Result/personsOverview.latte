@@ -64,6 +64,7 @@
                         <table class="table table-striped table-bordered table-hover toggle-arrow-tiny score-table" id="overviewTable" data-page-size="99999999999" >
                             <thead>
                                 <tr>
+                                    <th class="noselect" data-sort-ignore="true" data-sorted="false"></th>
                                     <th class="wide noselect">Jméno</th>
                                     <th class="noselect">Centrum</th>
                                     <th class="noselect numeric thin" data-type="numeric" data-sort-ignore="true">Wk</th>
@@ -79,15 +80,16 @@
                             <tbody>
                                 <tr n:foreach="$persons as $person" n:if="isset($category_distribution[$person->id])" id="person-{$person->id}">
                                     {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
+                                    <td>1</td>
                                     <td>{$person->name}</td>
                                     <td>{$person->center->title}</td>
                                     <td data-category="wk" class="center">{isset($weeks_distribution[$person->id]) ? $weeks_distribution[$person->id] : "."}</td>
                                     <td data-category="maha" class="center">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
-                                    <td data-category="big" class="center">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
+                                    <td data-category="big" data-value="{isset($distribution['Big']) ? $distribution['Big'] : '0'}" class="center">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
                                     <td data-category="medium" class="center">{isset($distribution['Medium']) ? $distribution['Medium'] : "."}</td>
                                     <td data-category="small" class="center">{isset($distribution['Small']) ? $distribution['Small'] : "."}</td>
                                     <td data-category="mag" class="center">{isset($distribution['Mag']) ? $distribution['Mag'] : "."}</td>
-                                    <td data-category="points" class="center"{if isset($book_points[$person->id])} title="{$book_points[$person->id]}">{$book_points[$person->id]|number:0}{else}>.{/if}</td>
+                                    <td data-category="points" data-value="{$book_points[$person->id]}" class="center sum-points"{if isset($book_points[$person->id])} title="{$book_points[$person->id]}">{$book_points[$person->id]|number:0}{else}>.{/if}</td>
                                     <td style="display: none">
                                     {form personResultsForm-$person->id}
                                         <div class="panel-body">
@@ -133,7 +135,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="3">TOTAL</td>
+                                    <td colspan="4">TOTAL</td>
                                     <td class="center bold">{isset($category_sum_distribution['Mahá']) ? $category_sum_distribution['Mahá'] : "0"}</td>
                                     <td class="center bold">{isset($category_sum_distribution['Big']) ? $category_sum_distribution['Big'] : "0"}</td>
                                     <td class="center bold">{isset($category_sum_distribution['Medium']) ? $category_sum_distribution['Medium'] : "0"}</td>
@@ -142,7 +144,7 @@
                                     <td class="center bold">{$allsum_points}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="9">
+                                    <td colspan="10">
                                         <button onclick="window.open({link resultsTablePrintout, $week_from, $year_from, $week_to, $year_to}, 'Náhled pro tisk', 'width=900, height=700, scrollbars=yes').focus()" type="button" class="btn btn-primary tfoot-button">Zobrazit výsledkovou listinu</button>
                                         <!--<ul class="pagination pull-right"></ul>-->
                                     </td>
@@ -185,7 +187,7 @@
     <script src="{$basePath}/js/plugins/dataTables/dataTables.tableTools.min.js"></script>
 
     <!-- FooTable -->
-    <script src="{$basePath}/js/plugins/footable/footable.all.min.js"></script>
+    <script src="{$basePath}/js/plugins/footable/footable.js"></script>
 
     <!-- Date picker -->
     <script src="{$basePath}/js/plugins/datapicker/bootstrap-datepicker.js"></script>
@@ -193,25 +195,17 @@
 
     <!-- Page-Level Scripts -->
     <script>
-        function redrawScoreTablePrint() {
-            $('.score-tableprint').footable({
-				"paging": {
-					"size": 1000000
-				}
-			});
-            renumberScoreTableOrder('#tableprint_persons');
-            renumberScoreTableOrder('#tableprint_centers');
-        }
-
-        function renumberScoreTableOrder(table) { 
+        function renumberScoreTableOrder(table, index) { 
             // manuální renderování pořadí
             var position = 0;
-            var last_person_sumpoints = 99999;
+            var row_position = 0;
+            var last_person_sumpoints = Infinity;
             $(table + ' > tbody > tr').each(function() {
-                var person_sumpoints = $(this).find('td:last-child').data("value");
+                var person_sumpoints = $(this).find("td:nth-child(" + index + ")").data("value");
                 var td = $(this).find('td:first-child');
+                row_position += 1;
                 if(last_person_sumpoints > person_sumpoints) {
-                    position += 1;
+                    position = row_position;
                 }
 
                 td.html(position);
@@ -335,8 +329,8 @@
                                 function(payload) {
                                     $.nette.success(payload);
                                     $('#overviewTable').footable();
-                                    redrawScoreTablePrint();
                                     $('#overviewTable').hide();
+                                    renumberScoreTableOrder('#overviewTable', 10);
                                     $('#overviewTable').fadeIn();
                                     $('#fountainG').fadeOut();
                                     $(input_from).prop('disabled', false);
@@ -361,7 +355,7 @@
             picker.setFrom({$year_from}, {$week_from});
             picker.setTo({$year_to}, {$week_to}, {link personsOverview});
             
-            redrawScoreTablePrint();
+            renumberScoreTableOrder('#overviewTable', 10);
         });
     </script>
 {/block}

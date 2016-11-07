@@ -9,6 +9,7 @@
 {/block}
 {block content}
 <table class="score-tableprint footable" id="tableprint_persons" data-page-size="99999999999">
+	<caption><input class="editable_title" type="text" value="Rok {$score_title}"/></caption>
     <thead>
         <tr>
             <th class="position-column" data-type="numeric" data-sort-ignore="true">Pos</th>
@@ -37,7 +38,7 @@
             <td>{isset($distribution['Small']) ? $distribution['Small'] : "."}</td>
             <td>{isset($distribution['Mag']) ? $distribution['Mag'] : "."}</td>
             <td>{isset($mahabig_distribution[$person->id]) ? $mahabig_distribution[$person->id] : "."}</td>
-            <td data-value="{$book_points[$person->id]}">{$book_points[$person->id]|number}</td>
+            <td data-sort-value="{$book_points[$person->id]}">{$book_points[$person->id]|number}</td>
         </tr>
     </tbody>
     <tfoot>
@@ -96,12 +97,14 @@
     function renumberScoreTableOrder(table) { 
         // manuální renderování pořadí
         var position = 0;
-        var last_person_sumpoints = 99999;
+        var row_position = 0;
+        var last_person_sumpoints = Infinity;
         $(table + ' > tbody > tr').each(function() {
             var person_sumpoints = $(this).find('td:last-child').data("value");
             var td = $(this).find('td:first-child');
+            row_position += 1;
             if(last_person_sumpoints > person_sumpoints) {
-                position += 1;
+                position = row_position;
             }
 
             td.html(position);

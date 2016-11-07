@@ -940,19 +940,13 @@
             }).data("footable-sort", e)
         }, e.doSort = function(a, i) {
         	var o = e.footable;
-        	/*
+        	
         	var table_id = o.table.id;
             var index = a + 1;
             var direction = i;
             var empty_cells = $("#"+table_id).find('td.empty:nth-child(' + index + ')');
-            console.log(empty_cells);
-            if(direction) {
-                empty_cells.attr("data-value", "0");
-            }
-            else {
-                empty_cells.attr("data-value", "999999999999");
-            }
-            */
+            //renumberScoreTableOrder('#overviewTable', index);
+            
             
             if (t(o.table).data("sort") !== !1) {
                 var n = t(o.table),
