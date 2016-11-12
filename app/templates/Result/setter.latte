@@ -50,7 +50,8 @@
                         <table class="table table-striped table-bordered table-hover toggle-arrow-tiny score-table" id="resultsTable" data-page-size="9999999999999" >
                             <thead>
                                 <tr>
-                                    <th class="noselect" style="width: 50%">Jméno</th>
+                                    <th class="noselect">Jméno</th>
+                                    <th class="noselect center">Centrum</th>
                                     <th class="noselect category" data-type="numeric">Mahá</th>
                                     <th class="noselect category" data-type="numeric">Big</th>
                                     <th class="noselect category" data-type="numeric">Medium</th>
@@ -64,6 +65,7 @@
                                 <tr n:foreach="$persons as $person" id="person-{$person->id}">
                                     {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
                                     <td>{$person->name}</td>
+                                    <td>{$person->center->title}</td>
                                     <td data-category="maha">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
                                     <td data-category="big">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
                                     <td data-category="medium">{isset($distribution['Medium']) ? $distribution['Medium'] : "."}</td>

@@ -20,7 +20,6 @@ constants:
 session:
 	expiration: 14 days
 
-
 services:
 	- App\Model\UserManager
 	- App\Forms\FormFactory
