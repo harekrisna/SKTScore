@@ -285,7 +285,7 @@ class Distribution extends TableExtended
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select('book_id, center_id, SUM(quantity) AS quantity, concat(year, week) AS yearweek')
+        $result = $this->getTable()->select('book_id, person.center_id, SUM(quantity) AS quantity, concat(year, week) AS yearweek')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
                                    ->group('book_id, person.center_id');
 
@@ -381,7 +381,7 @@ class Distribution extends TableExtended
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select('center_id, SUM(quantity) AS quantity')
+        $result = $this->getTable()->select('person.center_id, SUM(quantity) AS quantity')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
                                    ->group('person.center_id');
 
