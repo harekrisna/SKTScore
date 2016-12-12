@@ -196,24 +196,6 @@
 
     <!-- Page-Level Scripts -->
     <script>
-        function renumberScoreTableOrder(table, index) { 
-            // manuální renderování pořadí
-            var position = 0;
-            var row_position = 0;
-            var last_person_sumpoints = Infinity;
-            $(table + ' > tbody > tr').each(function() {
-                var person_sumpoints = $(this).find("td:nth-child(" + index + ")").data("value");
-                var td = $(this).find('td:first-child');
-                row_position += 1;
-                if(last_person_sumpoints > person_sumpoints) {
-                    position = row_position;
-                }
-
-                td.html(position);
-                last_person_sumpoints = person_sumpoints;
-            });
-        }
-
         $(document).ready(function() {
             $('#overviewTable').footable();
 
@@ -331,7 +313,7 @@
                                     $.nette.success(payload);
                                     $('#overviewTable').footable();
                                     $('#overviewTable').hide();
-                                    renumberScoreTableOrder('#overviewTable:not(.empty)', 10);
+                                    generateScoreTableOrder('#overviewTable:not(.empty)', 10);
                                     $('#overviewTable').fadeIn();
                                     $('#fountainG').fadeOut();
                                     $(input_from).prop('disabled', false);
@@ -356,7 +338,7 @@
             picker.setFrom({$year_from}, {$week_from});
             picker.setTo({$year_to}, {$week_to}, {link personsOverview});
             
-            renumberScoreTableOrder('#overviewTable:not(.empty)', 10);
+            generateScoreTableOrder('#overviewTable:not(.empty)', 10);
         });
     </script>
 {/block}

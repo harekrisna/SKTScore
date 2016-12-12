@@ -125,3 +125,23 @@ function loading(button, text) {
 
     return loading;
 }
+
+function generateScoreTableOrder(table, index) { 
+    // manuální renderování sloupce pořadí
+    var position = 0;
+    var row_position = 0;
+    var last_person_sumpoints = Infinity;
+    $(table + ' > tbody > tr').each(function() {
+        var person_sumpoints = $(this).find("td:nth-child(" + index + ")").data("value");
+        var td = $(this).find('td:first-child');
+        row_position += 1;
+        if(last_person_sumpoints > person_sumpoints) {
+            position = row_position;
+        }
+		
+        td.html(position);
+        if(person_sumpoints == null)
+        	td.html(".");
+        last_person_sumpoints = person_sumpoints;
+    });
+}

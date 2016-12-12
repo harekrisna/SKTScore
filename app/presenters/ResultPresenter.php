@@ -30,7 +30,7 @@ class ResultPresenter extends BasePresenter {
 		if($this->getSignal() == null) { // při odeslání personResultsForm nedělat nic
 			$book_distribution = $this->distribution->getPersonsBooksDistribution($week, $year);
 			$books = $this->book->findAll();
-
+			
 			$persons = $this->person->findBy(['center_id' => $this->user->center_id]);
 			if($this->getUser()->isInRole('superadmin'))
 				$persons = $this->person->findAll();
@@ -45,7 +45,9 @@ class ResultPresenter extends BasePresenter {
 					}
 				}
 			}
-
+			
+			$this->template->centers = $this->center->findAll()->fetchPairs('id', 'title');
+			
             if($this->isAjax()) { // ajaxová změna týdne
                 $this->redrawControl('resultsTable');
             }
@@ -274,7 +276,28 @@ class ResultPresenter extends BasePresenter {
             			  				   ->fetchPairs('id', 'name');
             
             $this->template->parseForm = $form;
-            $score_data_lines = array_slice($lines, 3, -2); // pole s řádky výsledků
+            
+            $score_data_lines = [];
+            $record_flag = false;
+            
+            // vyzobeme pouze řádky mezi počáteční a koncovou dělící čárou "-------------------------" 
+            foreach($lines as $line) {
+	            $line = trim($line);
+	            if(strpos($line, "------") !== false) {
+		            if($record_flag == false) {
+	                	$record_flag = true;
+	                	continue;
+	                }
+	                else {
+		                break;
+	                }
+                }
+                
+                if($record_flag == true) {
+	                $score_data_lines[] = $line;
+                }
+            }
+            
             $persons_score = [];
 
             $person_index = 1;

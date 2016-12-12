@@ -36,6 +36,7 @@
                         </div>
                         *}
                     </div>
+                    {dump $centers}
                     <div class="ibox-content relative" n:snippet="resultsTable">
                         <div id="fountainG" class="ajax-loading">
                             <div id="fountainG_1" class="fountainG"></div>
@@ -50,6 +51,7 @@
                         <table class="table table-striped table-bordered table-hover toggle-arrow-tiny score-table" id="resultsTable" data-page-size="9999999999999" >
                             <thead>
                                 <tr>
+	                                <th class="noselect" data-sort-ignore="true" data-sorted="false"></th>
                                     <th class="noselect">Jméno</th>
                                     <th class="noselect center">Centrum</th>
                                     <th class="noselect category" data-type="numeric">Mahá</th>
@@ -64,16 +66,21 @@
                             <tbody>
                                 <tr n:foreach="$persons as $person" id="person-{$person->id}">
                                     {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
+                                    <td></td>
                                     <td>{$person->name}</td>
-                                    <td>{$person->center->title}</td>
+                                    <td data-value="{$person->center->title}">
+	                                    <select n:inner-foreach="$centers as $center_id => $center_title" name="center_id[{$person->id}]">
+	                                    	<option value="{$center_id}" {if $center_id == $person->center_id}selected{/if}>{$center_title}</option>
+										</select>
+	                                </td>
                                     <td data-category="maha">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
                                     <td data-category="big">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
                                     <td data-category="medium">{isset($distribution['Medium']) ? $distribution['Medium'] : "."}</td>
                                     <td data-category="small">{isset($distribution['Small']) ? $distribution['Small'] : "."}</td>
                                     <td data-category="mag">{isset($distribution['Mag']) ? $distribution['Mag'] : "."}</td>
-                                    <td data-category="points">{isset($book_points[$person->id]) ? $book_points[$person->id] : "."}</td>
+                                    <td data-category="points" data-value="{isset($book_points[$person->id]) ? $book_points[$person->id] : 'null'}">{isset($book_points[$person->id]) ? $book_points[$person->id] : "."}</td>
                                     <td style="display: none">
-                                    {form personResultsForm-$person->id}
+                                    {form personResultsForm-$person->id, data-person_id => $person->id}
                                         <div class="panel-body">
                                             <div class="panel-group" id="accordion-{$person->id}">
                                                 <div class="panel panel-default">
@@ -116,6 +123,7 @@
                                     </td>
                                 </tr>
                             </tbody>
+                            {*
                             <tfoot>
                                 <tr>
                                     <td colspan="7">
@@ -123,6 +131,7 @@
                                     </td>
                                 </tr>
                             </tfoot>
+                            *}
                         </table>
                     </div>
                 </div>
@@ -149,7 +158,7 @@
     <script>
         $(document).ready(function() {
             var selected_week_number;
-
+        
             function redrawActiveWeek() {
                 var active_tr = $(".datepicker-dropdown table td.cw").filter(function() { // najdeme řádek obsahující číslo vybraného týdne
                     return $(this).text() == selected_week_number;
@@ -239,13 +248,17 @@
             });
             
             $('#resultsTable').footable();
-            
+            generateScoreTableOrder('#resultsTable', 9);
             //  ajaxvá obsluha uložení výsledků osoby
             $("#snippet--resultsTable").on("submit", "form", function(event) {
                 var inputs = $(this).find("input");
                 var submit_button = $(this).find("input[type=submit]");
+                var person_id = $(this).data('person_id');
+                var center_id = $('select[name=center_id\\[' + person_id + '\\]]').val();
                 var loading;
-
+				
+				
+				
                 $.ajax({
                     type: "POST",
                     url: $(this).attr("action"),

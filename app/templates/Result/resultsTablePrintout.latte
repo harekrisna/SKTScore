@@ -38,7 +38,7 @@
             <td>{isset($distribution['Small']) ? $distribution['Small'] : "."}</td>
             <td>{isset($distribution['Mag']) ? $distribution['Mag'] : "."}</td>
             <td>{isset($mahabig_distribution[$person->id]) ? $mahabig_distribution[$person->id] : "."}</td>
-            <td data-sort-value="{$book_points[$person->id]}">{$book_points[$person->id]|number}</td>
+            <td data-sort-value="{$book_points[$person->id]}" data-value="{$book_points[$person->id]}">{$book_points[$person->id]|number}</td>
         </tr>
     </tbody>
     <tfoot>
@@ -90,26 +90,8 @@
 	$(document).ready(function() {
     	$('#tableprint_persons').footable();
     	$('#tableprint_centers').footable();
-    	renumberScoreTableOrder('#tableprint_persons');
-    	renumberScoreTableOrder('#tableprint_centers');
+    	generateScoreTableOrder('#tableprint_persons', 11);
+    	generateScoreTableOrder('#tableprint_centers', 10);
     });
-    
-    function renumberScoreTableOrder(table) { 
-        // manuální renderování pořadí
-        var position = 0;
-        var row_position = 0;
-        var last_person_sumpoints = Infinity;
-        $(table + ' > tbody > tr').each(function() {
-            var person_sumpoints = $(this).find('td:last-child').data("value");
-            var td = $(this).find('td:first-child');
-            row_position += 1;
-            if(last_person_sumpoints > person_sumpoints) {
-                position = row_position;
-            }
-
-            td.html(position);
-            last_person_sumpoints = person_sumpoints;
-        });
-    }
 </script>
 {/block}
