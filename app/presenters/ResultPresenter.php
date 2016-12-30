@@ -202,6 +202,7 @@ class ResultPresenter extends BasePresenter {
             }
 
             $form->addHidden('person_id', $person_id);
+            $form->addHidden('center_id');
             $form->addSubmit('save', 'Uložit');
             $form->onSuccess[] = array($this, 'saveResults');
             $form->onError[] = array($this, 'sendError');
@@ -211,8 +212,9 @@ class ResultPresenter extends BasePresenter {
 	}
 
     public function saveResults(Form $form, $values) {
+	    
         foreach ($values->results as $book_id => $quantity) {
-            $this->distribution->insertResult($values->person_id, $this->week, $this->year, $book_id, $quantity);    
+            $this->distribution->insertResult($values->person_id, $this->week, $this->year, $values->center_id, $book_id, $quantity);    
         }
 
 		$this->payload->categories_points = $this->distribution->getPersonCategoriesDistribution($values->person_id, $this->week, $this->year);
@@ -383,11 +385,13 @@ class ResultPresenter extends BasePresenter {
 			        if($person['small'] == ".") $person['small'] == "0";
 			        if($person['mag'] == ".") $person['mag'] == "0";
 			        
-        			$this->distribution->insertResult($person['person_id'], $week, $year, $maha_book->id, $person['maha']);
-        			$this->distribution->insertResult($person['person_id'], $week, $year, $big_book->id, $person['big']);
-        			$this->distribution->insertResult($person['person_id'], $week, $year, $medium_book->id, $person['medium']);
-        			$this->distribution->insertResult($person['person_id'], $week, $year, $small_book->id, $person['small']);
-        			$this->distribution->insertResult($person['person_id'], $week, $year, $mag_book->id, $person['mag']);
+			        $person_db = $this->person->get($person['person_id']);
+
+        			$this->distribution->insertResult($person['person_id'], $week, $year, $person_db->center_id, $maha_book->id, $person['maha']);
+        			$this->distribution->insertResult($person['person_id'], $week, $year, $person_db->center_id, $big_book->id, $person['big']);
+        			$this->distribution->insertResult($person['person_id'], $week, $year, $person_db->center_id, $medium_book->id, $person['medium']);
+        			$this->distribution->insertResult($person['person_id'], $week, $year, $person_db->center_id, $small_book->id, $person['small']);
+        			$this->distribution->insertResult($person['person_id'], $week, $year, $person_db->center_id, $mag_book->id, $person['mag']);
 
                     $persons_alias = $this->person->findBy(['skpn_alias' => $person['skpn_alias']]);
 
@@ -401,7 +405,7 @@ class ResultPresenter extends BasePresenter {
         }
         
         $this->flashMessage("Výsledky byly úspěšně importovány.", 'success');
-        $this->redirect("personsOverview", $week, $year, $week, $year);
+        //$this->redirect("personsOverview", $week, $year, $week, $year);
     }
 
     public function sendError(Form $form) {

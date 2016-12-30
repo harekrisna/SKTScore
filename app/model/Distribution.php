@@ -10,11 +10,14 @@ class Distribution extends TableExtended
   /** @var string */
 	protected $tableName = 'distribution';
 
-    public function insertResult($person_id, $week, $year, $book_id, $quantity) {
+    public function insertResult($person_id, $week, $year, $center_id, $book_id, $quantity) {
+		$week = str_pad($week, 2, "0", STR_PAD_LEFT);
+	    
         $distribution_record = $this->findBy(['person_id' => $person_id, 
                                               'week' => $week,
                                               'year' => $year,
-                                              'book_id' => $book_id])
+                                              'book_id' => $book_id
+                                              ])
                                     ->fetch();
 
         if($distribution_record) {
@@ -26,7 +29,9 @@ class Distribution extends TableExtended
                                       'week' => $week,
                                       'year' => $year,
                                       'book_id' => $book_id],
-                                     ['quantity' => $quantity]);
+                                     ['quantity' => $quantity,
+                                      'center_id' => $center_id]
+                                    );
             }
         }
         else {
@@ -35,6 +40,7 @@ class Distribution extends TableExtended
                                       'week' => $week,
                                       'year' => $year,
                                       'book_id' => $book_id,
+                                      'center_id' => $center_id,
                                       'quantity' => $quantity]);
             }
         }
@@ -45,11 +51,12 @@ class Distribution extends TableExtended
         $result = $this->findBy(['week' => $week,
                                  'year' => $year])
                        ->group('person_id, book.category.id')
-                       ->select("person_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum");
+                       ->select("person_id, center_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum");
 
         $score = [];
         foreach ($result as $row) {
             $score[$row['person_id']][$row['category_title']] = $row['category_quantity_sum'];
+            $score[$row['person_id']]['center_id'] = $row['center_id'];
         }
 
         return $score;

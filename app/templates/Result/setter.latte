@@ -36,7 +36,6 @@
                         </div>
                         *}
                     </div>
-                    {dump $centers}
                     <div class="ibox-content relative" n:snippet="resultsTable">
                         <div id="fountainG" class="ajax-loading">
                             <div id="fountainG_1" class="fountainG"></div>
@@ -66,6 +65,7 @@
                             <tbody>
                                 <tr n:foreach="$persons as $person" id="person-{$person->id}">
                                     {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
+									{dump $distribution}
                                     <td></td>
                                     <td>{$person->name}</td>
                                     <td data-value="{$person->center->title}">
@@ -208,11 +208,13 @@
                         var active_tr = $('.datepicker-dropdown table td.active.day').parent();
                         active_tr.find('td.active').removeClass('active');
                         active_tr.addClass('active');
-                                            
+                                      
                         var week_number = date.getWeek(value);
                         selected_week_number = week_number;
                         var year = value.substring(0, 4);
                         setWeekPicker(input, year, week_number);
+                        
+                        week_number = padLeft(week_number, 2);
                         
                         $('#resultsTable').fadeTo(500, 0, function(){
                            $(this).css("visibility", "hidden");   
@@ -256,13 +258,13 @@
                 var person_id = $(this).data('person_id');
                 var center_id = $('select[name=center_id\\[' + person_id + '\\]]').val();
                 var loading;
-				
-				
-				
+                var form_data = $(this).serialize() + '&center_id=' + center_id;
+                console.log(form_data);
+								
                 $.ajax({
                     type: "POST",
                     url: $(this).attr("action"),
-                    data: $(this).serialize(),
+                    data: form_data,
                     beforeSend: function() {
                         inputs.addClass("disabled")
                               .prop('disabled', true);

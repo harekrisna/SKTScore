@@ -145,3 +145,7 @@ function generateScoreTableOrder(table, index) {
         last_person_sumpoints = person_sumpoints;
     });
 }
+
+function padLeft(nr, n, str){
+    return Array(n-String(nr).length+1).join(str||'0')+nr;
+}
