@@ -9,7 +9,7 @@
 {/block}
 {block content}
 <table class="score-tableprint footable" id="tableprint_persons" data-page-size="99999999999">
-	<caption><input class="editable_title" type="text" value="Rok {$score_title}"/></caption>
+	<caption><input class="editable_title" type="text" value="{block title}Rok {$score_title}{/block}"/></caption>
     <thead>
         <tr>
             <th class="position-column" data-type="numeric" data-sort-ignore="true">Pos</th>
@@ -30,7 +30,7 @@
             {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
             <td></td>
             <td class="left">{$person->name}</td>
-            <td class="left">{$person->center->title}</td>
+            <td class="left">{$distribution['center']}</td>
             <td>{isset($weeks_distribution[$person->id]) ? $weeks_distribution[$person->id] : "."}</td>
             <td>{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
             <td>{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
@@ -51,7 +51,7 @@
             <td>{isset($category_sum_distribution['Small']) ? $category_sum_distribution['Small'] : "0"}</td>
             <td>{isset($category_sum_distribution['Mag']) ? $category_sum_distribution['Mag'] : "0"}</td>
             <td>{$mahabig_sum_distribution}</td>
-            <td>{$allsum_points_ceil}</td>
+            <td>{$allsum_points}</td>
         </tr>
     </tfoot>
 </table>
@@ -72,7 +72,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr n:foreach="$centers as $center" n:if="isset($centers_sum_distribution_ceil[$center->id])">
+        <tr n:foreach="$centers as $center" n:if="isset($centers_sum_distribution[$center->id])">
             <td></td>
             <td class="left">{$center->title}</td>
             <td>{$centers_count_weeks}</td>
@@ -82,7 +82,7 @@
             <td>{isset($centers_categories_distribution[$center->id]['Small']) ? $centers_categories_distribution[$center->id]['Small'] : "."}</td>
             <td>{isset($centers_categories_distribution[$center->id]['Mag']) ? $centers_categories_distribution[$center->id]['Mag'] : "."}</td>
             <td>{isset($centers_mahabig_distribution[$center->id]) ? $centers_mahabig_distribution[$center->id] : "."}</td>
-            <td data-value="{$centers_sum_distribution[$center->id]}">{$centers_sum_distribution_ceil[$center->id]}</td>
+            <td data-value="{$centers_sum_distribution[$center->id]}">{$centers_sum_distribution[$center->id]|round}</td>
         </tr>
     </tbody>
 </table>

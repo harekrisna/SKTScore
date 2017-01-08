@@ -66,5 +66,9 @@ class Filters extends Nette\Object {
         else {
             return $integer_tag;
         }
-    }    
+    } 
+    
+    public function round($number) {
+	    return round($number, 0);
+    }   
 }

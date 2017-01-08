@@ -63,12 +63,12 @@ class Distribution extends TableExtended
     }
 
 
-    // pole osob s polem kategorie s hodnotou kolik rozdal v této kategorii
+    // pole osob s polem kategorií s hodnotou kolik rozdal v této kategorii
     public function getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to) {
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select("person_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum")
+        $result = $this->getTable()->select("person_id, center.title AS center, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum")
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
                                    ->group('person_id, book.category.id');
 
@@ -76,7 +76,23 @@ class Distribution extends TableExtended
         foreach ($result as $row) {
             $score[$row['person_id']][$row['category_title']] = $row['category_quantity_sum'];
         }
-
+        
+        
+        $result = $this->getTable()->select('person_id, center.title AS center, COUNT(DISTINCT(center_id)) AS diff_centers')
+								   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+								   ->group('person_id');
+        
+        $person_model = new Person($this->connection, $this->user);
+                               
+	    foreach ($result as $row) {
+	        if($row->diff_centers > 1) { // osoba má v daném období výsledky patřící do více center 
+		    	$score[$row['person_id']]['center'] = $person_model->get($row['person_id'])->center->title; // hlavní centrum osoby
+		    }
+	        else { // osoba má v daném období výsledky patřící do jednoho center 
+		        $score[$row['person_id']]['center'] = $row['center'];
+	        }
+        }
+		
         return $score;
     }    
 
@@ -195,7 +211,7 @@ class Distribution extends TableExtended
         $result = $this->getTable()->select('SUM(quantity) AS quantity_sum')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
                                    ->fetch();
-
+								   
         return $result['quantity_sum'];
     }
 
@@ -244,6 +260,8 @@ class Distribution extends TableExtended
     }
 
     public function getPersonsBooksDistribution($week, $year) {
+	    $week = str_pad($week, 2, '0', STR_PAD_LEFT);
+        
         $result = $this->findBy(['week' => $week,
                                  'year' => $year]);
         $score = [];
@@ -306,11 +324,12 @@ class Distribution extends TableExtended
 
 
     // pole center s hodnotou: "zaokrouhlený celkový počet bodů"
+    /* už asi není potřeba
     public function getCentersSumPointsCeilInterval($week_from, $year_from, $week_to, $year_to) {
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select('person_id, person.center_id AS center_id, ROUND(SUM(quantity * book.category.point_value)) AS points_sum')
+        $result = $this->getTable()->select('person_id, center_id, ROUND(SUM(quantity * book.category.point_value)) AS points_sum')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
                                    ->group('person_id');
         
@@ -324,23 +343,20 @@ class Distribution extends TableExtended
         
         return $score;
     }   
-
+	*/
 
     // pole center s hodnotou: "nezaokrouhlený celkový počet bodů"
     public function getCentersSumPointsInterval($week_from, $year_from, $week_to, $year_to) {
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select('person_id, person.center_id AS center_id, SUM(quantity * book.category.point_value) AS points_sum')
+        $result = $this->getTable()->select('center_id, SUM(quantity * book.category.point_value) AS points_sum')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
-                                   ->group('person_id');
+                                   ->group('center_id');
         
         $score = [];
         foreach ($result as $row) {
-            if(empty($score[$row['center_id']])) {
-               $score[$row['center_id']] = 0;
-            }
-            $score[$row['center_id']] += $row['points_sum'];
+            $score[$row['center_id']] = $row['points_sum'];
         }
         
         return $score;
@@ -352,7 +368,7 @@ class Distribution extends TableExtended
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select('person.center_id AS center_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum')
+        $result = $this->getTable()->select('center_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
                                    ->group('center_id, category_title');
         

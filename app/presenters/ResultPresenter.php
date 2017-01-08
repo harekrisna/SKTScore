@@ -23,9 +23,12 @@ class ResultPresenter extends BasePresenter {
 	public function actionSetter($week, $year) {
 		if($week == null) $week = date('W');
         if($year == null) $year = date('Y');
-        
+
         $this->week = $week;
         $this->year = $year;
+        
+        $_SESSION['setter_week'] = $week;
+        $_SESSION['setter_year'] = $year;
         
 		if($this->getSignal() == null) { // při odeslání personResultsForm nedělat nic
 			$book_distribution = $this->distribution->getPersonsBooksDistribution($week, $year);
@@ -56,7 +59,11 @@ class ResultPresenter extends BasePresenter {
 
 	public function renderSetter() {
 		if($this->getSignal() == null) {
+			       
             $this->template->week = $this->week;
+            if($this->week[0] == "0")
+				$this->template->week = $this->week[1];
+				
             $this->template->year = $this->year;
 			$this->template->persons = $this->person->findBy(['center_id' => $this->user->center_id]);
 			if($this->getUser()->isInRole('superadmin'))
@@ -83,6 +90,12 @@ class ResultPresenter extends BasePresenter {
         $this->template->year_from = $year_from;
         $this->template->week_to = $week_to;
         $this->template->year_to = $year_to;
+        
+        $_SESSION['week_from'] = $week_from;
+        $_SESSION['year_from'] = $year_from;
+        $_SESSION['week_to'] = $week_to;
+        $_SESSION['year_to'] = $year_to;
+		
         $this->template->persons = $this->person->findAll();
         $this->template->books = $this->book->findAll();
         $this->template->primary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
@@ -90,7 +103,7 @@ class ResultPresenter extends BasePresenter {
 
         $this->template->secondary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
                                                                          'priority' => "secondary"]);
-
+                                                                         
         $this->template->weeks_distribution = $this->distribution->getPersonsWeeksDistribution($week_from, $year_from, $week_to, $year_to);
         $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->category_sum_distribution = $this->distribution->getCategoriesDistributionSumInterval($week_from, $year_from, $week_to, $year_to);
@@ -100,28 +113,10 @@ class ResultPresenter extends BasePresenter {
         $this->template->allsum_points = $this->distribution->getAllSumPointsInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->allsum_points_ceil = $this->distribution->getAllSumPointsCeilInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->book_distribution = $this->distribution->getPersonsBooksDistributionInterval($week_from, $year_from, $week_to, $year_to);
-        
-        $this->template->centers = $this->center->findAll();
-        $this->template->centers_categories_distribution = $this->distribution->getCentersCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
-        $this->template->centers_mahabig_distribution = $this->distribution->getCentersMahaBigDistributionInterval($week_from, $year_from, $week_to, $year_to);
-        $this->template->centers_sum_distribution = $this->distribution->getCentersSumPointsInterval($week_from, $year_from, $week_to, $year_to);
-        $this->template->centers_sum_distribution_ceil = $this->distribution->getCentersSumPointsCeilInterval($week_from, $year_from, $week_to, $year_to);
-
-        if($year_from != $year_to) {
-            $score_title = $year_from.": týden ".$week_from." - ".$year_to." týden ".$week_to;
-        }
-        else if($week_from != $week_to) {
-            $score_title = $year_from.": týden ".$week_from." - ".$week_to;
-        }
-        else {
-            $score_title = $year_from.": týden ".$week_from; 
-        }
-
-        $this->template->score_title = $score_title;  
-        $this->template->centers_count_weeks = $week_to - $week_from + 1;
 
         if($this->isAjax()) {
-            $this->redrawControl('overviewTable');
+	        $this->redrawControl('overviewTable');
+            $this->redrawControl('resultsNavigation');
         }
     }
 
@@ -144,7 +139,7 @@ class ResultPresenter extends BasePresenter {
         $this->template->centers_categories_distribution = $this->distribution->getCentersCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->centers_mahabig_distribution = $this->distribution->getCentersMahaBigDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->centers_sum_distribution = $this->distribution->getCentersSumPointsInterval($week_from, $year_from, $week_to, $year_to);
-        $this->template->centers_sum_distribution_ceil = $this->distribution->getCentersSumPointsCeilInterval($week_from, $year_from, $week_to, $year_to);
+        //$this->template->centers_sum_distribution_ceil = $this->distribution->getCentersSumPointsCeilInterval($week_from, $year_from, $week_to, $year_to);
 
         if($year_from != $year_to) {
             $score_title = $year_from.": týden ".$week_from." - ".$year_to." týden ".$week_to;
@@ -165,7 +160,13 @@ class ResultPresenter extends BasePresenter {
         $this->template->year_from = $year_from;
         $this->template->week_to = $week_to;
         $this->template->year_to = $year_to;
-        $this->template->persons = $this->person->findAll();
+
+        $_SESSION['week_from'] = $week_from;
+        $_SESSION['year_from'] = $year_from;
+        $_SESSION['week_to'] = $week_to;
+        $_SESSION['year_to'] = $year_to;
+        
+		$this->template->persons = $this->person->findAll();
         $this->template->books = $this->book->findAll();
         $this->template->centers = $this->center->findAll();
         
@@ -179,6 +180,7 @@ class ResultPresenter extends BasePresenter {
 
         if($this->isAjax()) {
             $this->redrawControl('overviewTable');
+            $this->redrawControl('resultsNavigation');
         }
     }
 

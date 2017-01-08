@@ -19,15 +19,15 @@
                     <div class="ibox-title modified" style="overflow:auto;">
                         <div class="week-input-container">
                             <label class="control-label tiny-label" for="week_from_input">od</label>
-            				<input id="week_from_input" class="form-control week-input" onkeydown="return false"/>
+            				<input id="week_from_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
                         </div>
                         <div class="week-input-container">
                             <label class="control-label tiny-label" for="week_to_input">do</label>
-                            <input id="week_to_input" class="form-control week-input" onkeydown="return false"/>
+                            <input id="week_to_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
                         </div>
                     </div>
                     
-                    <div class="ibox-content relative">
+                    <div class="ibox-content relative" style="min-height: 200px;">
                         <div id="fountainG" class="ajax-loading">
                             <div id="fountainG_1" class="fountainG"></div>
                             <div id="fountainG_2" class="fountainG"></div>
@@ -83,7 +83,7 @@
                                     {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
                                     <td>1</td>
                                     <td>{$person->name}</td>
-                                    <td>{$person->center->title}</td>
+                                    <td>{$distribution['center']}</td>
                                     <td data-category="wk" class="center">{isset($weeks_distribution[$person->id]) ? $weeks_distribution[$person->id] : "."}</td>
                                     <td data-category="maha" class="center">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
                                     <td data-category="big" data-value="{isset($distribution['Big']) ? $distribution['Big'] : '0'}" class="center">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
@@ -154,6 +154,7 @@
                         </table>
                         {/if}
                         {/snippet}
+                        {* // výsledková listina v modálním okne, kvůli problémům při tisku už se nepoužívá
                         <div class="modal inmodal fade" id="result_list" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
@@ -172,8 +173,8 @@
                                 </div>
                             </div>
                         </div>
+                        *}
                     </div>
-                    
                 </div>
             </div>
         </div>
@@ -296,10 +297,7 @@
                                 self.setTo(year, week_number);
                             }
 
-                            $('#overviewTable').fadeTo(500, 0, function(){
-                               $(this).css("visibility", "hidden");   
-                            });
-
+                            $('#overviewTable').fadeOut();   
                             $('#fountainG').fadeIn();
                             $(input_from).prop('disabled', true);
                             $(input_to).prop('disabled', true);
@@ -334,9 +332,9 @@
                 });
             }
 
-            var picker = new weekIntervalPicker('#week_from_input', '#week_to_input');
+            var picker = new weekIntervalPicker('#week_from_input', '#week_to_input', {link personsOverview});
             picker.setFrom({$year_from}, {$week_from});
-            picker.setTo({$year_to}, {$week_to}, {link personsOverview});
+            picker.setTo({$year_to}, {$week_to});
             
             generateScoreTableOrder('#overviewTable:not(.empty)', 10);
         });

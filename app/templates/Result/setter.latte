@@ -36,7 +36,7 @@
                         </div>
                         *}
                     </div>
-                    <div class="ibox-content relative" n:snippet="resultsTable">
+                    <div class="ibox-content relative" style="min-height: 200px;" n:snippet="resultsTable">
                         <div id="fountainG" class="ajax-loading">
                             <div id="fountainG_1" class="fountainG"></div>
                             <div id="fountainG_2" class="fountainG"></div>
@@ -70,7 +70,7 @@
                                     <td>{$person->name}</td>
                                     <td data-value="{$person->center->title}">
 	                                    <select n:inner-foreach="$centers as $center_id => $center_title" name="center_id[{$person->id}]">
-	                                    	<option value="{$center_id}" {if $center_id == $person->center_id}selected{/if}>{$center_title}</option>
+	                                    	<option value="{$center_id}" {if $distribution && $center_id == $distribution['center_id']}selected{/if}>{$center_title}</option>
 										</select>
 	                                </td>
                                     <td data-category="maha">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
@@ -216,16 +216,14 @@
                         
                         week_number = padLeft(week_number, 2);
                         
-                        $('#resultsTable').fadeTo(500, 0, function(){
-                           $(this).css("visibility", "hidden");   
-                        });
-
+                        $('#resultsTable').fadeOut(); 
                         $('#fountainG').fadeIn();
                         $(input).prop('disabled', true);
 
                         $.get("result/setter", {"week": week_number, "year": year}, function(payload) {
                             $.nette.success(payload);
                             $('#resultsTable').footable();
+                            generateScoreTableOrder('#resultsTable', 9);
                             $('#resultsTable').hide();
                             $('#resultsTable').fadeIn();
                             $('#fountainG').fadeOut();

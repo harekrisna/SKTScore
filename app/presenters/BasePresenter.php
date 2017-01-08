@@ -60,7 +60,29 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 	}
 
 	public function beforeRender() {
-		$this->template->this_week = date("W");
-        $this->template->this_year = date("Y");
+		$week = date("W");
+		if($week[0] == "0")
+			$week = $week[1];
+		
+		$this->template->setter_week = $week;			
+	    $this->template->setter_year = date("Y");	
+		
+		if(isset($_SESSION['setter_week'])) {
+			$this->template->setter_week = $_SESSION['setter_week'];			
+	        $this->template->setter_year = $_SESSION['setter_year'];	
+		}
+		
+		
+		$this->template->week_from = $this->template->week_to = $week;			
+	    $this->template->year_from = $this->template->year_to = date("Y");	    
+	        	
+		if(isset($_SESSION['week_from'])) {
+			$this->template->week_from = $_SESSION['week_from'];
+	        $this->template->year_from = $_SESSION['year_from'];
+	        $this->template->week_to = $_SESSION['week_to'];
+	        $this->template->year_to = $_SESSION['year_to'];
+		}
+		
+        $this->template->addFilter('round', $this->context->getService("filters")->round);
 	}
 }
