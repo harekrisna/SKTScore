@@ -70,7 +70,7 @@
                                     <td>{$person->name}</td>
                                     <td data-value="{$person->center->title}">
 	                                    <select n:inner-foreach="$centers as $center_id => $center_title" name="center_id[{$person->id}]">
-	                                    	<option value="{$center_id}" {if $distribution && $center_id == $distribution['center_id']}selected{/if}>{$center_title}</option>
+	                                    	<option value="{$center_id}"{if $distribution && $center_id == $distribution['center_id']} selected{elseif $center_id == $person->center_id} selected{/if}>{$center_title}</option>
 										</select>
 	                                </td>
                                     <td data-category="maha">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
