@@ -65,13 +65,16 @@
                             <tbody>
                                 <tr n:foreach="$persons as $person" id="person-{$person->id}">
                                     {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
-									{dump $distribution}
                                     <td></td>
                                     <td>{$person->name}</td>
                                     <td data-value="{$person->center->title}">
+	                                    {if $user->isInRole('superadmin')}
 	                                    <select n:inner-foreach="$centers as $center_id => $center_title" name="center_id[{$person->id}]">
 	                                    	<option value="{$center_id}"{if $distribution && $center_id == $distribution['center_id']} selected{elseif $center_id == $person->center_id} selected{/if}>{$center_title}</option>
 										</select>
+										{else}
+											{$person->center->title}
+										{/if}
 	                                </td>
                                     <td data-category="maha">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
                                     <td data-category="big">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
@@ -251,13 +254,19 @@
             generateScoreTableOrder('#resultsTable', 9);
             //  ajaxvá obsluha uložení výsledků osoby
             $("#snippet--resultsTable").on("submit", "form", function(event) {
+	            var is_superadmin = {$user->isInRole('superadmin')};
                 var inputs = $(this).find("input");
                 var submit_button = $(this).find("input[type=submit]");
                 var person_id = $(this).data('person_id');
-                var center_id = $('select[name=center_id\\[' + person_id + '\\]]').val();
                 var loading;
-                var form_data = $(this).serialize() + '&center_id=' + center_id;
-                console.log(form_data);
+                
+                if(is_superadmin == true) { // superadmin může měnit centrum osoby
+                	var center_id = $('select[name=center_id\\[' + person_id + '\\]]').val();
+                	var form_data = $(this).serialize() + '&center_id=' + center_id;
+				}
+				else { // ostatní nikoliv
+					var form_data = $(this).serialize();
+				}
 								
                 $.ajax({
                     type: "POST",

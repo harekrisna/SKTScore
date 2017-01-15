@@ -75,7 +75,7 @@
         <tr n:foreach="$centers as $center" n:if="isset($centers_sum_distribution[$center->id])">
             <td></td>
             <td class="left">{$center->title}</td>
-            <td>{$centers_count_weeks}</td>
+            <td>{$centers_weeks_distribution[$center->id]}</td>
             <td>{isset($centers_categories_distribution[$center->id]['Mahá']) ? $centers_categories_distribution[$center->id]['Mahá'] : "."}</td>
             <td>{isset($centers_categories_distribution[$center->id]['Big']) ? $centers_categories_distribution[$center->id]['Big'] : "."}</td>
             <td>{isset($centers_categories_distribution[$center->id]['Medium']) ? $centers_categories_distribution[$center->id]['Medium'] : "."}</td>

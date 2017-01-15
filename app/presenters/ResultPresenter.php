@@ -152,7 +152,7 @@ class ResultPresenter extends BasePresenter {
         }
 
         $this->template->score_title = $score_title;  
-        $this->template->centers_count_weeks = $week_to - $week_from + 1;
+        $this->template->centers_weeks_distribution = $this->distribution->getCentersWeeksDistribution($week_from, $year_from, $week_to, $year_to);
     }
 
     public function renderBooksOverview($week_from, $year_from, $week_to, $year_to) {
@@ -170,8 +170,6 @@ class ResultPresenter extends BasePresenter {
         $this->template->books = $this->book->findAll();
         $this->template->centers = $this->center->findAll();
         
-        $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
-        $this->template->mahabig_distribution = $this->distribution->getPersonsMahaBigDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->books_sum_distribution = $this->distribution->getBooksSumDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->centers_distribution = $this->distribution->getBooksCentersDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->centers_sum_distribution = $this->distribution->getCentersSumDistributionInterval($week_from, $year_from, $week_to, $year_to);
@@ -213,10 +211,16 @@ class ResultPresenter extends BasePresenter {
 		return $form;
 	}
 
-    public function saveResults(Form $form, $values) {
-	    
+    public function saveResults(Form $form, $values) {  
         foreach ($values->results as $book_id => $quantity) {
-            $this->distribution->insertResult($values->person_id, $this->week, $this->year, $values->center_id, $book_id, $quantity);    
+	        if($this->getUser()->isInRole('superadmin')) {
+            	$center_id = $values->center_id;
+            }
+            else {
+	            $center_id = $this->admin->get($this->getUser()->id)->center_id;
+            }
+            
+            $this->distribution->insertResult($values->person_id, $this->week, $this->year, $center_id, $book_id, $quantity);    
         }
 
 		$this->payload->categories_points = $this->distribution->getPersonCategoriesDistribution($values->person_id, $this->week, $this->year);
