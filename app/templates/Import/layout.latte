@@ -1,0 +1,15 @@
+{layout '../@layout.latte'}
+{block main}
+	<div class="row wrapper border-bottom white-bg page-heading">
+	    <div class="col-lg-10">
+	        <h2 n:block="title">Import SKPN</h2>
+            <ol class="breadcrumb" n:snippet="resultsNavigation">
+                <li n:class="$presenter->isLinkCurrent('Import:importSkpnResultList') ? active"><a n:href="Import:importSkpnResultList">Z výsledkové listiny</a></li>
+                <li n:class="$presenter->isLinkCurrent('Import:importSkpnPersonList') ? active"><a n:href="Import:importSkpnPersonList">Z listiny osoby</a></li>
+            </ol>
+	    </div>
+	</div>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        {include content}            
+    </div>
+{/block}

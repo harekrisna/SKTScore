@@ -72,6 +72,13 @@
                             <li n:class="$presenter->isLinkCurrent('Admin:list') ? active, $presenter->isLinkCurrent('Admin:edit') ? active"><a n:href="Admin:list">Přehled</a></li>
                         </ul>
                     </li>
+                    <li n:if="$user->isInRole('superadmin') || $user->id == 5" n:class="$presenter->isLinkCurrent('Import:*') ? active">
+                        <a n:href="Import:importSkpnResultList"><i class="fa fa-download"></i><span class="nav-label">Import SKPN</span><span class="fa arrow"></a>
+                        <ul class="nav nav-second-level collapse">
+                            <li n:class="$presenter->isLinkCurrent('Import:importSkpnResultList') ? active"><a n:href="Import:importSkpnResultList">Z výsledkové listiny</a></li>
+                            <li n:class="$presenter->isLinkCurrent('Import:importSkpnPersonList') ? active"><a n:href="Import:importSkpnPersonList">Z listiny osoby</a></li>
+                        </ul>
+                    </li>
 	            </ul>
 	        </div>
 	    </nav>

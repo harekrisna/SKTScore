@@ -9,7 +9,7 @@
                 <div class="ibox-title empty">
                 </div>
                 <div class="ibox-content">
-                    {form parseSkpnForm, class => "form-horizontal"}
+                    {form parseSkpnPersonListForm, class => "form-horizontal"}
                         <div class="form-group">
                             {label import_source, class => "col-sm-2 control-label" /}
                             <div class="col-sm-10">
@@ -34,7 +34,7 @@
                 </div>
                 <div class="ibox-content">
                 {if isset($parseForm) && $parseForm->isSuccess()}
-                    {form importSkpnForm, class => "form-horizontal"}
+                    {form importSkpnPersonListForm, class => "form-horizontal"}
                     <div class="form-group">
                         {label year, class => "col-sm-2 control-label" /}
                         <div class="col-sm-2">
@@ -88,7 +88,7 @@
                         </div>
                     </div>
                     <script>
-	                    $("form#frm-importSkpnForm input:checkbox").on('ifChanged', function(e) {
+	                    $("form#frm-importSkpnPersonListForm input:checkbox").on('ifChanged', function(e) {
 						    var isChecked = e.currentTarget.checked;
 						    var select = $(this).closest('tr').find('select');
 						    if(isChecked == true) {
