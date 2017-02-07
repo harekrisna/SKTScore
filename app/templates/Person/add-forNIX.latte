@@ -1,0 +1,280 @@
+{block head}
+    <link href="{$basePath}/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="{$basePath}/css/plugins/steps/jquery.steps.css" rel="stylesheet">
+    <link href="{$basePath}/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <style>
+        .wizard > .content > .body { position: relative; }
+    </style>
+{/block}
+{block main}
+		<div class="row wrapper border-bottom white-bg page-heading slim">
+		    <div class="col-lg-10">
+		        <h2>Přidat osobu</h2>
+		    </div>
+		</div>
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            {form personForm, class => "wizard-big"}
+                                <h1>Obecné</h1>
+                                <fieldset>
+                                    <h2>Obecné informace o osobě</h2>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                {label name /}
+                                                {input name, class => "form-control", tabindex => 1}
+                                            </div>
+                                            <div class="form-group">
+                                                {label spiritual_name /}
+                                                {input spiritual_name, class => "form-control", tabindex => 3}                                        
+                                            </div>
+                                            <div class="form-group">
+                                                {label birth_date /}
+				                                <div class="input-group date">
+				                                    <span class="input-group-addon">
+				                                    	<i class="fa fa-calendar"></i>
+				                                    </span>
+				                                    {input birth_date, class => "form-control", tabindex => 4}         
+				                                </div>
+                                            </div>                                            
+                                            <div class="form-group padding-checkbox">
+	                                            <div class="i-checks">
+		                                            <div class="col-lg-3 nopadding-right">
+                                                        {input is_leader}
+		                                            </div>
+		                                            <div class="col-lg-3">
+			                                            {input bv_active}
+		                                            </div>
+                                                    <div class="col-lg-4">
+                                                        {input skt_active}
+                                                    </div>
+		                                        </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+	                                        <div class="form-group">
+                                                {label surname /}
+                                                {input surname, class => "form-control", tabindex => 2}                                            
+                                            </div>
+                                            <div class="form-group">
+                                                {label subject /}
+                                                {input subject, class => "form-control"}                                             
+                                            </div>
+                                            <div class="form-group padding-radio">
+	                                            <div class="i-checks radiolist">
+												{input das:d}{label das:d /}
+		                                        {input das:dd}{label das:dd /}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <h1>Kontakt</h1>
+                                <fieldset>
+                                    <h2>Kontaktní informace o osobě</h2>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                {label city /}
+                                                {input city, class => "form-control", tabindex => 6}                                        
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                {label zip_code /}
+                                                {input zip_code, class => "form-control", tabindex => 8}                                        
+                                            </div>
+                                            <div class="form-group">
+                                                {label email /}
+                                                {input email, class => "form-control", tabindex => 10}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                {label street /}
+                                                {input street, class => "form-control", tabindex => 7}                                        
+                                            </div>
+                                            <div class="form-group">
+                                                {label region_id /}
+                                                {input region_id, class => "form-control", tabindex => 9}                                        
+                                            </div>                                            
+                                            <div class="form-group">
+                                                {label phone /}
+                                                {input phone, class => "form-control", data-mask => "(+999) 999-999-999", tabindex => 11}   
+                                                <span class="help-block">(+999) 999-999-999</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <h1>Vedení</h1>
+                                <fieldset>
+                                    <h2>Vedení osoby</h2>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                {label guru_id /}
+                                                {input guru_id, class => "form-control", tabindex => 12}                                        
+                                            </div> 
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                {label preaching_zone_1_id /}
+                                                {input preaching_zone_1_id, class => "form-control", tabindex => 15}                                        
+                                            </div> 
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                {label leader_id /}
+                                                {input leader_id, class => "form-control", tabindex => 13}                                        
+                                            </div> 
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                {label preaching_zone_2_id /}
+                                                {input preaching_zone_2_id, class => "form-control", tabindex => 16}                                        
+                                            </div> 
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                {label center_id /}
+                                                {input center_id, class => "form-control", tabindex => 14}                                        
+                                            </div> 
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                {label preaching_zone_3_id /}
+                                                {input preaching_zone_3_id, class => "form-control", tabindex => 17}                                        
+                                            </div> 
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <h1>Duchovní vývoj</h1>
+                                <fieldset>
+                                    <h2>Duchovní vývoj</h2>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                {label membership_category_id /}
+                                                {input membership_category_id, class => "form-control", tabindex => 18}                                        
+                                            </div> 
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                {label membership_level_id /}
+                                                {input membership_level_id, class => "form-control", tabindex => 18}                                          
+                                            </div> 
+                                        </div>                                    
+                                    </div>
+                                </fieldset>
+                            {/form}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{/block}
+{block scripts}
+
+
+    <!-- Steps -->
+    <script src="{$basePath}/js/plugins/staps/jquery.steps.min.js"></script>
+
+    <!-- Jquery Validate -->
+    <script src="{$basePath}/js/plugins/validate/jquery.validate.min.js"></script>
+
+    <!-- Data picker -->
+    <script src="{$basePath}/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    
+    <!-- iCheck -->
+    <script src="{$basePath}/js/plugins/iCheck/icheck.min.js"></script>
+   
+    <!-- Input Mask-->
+    <script src="{$basePath}/js/plugins/jasny/jasny-bootstrap.min.js"></script>
+    
+    <script>
+        $(document).ready(function(){
+			jQuery.extend(jQuery.validator.messages, {
+				required: "Toto pole je povinné.",
+				email: "Prosím zadejte platný formát emailové adresy.",
+			});
+
+            $("#frm-personForm").steps({
+                bodyTag: "fieldset",
+                onStepChanging: function (event, currentIndex, newIndex)
+                {
+                    // Always allow going backward even if the current step contains invalid fields!
+                    if (currentIndex > newIndex)
+                    {
+                        return true;
+                    }
+					
+
+                    var form = $(this);
+
+                    // Clean up if user went backward before
+                    if (currentIndex < newIndex)
+                    {
+                        // To remove error styles
+                        $(".body:eq(" + newIndex + ") label.error", form).remove();
+                        $(".body:eq(" + newIndex + ") .error", form).removeClass("error");
+                    }
+
+                    // Disable validation on fields that are disabled or hidden.
+                    form.validate().settings.ignore = ":disabled,:hidden";
+
+                    // Start validation; Prevent going forward if false
+                    return form.valid();
+                },
+                onFinishing: function (event, currentIndex)
+                {
+                    var form = $(this);
+
+                    // Disable validation on fields that are disabled.
+                    // At this point it's recommended to do an overall check (mean ignoring only disabled fields)
+                    form.validate().settings.ignore = ":disabled";
+
+                    // Start validation; Prevent form submission if false
+                    return form.valid();
+                },
+                onFinished: function (event, currentIndex)
+                {
+                    var form = $(this);
+
+                    // Submit form input
+                    form.submit();
+                }
+            }).validate({
+	            ignore: ".ignore",	            
+	            errorPlacement: function (error, element)
+                {
+                    element.before(error);
+                },
+                rules: {
+                    confirm: {
+                        equalTo: "#password"
+                    }
+                }
+            });
+            
+            $('.input-group.date').datepicker({
+                startView: 2,
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+                language: 'cs'
+            });        
+			
+			$('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+		});
+    </script>{/block}
