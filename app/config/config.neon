@@ -26,7 +26,9 @@ services:
 	- App\Forms\SignFormFactory
 	- App\Forms\AdminFormFactory
 	- App\Forms\CenterFormFactory
+	- App\Forms\CountryFormFactory
 	- App\Forms\PersonFormFactory
+	- App\Forms\ChooseCentersFormFactory
 	- App\Forms\PersonResultsFormFactory
 	- App\Forms\BookFormFactory
 	router: App\RouterFactory::createRouter
@@ -35,6 +37,8 @@ services:
 	filters: App\Templates\Filters
 	person: App\Model\Person
 	center: App\Model\Center
+	show_center: App\Model\ShowCenter
+	country: App\Model\Country
 	book: App\Model\Book
 	book_priority: App\Model\BookPriority
 	category: App\Model\Category

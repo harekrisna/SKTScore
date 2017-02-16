@@ -17,6 +17,10 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 	protected $person;
 	/** @var Center */
 	protected $center;
+	/** @var ShowCenter */
+	protected $show_center;
+	/** @var Country */
+	protected $country;
 	/** @var Book */
 	protected $book;
 	/** @var BookPriority */
@@ -40,6 +44,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
         $this->admin = $this->context->getService('admin');
 		$this->person = $this->context->getService('person');
 		$this->center = $this->context->getService('center');
+		$this->show_center = $this->context->getService('show_center');
+		$this->country = $this->context->getService('country');
 		$this->book = $this->context->getService('book');
 		$this->book_priority = $this->context->getService('book_priority');
 		$this->category = $this->context->getService('category');

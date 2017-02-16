@@ -9,7 +9,7 @@ abstract class TableExtended extends Table  {
     public function insert($data, $add_create_by = true)	{
         try {
             if($add_create_by) {
-                $data['created_by_user_id'] = $this->user->getIdentity()->id;
+                //$data['created_by_user_id'] = $this->user->getIdentity()->id;
             }
             
             return $this->getTable()

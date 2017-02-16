@@ -65,6 +65,13 @@
                             <li n:class="$presenter->isLinkCurrent('Center:list') ? active, $presenter->isLinkCurrent('Center:edit') ? active"><a n:href="Center:list">Přehled</a></li>
                         </ul>
                     </li>
+                    <li n:if="$user->isInRole('superadmin')" n:class="$presenter->isLinkCurrent('Country:*') ? active">
+                        <a n:href="Country:list"><i class="fa fa-globe"></i><span class="nav-label">Státy</span><span class="fa arrow"></a>
+                        <ul class="nav nav-second-level collapse">
+                            <li n:class="$presenter->isLinkCurrent('Country:add') ? active"><a n:href="Country:add">Přidat</a></li>
+                            <li n:class="$presenter->isLinkCurrent('Country:list') ? active, $presenter->isLinkCurrent('Country:edit') ? active"><a n:href="Country:list">Přehled</a></li>
+                        </ul>
+                    </li>
                     <li n:if="$user->isInRole('superadmin')" n:class="$presenter->isLinkCurrent('Admin:*') ? active">
                         <a n:href="Admin:list"><i class="fa fa-users"></i><span class="nav-label">Správci</span><span class="fa arrow"></a>
                         <ul class="nav nav-second-level collapse">

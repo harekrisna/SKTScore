@@ -6,28 +6,25 @@ use Nette;
 use Nette\Application\UI\Form;
 use Tracy\Debugger;
 
-class CenterFormFactory extends Nette\Object {
+class CountryFormFactory extends Nette\Object {
 	/** @var FormFactory */
 	private $factory;
-	/** @var Center */
-	private $center;
 	/** @var Country */
-	private $country;
+	private $model;
 	private $record;
 		
-	public function __construct(FormFactory $factory, \App\Model\Center $center, \App\Model\Country $country) {
+	public function __construct(FormFactory $factory, \App\Model\Country $country) {
 		$this->factory = $factory;
-		$this->center = $center;
-		$this->country = $country;
+		$this->model = $country;
 	}
 
 	public function create($record = null) {
 		$this->record = $record;
 
 		$form = $this->factory->create();
-		$form->add_title = "Přidat nové centrum";
+		$form->add_title = "Přidat nový stát";
 		$form->edit_title = "Změnit údaje";
-		$form->success_add_message = "Centrum bylo přidáno";
+		$form->success_add_message = "Stát byl přidán";
 		$form->success_edit_message = "Údaje byly upraveny";
 		
 		$data = $form->addContainer("data");
@@ -37,11 +34,8 @@ class CenterFormFactory extends Nette\Object {
 
 		$data->addText('abbreviation', 'Zkratka')
 			 ->setRequired('Zadejte zkratku prosím.');
-		
-		$country_items = $this->country->findAll()->fetchPairs('id', 'title');
-		$data->addSelect("country_id", "Stát", $country_items);
-	    
-	    $form->addSubmit('add', 'Přidat centrum');
+
+	    $form->addSubmit('add', 'Přidat stát');
 	    $form->addSubmit('edit', 'Uložit změny');
 
 	    if($record != null) {
@@ -55,19 +49,19 @@ class CenterFormFactory extends Nette\Object {
 	public function formSucceeded(Form $form, $values) {
 		try {
 			if($form->isSubmitted()->name == "add") {
-				$this->center->insert($values->data, false);
+				$this->model->insert($values->data, false);
 			}
 			else {
-				$this->center->update($this->record->id, $values->data);
+				$this->model->update($this->record->id, $values->data);
 			}
 		}
 		catch(\App\Model\DuplicateException $e) {
 			if($e->foreign_key == "title") {
-				$form['data']['title']->addError("Centrum s tímto názvem již existuje.");
+				$form['data']['title']->addError("Stát s tímto názvem již existuje.");
 			}
 			
 			if($e->foreign_key == "abbreviation") {
-				$form['data']['abbreviation']->addError("Centrum s touto zkratkou již existuje.");
+				$form['data']['abbreviation']->addError("Stát s touto zkratkou již existuje.");
 			}
 		}
 	}

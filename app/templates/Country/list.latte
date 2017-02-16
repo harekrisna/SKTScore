@@ -18,7 +18,6 @@
                             <tr>
                                 <th class="wide noselect">Název</th>
                                 <th class="noselect">Zkratka</th>
-                                <th class="noselect">Stát</th>
                                 <th data-sort-ignore="true" data-name="controls" class="controls"></th>
                             </tr>
                         </thead>
@@ -26,7 +25,6 @@
                             <tr n:foreach="$records as $record">
                                 <td>{$record->title}</td>
                                 <td>{$record->abbreviation}</td>
-                                <td>{$record->country->abbreviation}</td>
                                 <td class="controls">
                                     <a class="row-edit" n:href="edit, $record->id"><span class="glyphicon glyphicon-edit"></span></a>
                                     <a class="row-delete" data-delete_name="{$record->title}" n:href="delete, $record->id"><span class="glyphicon glyphicon-remove"></span></a>

@@ -7,8 +7,20 @@ use Tracy\Debugger;
  */
 class Distribution extends TableExtended
 {
-  /** @var string */
-	protected $tableName = 'distribution';
+    /** @var string */
+	  protected $tableName = 'distribution';
+    /** @var Nette\Database\Table\Selection */
+    private $centers_to_show;
+    /** @var Person */
+    private $person;
+
+    public function __construct(\Nette\Database\Context $db, \Nette\Security\User $user, ShowCenter $show_center, Person $person) {
+        parent::__construct($db, $user);
+        $this->person = $person;
+        $this->centers_to_show = $show_center->findBy(['user_id' => $this->user->getId()])
+                                             ->select('center_id');
+
+    }
 
     public function insertResult($person_id, $week, $year, $center_id, $book_id, $quantity) {
 		$week = str_pad($week, 2, "0", STR_PAD_LEFT);
@@ -70,6 +82,7 @@ class Distribution extends TableExtended
 
         $result = $this->getTable()->select("person_id, center.title AS center, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum")
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('person_id, book.category.id');
 
         $score = [];
@@ -78,19 +91,18 @@ class Distribution extends TableExtended
         }
         
         
-        $result = $this->getTable()->select('person_id, center.title AS center, COUNT(DISTINCT(center_id)) AS diff_centers')
-								   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
-								   ->group('person_id');
-        
-        $person_model = new Person($this->connection, $this->user);
+        $result = $this->getTable()->select('person_id, center.title AS center, COUNT(DISTINCT(distribution.center_id)) AS diff_centers')
+            								       ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
+            								       ->group('person_id');
                                
-	    foreach ($result as $row) {
-	        if($row->diff_centers > 1) { // osoba má v daném období výsledky patřící do více center 
-		    	$score[$row['person_id']]['center'] = $person_model->get($row['person_id'])->center->title; // hlavní centrum osoby
-		    }
-	        else { // osoba má v daném období výsledky patřící do jednoho center 
-		        $score[$row['person_id']]['center'] = $row['center'];
-	        }
+	      foreach ($result as $row) {
+	          if($row->diff_centers > 1) { // osoba má v daném období výsledky patřící do více center 
+		        	  $score[$row['person_id']]['center'] = $this->person->get($row['person_id'])->center->title; // hlavní centrum osoby
+		        } 
+	          else { // osoba má v daném období výsledky patřící do jednoho center 
+		            $score[$row['person_id']]['center'] = $row['center'];
+	          }
         }
 		
         return $score;
@@ -103,6 +115,7 @@ class Distribution extends TableExtended
 
         $result = $this->getTable()->select("person_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum")
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('book.category.id');
 
         $score = [];
@@ -121,6 +134,7 @@ class Distribution extends TableExtended
         $result = $this->getTable()->select("person_id, SUM(quantity) AS mahabig_quantity_sum")
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
                                    ->where('book.category.title = ? OR book.category.title = ?', "Mahá", "Big")
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('person_id');
 
         $score = [];
@@ -139,6 +153,7 @@ class Distribution extends TableExtended
         $result = $this->getTable()->select("SUM(quantity) AS mahabig_quantity_sum")
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
                                    ->where('book.category.title = ? OR book.category.title = ?', "Mahá", "Big")
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->fetch();
 
         return $result['mahabig_quantity_sum'];
@@ -163,7 +178,8 @@ class Distribution extends TableExtended
         $result = $this->findBy(['week' => $week,
                                  'year' => $year])
                        ->group('person_id')
-                       ->select('person_id, SUM(quantity * book.category.point_value) AS points_sum');
+                       ->select('person_id, SUM(quantity * book.category.point_value) AS points_sum')
+                       ->where('person.center_id IN(?)', $this->centers_to_show);
 
         $score = [];
         foreach ($result as $row) {
@@ -180,6 +196,7 @@ class Distribution extends TableExtended
 
         $result = $this->getTable()->select('person_id, SUM(quantity * book.category.point_value) AS points_sum')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('person_id');
                        
 
@@ -198,6 +215,7 @@ class Distribution extends TableExtended
 
         $result = $this->getTable()->select('SUM(quantity * book.category.point_value) AS points_sum')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->fetch();
 
         return $result['points_sum'];
@@ -210,6 +228,7 @@ class Distribution extends TableExtended
 
         $result = $this->getTable()->select('SUM(quantity) AS quantity_sum')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->fetch();
 								   
         return $result['quantity_sum'];
@@ -222,6 +241,7 @@ class Distribution extends TableExtended
 
         $result = $this->getTable()->select('person_id, ROUND(SUM(quantity * book.category.point_value)) AS points_sum')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('person_id');
                        
         $total_sum_points = 0;
@@ -239,6 +259,7 @@ class Distribution extends TableExtended
 
         $result = $this->getTable()->select('person_id, COUNT(DISTINCT(concat(week, year))) AS weeks_count')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('person_id');
                        
         $score = [];
@@ -254,8 +275,9 @@ class Distribution extends TableExtended
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select('center_id, COUNT(DISTINCT(concat(week, year))) AS weeks_count')
+        $result = $this->getTable()->select('person.center_id, COUNT(DISTINCT(concat(week, year))) AS weeks_count')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('center_id');
                        
         $score = [];
@@ -294,6 +316,7 @@ class Distribution extends TableExtended
 
         $result = $this->getTable()->select('person_id, book_id, SUM(quantity) AS quantity, concat(year, week) AS yearweek')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('person_id, book_id');
 
         $score = [];
@@ -309,8 +332,9 @@ class Distribution extends TableExtended
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select('person_id, book_id, center_id, SUM(quantity) AS quantity, concat(year, week) AS yearweek')
+        $result = $this->getTable()->select('person_id, book_id, person.center_id, SUM(quantity) AS quantity, concat(year, week) AS yearweek')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('book_id, center_id, person_id');
         $score = [];
         foreach ($result as $row) {
@@ -326,8 +350,9 @@ class Distribution extends TableExtended
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select('book_id, center_id, SUM(quantity) AS quantity, concat(year, week) AS yearweek')
+        $result = $this->getTable()->select('book_id, person.center_id, SUM(quantity) AS quantity, concat(year, week) AS yearweek')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('book_id, center_id');
 
         $score = [];
@@ -366,8 +391,9 @@ class Distribution extends TableExtended
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select('center_id, SUM(quantity * book.category.point_value) AS points_sum')
+        $result = $this->getTable()->select('person.center_id, SUM(quantity * book.category.point_value) AS points_sum')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('center_id');
         
         $score = [];
@@ -384,8 +410,9 @@ class Distribution extends TableExtended
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select('center_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum')
+        $result = $this->getTable()->select('person.center_id, book.category.title AS category_title, SUM(quantity) AS category_quantity_sum')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('center_id, category_title');
         
         $score = [];
@@ -402,9 +429,10 @@ class Distribution extends TableExtended
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select('center_id, book.category.title AS category_title, SUM(quantity) AS mahabig_sum')
+        $result = $this->getTable()->select('person.center_id, book.category.title AS category_title, SUM(quantity) AS mahabig_sum')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
                                    ->where('book.category.title = ? OR book.category.title = ?', "Mahá", "Big")
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('center_id');
         
         $score = [];
@@ -420,8 +448,9 @@ class Distribution extends TableExtended
         $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
         $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
 
-        $result = $this->getTable()->select('center_id, SUM(quantity) AS quantity')
+        $result = $this->getTable()->select('person.center_id, SUM(quantity) AS quantity')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('center_id');
 
         $score = [];
@@ -439,6 +468,7 @@ class Distribution extends TableExtended
 
         $result = $this->getTable()->select('book_id, SUM(quantity) AS quantity')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
                                    ->group('book_id');
 
         $score = [];
