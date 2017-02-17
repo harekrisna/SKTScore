@@ -65,6 +65,7 @@
                             <tbody>
                                 <tr n:foreach="$persons as $person" id="person-{$person->id}">
                                     {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
+                                    {continueIf $person->active == 0 && $distribution == null}
                                     <td></td>
                                     <td>{$person->name}</td>
                                     <td data-value="{$person->center->title}">
@@ -94,11 +95,11 @@
                                                     </div>
                                                     <div id="collapseOne-{$person->id}" class="panel-collapse collapse in">
                                                         <div class="panel-body">
-                                                            {foreach $primary_books as $book}
                                                             <table class="result-detail">
-                                                                <tr><th>{label results-$book->book_id /}</th><td>{input results-$book->book_id}</td></tr>
-                                                            </table>
+                                                            {foreach $primary_books as $book}
+                                                                <tr><th><label n:name="results-$book->book_id">{$book->book->title}{if $book->book->title != $book->book->category->title} ({$book->book->category->title}){/if}</label></th><td>{input results-$book->book_id}</td></tr>
                                                             {/foreach}
+                                                            </table>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -110,11 +111,11 @@
                                                     </div>
                                                     <div id="collapseTwo-{$person->id}" class="panel-collapse collapse">
                                                         <div class="panel-body">
-                                                            {foreach $secondary_books as $book}
                                                             <table class="result-detail">
+                                                            {foreach $secondary_books as $book}
                                                                 <tr><th>{label results-$book->book_id /}</th><td>{input results-$book->book_id}</td></tr>
-                                                            </table>
                                                             {/foreach}
+                                                            </table>
                                                         </div>
                                                     </div>
                                                 </div>

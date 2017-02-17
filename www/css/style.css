@@ -35,6 +35,15 @@ ol.breadcrumb li.active {
 .footable td.bold {
   font-weight: bold;
 }
+.footable thead th,
+.footable tfood th {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 .footable thead th.wide,
 .footable tfood th.wide {
   width: 30% !important;
@@ -43,6 +52,10 @@ ol.breadcrumb li.active {
 .footable tfood th.medium {
   width: 90px;
 }
+.footable thead th.th-small,
+.footable tfood th.th-small {
+  width: 75px !important;
+}
 .footable thead th.thin,
 .footable tfood th.thin {
   width: 10px;
@@ -50,6 +63,12 @@ ol.breadcrumb li.active {
 .footable thead th span.footable-sort-indicator,
 .footable tfood th span.footable-sort-indicator {
   display: inline !important;
+}
+.footable .switch.active {
+  margin-left: 8px;
+}
+.footable .onoffswitch-label {
+  margin-bottom: 0px;
 }
 .main-ajax-spinner {
   opacity: 0;

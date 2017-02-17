@@ -51,12 +51,25 @@ ol.breadcrumb li.active {
 	}
 
 	thead, tfood {
+		th {
+			-webkit-touch-callout: none; 
+			-webkit-user-select: none; 
+			-khtml-user-select: none; 
+			-moz-user-select: none; 
+			-ms-user-select: none; 
+			user-select: none;
+		}
+
 		th.wide {
 			width: 30% !important;
 		}
 
 		th.medium {
 			width: 90px;
+		}
+
+		th.th-small {
+			width: 75px !important;
 		}
 
 		th.thin {
@@ -66,6 +79,14 @@ ol.breadcrumb li.active {
 		th span.footable-sort-indicator {
 			display: inline !important;
 		}
+	}
+
+	.switch.active {
+		margin-left: 8px;
+	}
+
+	.onoffswitch-label {
+		margin-bottom: 0px;
 	}
 }
 

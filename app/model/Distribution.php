@@ -178,8 +178,7 @@ class Distribution extends TableExtended
         $result = $this->findBy(['week' => $week,
                                  'year' => $year])
                        ->group('person_id')
-                       ->select('person_id, SUM(quantity * book.category.point_value) AS points_sum')
-                       ->where('person.center_id IN(?)', $this->centers_to_show);
+                       ->select('person_id, SUM(quantity * book.category.point_value) AS points_sum');
 
         $score = [];
         foreach ($result as $row) {

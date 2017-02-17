@@ -71,13 +71,14 @@ class ResultPresenter extends BasePresenter {
 			$this->template->persons = $this->person->findBy(['center_id' => $this->user->center_id]);
 			if($this->getUser()->isInRole('superadmin'))
 				$this->template->persons = $this->person->findAll();
-
 			
             $this->template->primary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
-                                                                           'priority' => "primary"]);
+                                                                           'priority' => "primary"])
+                                                                 ->order('book.category.id, book.title');
 
             $this->template->secondary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
-                                                                             'priority' => "secondary"]);
+                                                                             'priority' => "secondary"])
+                                                                   ->order('book.category.id, book.title');
 
             $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistribution($this->week, $this->year);
             $this->template->book_points = $this->distribution->getPersonsSumPoints($this->week, $this->year);
@@ -109,7 +110,7 @@ class ResultPresenter extends BasePresenter {
         $centers_group = $this->center->findAll()->group('country_id');
         $this->template->centers_group = $centers_group;
         $selected_centers = [];
-        
+
         $selected_centers_db = $this->show_center->findBy(['user_id' => $this->user->getId()]);
         foreach ($selected_centers_db as $selected_center) {
             $selected_centers[] = $selected_center->center_id;

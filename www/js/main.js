@@ -23,7 +23,22 @@ $(document).ready(function () {
 });
 
 function initFooTable(table, success_message = "Záznam byl smazán.", error_message = "Záznam se nepodařilo smazat.") {
-	$(table).footable();
+	$(table).footable({
+      'paging': {
+          'enabled': true,
+          'size': 20,
+      },
+
+      'sorting': {
+          'enabled': true,
+      },
+
+      'filtering': {
+          'enabled': true,
+          'placeholder': "Vyhledat...",
+          'dropdownTitle': "Hledat v:",
+      }
+  });
   
 	$(table).on('click', '.row-delete', function (event) {
 		var invoker = this;

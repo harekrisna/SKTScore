@@ -26,4 +26,11 @@ class PersonPresenter extends ComplexPresenter {
             $this->template->records = $this->model->findBy(['center_id' => $this->user->center_id]);
         }
     }
+
+    public function handleSetPersonActivity($person_id, $active) {
+        $this->person->findBy(['id' => $person_id])
+                     ->update(['active' => $active == "true" ? 1 : 0]);
+
+        $this->sendPayload();
+    }    
 }
