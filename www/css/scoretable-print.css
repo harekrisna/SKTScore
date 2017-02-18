@@ -1,6 +1,6 @@
 @page {
     size:  auto;   /* auto is the initial value */
-    margin: 0mm;  /* this affects the margin in the printer settings */
+    margin: 4mm 0mm 4mm 0mm;  /* this affects the margin in the printer settings */
 }
 
 html {
@@ -10,24 +10,6 @@ html {
 
 body {
     margin: 0 5mm 0 5mm; /* margin you want for the content */
-}
-
-.modal-lg {
-    width: 100% !important;
-}
-
-.modal-header {
-  border: none;
-  padding: 5mm 0 2mm 0 !important;
-}
-
-.modal-footer {
-  display: none;
-}
-
-.modal-body {
-    padding: 0 5mm 0 5mm;
-    background-color: transparent;
 }
 
 #wrapper {
@@ -42,11 +24,6 @@ body {
 .footable-sort-indicator {
     display: none !important;
     font-size: 0 !important;
-}
-
-.modal-title {
-    text-align: center;
-    margin-left: 6mm;
 }
 
 button.close {
@@ -86,9 +63,18 @@ button.close {
     width: 30px;
 }
 
-.score-tableprint th.title-column {
+.score-tableprint th.name-column {
     text-align: left;
     padding-left: 15px;
+    width: 215px;
+    white-space: nowrap !important;
+}
+
+.score-tableprint th.center-column {
+    text-align: left;
+    padding-left: 15px;
+    min-width: 140px;
+    white-space: nowrap !important;
 }
 
 .score-tableprint th.score-column {
@@ -96,11 +82,16 @@ button.close {
 }
 
 .score-tableprint th.mahabig-column {
-    width: 80px;
+    width: 100px;
 }
 
 .score-tableprint th.points-column {
-    width: 70px;
+    width: 60px;
+}
+
+.score-tableprint td.ellipsis {
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .score-tableprint tfoot {

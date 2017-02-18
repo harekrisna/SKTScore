@@ -1,3 +1,4 @@
+
 .score-tableprint {
     width: 100%;
     max-width: 880px;
@@ -35,7 +36,14 @@
         width: 30px;
     }
 
-    th.title-column {
+    th.name-column {
+	    width: 215px;
+        text-align: left;
+        padding-left: 15px;
+    }
+    
+    th.center-column {
+	    width: 155px;
         text-align: left;
         padding-left: 15px;
     }
@@ -45,12 +53,19 @@
     }
 
     th.mahabig-column {
-        width: 80px;
+        width: 90px;
     }
 
     th.points-column {
-        width: 70px;
+        width: 80px;
     }
+
+	td.ellipsis {
+	    max-width: 0;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	    white-space: nowrap;
+	}
 
     tfoot {
         font-weight: bold;

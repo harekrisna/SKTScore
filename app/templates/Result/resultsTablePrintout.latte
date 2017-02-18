@@ -13,8 +13,8 @@
     <thead>
         <tr>
             <th class="position-column" data-type="numeric" data-sort-ignore="true">Pos</th>
-            <th class="title-column" data-sort-ignore="true">Jméno</th>
-            <th class="title-column" data-sort-ignore="true">Centrum</th>
+            <th class="name-column" data-sort-ignore="true">Jméno</th>
+            <th class="center-column" data-sort-ignore="true">Centrum</th>
             <th class="score-column" data-type="numeric" data-sort-ignore="true">Wk</th>
             <th class="score-column" data-type="numeric" data-sort-ignore="true">Mah</th>
             <th class="score-column" data-type="numeric" data-sort-ignore="true">Big</th>
@@ -29,7 +29,7 @@
         <tr n:foreach="$persons as $person" n:if="isset($book_points[$person->id])">
             {var $distribution = isset($category_distribution[$person->id]) ? $category_distribution[$person->id] : null}
             <td></td>
-            <td class="left">{$person->name}</td>
+            <td class="left ellipsis">{$person->name}</td>
             <td class="left">{$distribution['center']}</td>
             <td>{isset($weeks_distribution[$person->id]) ? $weeks_distribution[$person->id] : "."}</td>
             <td>{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
@@ -51,7 +51,7 @@
             <td>{isset($category_sum_distribution['Small']) ? $category_sum_distribution['Small'] : "0"}</td>
             <td>{isset($category_sum_distribution['Mag']) ? $category_sum_distribution['Mag'] : "0"}</td>
             <td>{$mahabig_sum_distribution}</td>
-            <td>{$allsum_points}</td>
+            <td>{if $allsum_points < 100000}{$allsum_points|number:2:'.':' '}{else}{$allsum_points|number:2:'.':''}{/if}</td>
         </tr>
     </tfoot>
 </table>

@@ -536,7 +536,13 @@ textarea.form-control.import-source {
 .score-tableprint th.position-column {
   width: 30px;
 }
-.score-tableprint th.title-column {
+.score-tableprint th.name-column {
+  width: 215px;
+  text-align: left;
+  padding-left: 15px;
+}
+.score-tableprint th.center-column {
+  width: 155px;
   text-align: left;
   padding-left: 15px;
 }
@@ -544,10 +550,16 @@ textarea.form-control.import-source {
   width: 50px;
 }
 .score-tableprint th.mahabig-column {
-  width: 80px;
+  width: 90px;
 }
 .score-tableprint th.points-column {
-  width: 70px;
+  width: 80px;
+}
+.score-tableprint td.ellipsis {
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .score-tableprint tfoot {
   font-weight: bold;
