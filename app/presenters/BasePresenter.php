@@ -41,6 +41,12 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
             $this->redirect('Sign:in');
         }		
         
+        $this->user = $this->getUser()->getIdentity();
+
+        if($this->user->data['need_change_password']) {
+			$this->redirect('Sign:changePassword');
+        }
+
         $this->admin = $this->context->getService('admin');
 		$this->person = $this->context->getService('person');
 		$this->center = $this->context->getService('center');
@@ -52,7 +58,6 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 		$this->distribution = $this->context->getService('distribution');
 		$this->week_model = $this->context->getService('week');
 
-		$this->user = $this->getUser()->getIdentity();
 	}
 
 	public function flashMessage($message, $type = 'info') {

@@ -24,6 +24,7 @@ services:
 	- App\Model\UserManager
 	- App\Forms\FormFactory
 	- App\Forms\SignFormFactory
+	- App\Forms\ChangePasswordFormFactory
 	- App\Forms\AdminFormFactory
 	- App\Forms\CenterFormFactory
 	- App\Forms\CountryFormFactory

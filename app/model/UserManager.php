@@ -10,8 +10,7 @@ use Tracy\Debugger;
 /**
  * Users management.
  */
-class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
-{
+class UserManager extends Nette\Object implements Nette\Security\IAuthenticator {
 	const
 		TABLE_NAME = 'user',
 		COLUMN_ID = 'id',

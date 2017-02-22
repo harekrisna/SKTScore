@@ -51,6 +51,9 @@
 			    {if $form->hasErrors()}
                     <div class="login-error">{$form->errors[0]}</div>
                 {/if}
+                {foreach $flashes as $flash}
+                    <p class="{$flash->type}" style="color: green;">{$flash->message}</p>
+                {/foreach}
                 <div class="form-group">
 	                {input username, class => form-control, placeholder => "Uživatelské jméno"}
                 </div>
@@ -60,7 +63,7 @@
                 {input send, class => "btn btn-primary block full-width m-b"}
 
 			{/form}
-            <p class="m-t"> <small>Prabhupád Bhavan &copy; 2016</small> </p>
+            <p class="m-t"> <small>Muktakéša dás &copy; {php echo date('Y')}</small> </p>
         </div>
     </div>
 

@@ -26,8 +26,7 @@ class SignFormFactory extends Nette\Object
 	/**
 	 * @return Form
 	 */
-	public function create()
-	{
+	public function create() {
 		$form = $this->factory->create();
 		$form->addText('username', 'Username:')
 			 ->setRequired('Please enter your username.');
@@ -44,8 +43,7 @@ class SignFormFactory extends Nette\Object
 	}
 
 
-	public function formSucceeded(Form $form, $values)
-	{
+	public function formSucceeded(Form $form, $values) {
 		$this->user->setExpiration('60 minutes', TRUE);
 
 		try {
@@ -54,5 +52,4 @@ class SignFormFactory extends Nette\Object
 			$form->addError('Nesprávné uživatelské jméno nebo heslo.');
 		}
 	}
-
 }
