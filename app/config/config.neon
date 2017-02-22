@@ -23,6 +23,7 @@ session:
 
 services:
 	- App\Model\UserManager
+	- App\Model\BackupManager
 	- App\Forms\FormFactory
 	- App\Forms\SignFormFactory
 	- App\Forms\ChangePasswordFormFactory

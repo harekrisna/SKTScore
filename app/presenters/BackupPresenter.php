@@ -8,7 +8,14 @@ use Tracy\Debugger;
 use Nette\Application\UI\Form;
 
 class BackupPresenter extends Nette\Application\UI\Presenter {
-	
+	/** @var BackupManager */
+	protected $backup_manager;
+
+	public function __construct(\App\Model\BackupManager $backup_manager) {
+ 		parent::__construct();
+ 		$this->backup_manager = $backup_manager;
+ 	}
+
 	public function actionBackupDb() {
 		$backup_file = DB_BACKUP_FOLDER."/".date('Y-m-d--h-i-s').".sql";
 
@@ -33,7 +40,7 @@ class BackupPresenter extends Nette\Application\UI\Presenter {
 		}
 
 		$persons_head .= "-- data pro tabulku `".$table."` \r\n\r\n";
-		$persons_backup = $this->context->getService($table)->backupAll();
+		$persons_backup = $this->backup_manager->backupAll($table);
 		file_put_contents($backup_file, $persons_head.$persons_backup, FILE_APPEND | LOCK_EX);		
 	}
 }
