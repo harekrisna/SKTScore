@@ -8,3 +8,4 @@ app/config/config.local.neon
 log/exception.log
 temp/btfj.dat
 temp/btfj.dat
+backup/

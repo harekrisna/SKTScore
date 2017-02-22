@@ -16,6 +16,7 @@ application:
 
 constants:
 	USER_AVATARS_IMG_FOLDER = user_avatars
+	DB_BACKUP_FOLDER = ../backup
 
 session:
 	expiration: 14 days
