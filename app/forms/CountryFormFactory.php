@@ -49,7 +49,7 @@ class CountryFormFactory extends Nette\Object {
 	public function formSucceeded(Form $form, $values) {
 		try {
 			if($form->isSubmitted()->name == "add") {
-				$this->model->insert($values->data, false);
+				$this->model->insert($values->data);
 			}
 			else {
 				$this->model->update($this->record->id, $values->data);

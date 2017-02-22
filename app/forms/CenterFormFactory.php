@@ -55,7 +55,7 @@ class CenterFormFactory extends Nette\Object {
 	public function formSucceeded(Form $form, $values) {
 		try {
 			if($form->isSubmitted()->name == "add") {
-				$this->center->insert($values->data, false);
+				$this->center->insert($values->data);
 			}
 			else {
 				$this->center->update($this->record->id, $values->data);

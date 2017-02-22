@@ -66,7 +66,7 @@ class AdminFormFactory extends Nette\Object {
 
 
 			if($form->isSubmitted()->name == "add") {
-				$this->admin->insert($values->data, false);
+				$this->admin->insert($values->data);
 			}
 			else {
 				$this->admin->update($this->record->id, $values->data);

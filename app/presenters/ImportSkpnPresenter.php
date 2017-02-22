@@ -10,7 +10,7 @@ use Tracy\Debugger;
 use Nette\Forms\Controls;
 
 
-class ImportPresenter extends BasePresenter {
+class ImportSkpnPresenter extends BasePresenter {
 
     public function createComponentParseSkpnResultListForm() {
         $form = new Form; 
@@ -36,8 +36,8 @@ class ImportPresenter extends BasePresenter {
         }
         else {
             $firsl_line_matches = $matches[0];
-            $this['importSkpnForm']['year']->setValue($firsl_line_matches[0]);
-            $this['importSkpnForm']['week']->setValue($firsl_line_matches[1]);
+            $this['importSkpnResultListForm']['year']->setValue($firsl_line_matches[0]);
+            $this['importSkpnResultListForm']['week']->setValue($firsl_line_matches[1]);
 			
 			$persons_pairs = $this->person->findAll();
             
@@ -73,7 +73,7 @@ class ImportPresenter extends BasePresenter {
             $persons_score = [];
 
             $person_index = 1;
-            $persons_container = $this['importSkpnForm']->addContainer('person');
+            $persons_container = $this['importSkpnResultListForm']->addContainer('person');
 			
 			
             foreach ($score_data_lines as $line) {

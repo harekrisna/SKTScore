@@ -6,10 +6,15 @@ use Tracy\Debugger;
 
 abstract class TableExtended extends Table  { 
 
-    public function insert($data, $add_create_by = true)	{
+    public function insert($data)	{
         try {
-            if($add_create_by) {
-                //$data['created_by_user_id'] = $this->user->getIdentity()->id;
+            $columns = $this->connection->getStructure()
+                                        ->getColumns($this->tableName);
+
+            foreach($columns as $column) {
+                if($column['name'] == "created_by_user_id") {
+                    $data['created_by_user_id'] = $this->user->getIdentity()->id;
+                }
             }
             
             return $this->getTable()
