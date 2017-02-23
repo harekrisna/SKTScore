@@ -10,13 +10,17 @@ use Nette\Application\UI\Form;
 class BackupPresenter extends Nette\Application\UI\Presenter {
 	/** @var BackupManager */
 	protected $backup_manager;
-
+	
 	public function __construct(\App\Model\BackupManager $backup_manager) {
  		parent::__construct();
  		$this->backup_manager = $backup_manager;
  	}
 
-	public function actionBackupDb() {
+	public function actionBackupDb($lock_string) {
+		if($lock_string != "krisna_is_god") {
+			throw new Nette\Application\ForbiddenRequestException();
+		}
+		
 		$backup_file = DB_BACKUP_FOLDER."/".date('Y-m-d--h-i-s').".sql";
 
 		$this->writeTableToBackupFile("country", $backup_file);
