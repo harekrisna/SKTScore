@@ -6,6 +6,8 @@ use Nette;
 use App\Model;
 use Tracy\Debugger;
 use Nette\Application\UI\Form;
+use Nette\Mail\Message;
+use Nette\Mail\SendmailMailer;
 
 class BackupPresenter extends Nette\Application\UI\Presenter {
 	/** @var BackupManager */
@@ -31,6 +33,15 @@ class BackupPresenter extends Nette\Application\UI\Presenter {
 		$this->writeTableToBackupFile("distribution", $backup_file);
 		$this->writeTableToBackupFile("book_priority", $backup_file);
 		$this->writeTableToBackupFile("show_center", $backup_file);
+
+        $mail = new Message;
+        $mail->setFrom("SKT Score <sktscore@gmail.com>")
+             ->addTo("Bart Frezzy <bart.freezy@gmail.com>")
+             ->setSubject("Záloha databáze SKT Score")
+			 ->addAttachment($backup_file);
+        
+        $mailer = new SendmailMailer;
+        $mailer->send($mail);
 
 		$this->payload->success = 1;
 		$this->sendPayload();

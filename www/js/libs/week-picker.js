@@ -1,66 +1,106 @@
-Date.prototype.getWeek = function(date_string) {
-	var date = new Date(date_string);
-	date.setHours(0, 0, 0, 0);
-	// Thursday in current week decides the year.
-	date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-	// January 4 is always in week 1.
-	var week1 = new Date(date.getFullYear(), 0, 4);
-	// Adjust to Thursday in week 1 and count number of weeks from date to week1.
-	return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000
-		                    - 3 + (week1.getDay() + 6) % 7) / 7);
-}
+var weekPicker = function(input, ajax_handler) {
+    var week_number,
+        year,
+        selected_week_number,
+        beforeSend = function() {},
+        afterReceive = function() {};
 
-// Returns the four-digit year corresponding to the ISO week of the date.
-Date.prototype.getWeekYear = function() {
-	var date = new Date(this.getTime());
-	date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-	return date.getFullYear();
-}
+    var self = this;
 
-Date.prototype.nowMySQLdate = function() {
-	return date.getFullYear()  + '-' +
-		   ('0' + (date.getMonth()+1)).slice(-2) + "-" +
-		   ('0' + date.getDate()).slice(-2);
-}
+    function redrawActiveWeek() {
+        var active_tr = $(".datepicker-dropdown table td.cw").filter(function() { // najdeme řádek obsahující číslo vybraného týdne
+            return $(this).text() == selected_week_number;
+        }).parent();
 
-Date.prototype.getMondayOfWeek = function(w, y) {
-    var simple = new Date(y, 0, 1 + (w - 1) * 7);
-    var dow = simple.getDay();
-    var ISOweekStart = simple;
-    if (dow <= 4)
-        ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
-    else
-        ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
-    return ISOweekStart;
-}
+        $(".datepicker-dropdown table tr").removeClass('active');
+        active_tr.find('td.active').removeClass('active');
+        active_tr.addClass('active');
+        
+        // odstranění hover efektu nad neaktivnímy týdny
+        active_tr = $(".datepicker-dropdown table tbody tr").each(function() {
+            var cells = $(this).find('td.disabled');
+            if(cells.length > 0) {
+                var first_cell = $(this).find('td:first-child');
+                first_cell.addClass('disabled');
+            }
+        });
+    }
 
-Date.prototype.getSundayOfWeek = function(w, y) {
-    var simple = new Date(y, 0, 1 + (w - 1) * 7);
-    var dow = simple.getDay();
-    var ISOweekStart = simple;
-    if (dow <= 4)
-        ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1 + 6);
-    else
-        ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay() + 6);
-    return ISOweekStart;
-}
+    this.setWeekPicker = function(year, week_number) {
+        $(input).val("Rok " + year + ": týden " + week_number);
+        selected_week_number = week_number;
+    }
 
-Date.prototype.convertDateToMySQLdate = function(date) {
-    return date.getFullYear()  + '-' +
-           ('0' + (date.getMonth()+1)).slice(-2) + "-" +
-           ('0' + date.getDate()).slice(-2);
-}
+    this.beforeSend = function(func_declaration) {
+        beforeSend = func_declaration;
+    }
 
-Date.prototype.getMonday = function(date_string) {
-    var d = new Date(date_string);
-    var day = d.getDay(),
-        diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
-    return new Date(d.setDate(diff));
-}
+    this.afterReceive = function(func_declaration) {
+        afterReceive = func_declaration;
+    }
 
-Date.prototype.getSunday = function(date_string) {
-    var d = new Date(date_string);
-    var day = d.getDay(),
-        diff = d.getDate() - day + (day == 0 ? -6:1) + 6; // adjust when day is sunday
-    return new Date(d.setDate(diff));
-}
+    this.getWeek = function() { return week_number; }
+    this.getYear = function() { return year; }
+
+    this.clear = function() { 
+        selected_week_number = null;
+        $(input).val(""); 
+    }
+
+    // ajaxová obsluha inputu pro výběr týdne
+    function initDatePicker(input) {
+        $(input).datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true,
+            format: 'yyyy-mm-dd',
+            language: 'cs',
+        })
+        .click(function() { // při kliknutí na input se zvýrazní vybraný týden
+            redrawActiveWeek();
+        })
+
+        .keyup(function() { // při kliknutí na input se zvýrazní vybraný týden
+            redrawActiveWeek();
+        });
+        
+        $(input).on('change', function (e) { // při změně týdne ze změní zvýrazněný
+            var value = $(input).val();
+            var only_int_value = value.replace(/-/g, '');
+
+            if(!isNaN(only_int_value)) {
+                date = new Date();
+                if(value == "") {
+                    value = date.nowMySQLdate();
+                }
+                var active_tr = $('.datepicker-dropdown table td.active.day').parent();
+                active_tr.find('td.active').removeClass('active');
+                active_tr.addClass('active');
+                              
+                week_number = date.getWeek(value);
+                selected_week_number = week_number;
+                year = value.substring(0, 4);
+                self.setWeekPicker(year, week_number);
+                
+                beforeSend();
+                $(input).prop('disabled', true);
+
+                $.get(ajax_handler, {"week": week_number, "year": year}, function(payload) {
+                    $.nette.success(payload);
+                    afterReceive();
+                    changeUrl("?week=" + week_number + "&year=" + year );
+                    $(input).prop('disabled', false);
+                });
+            }
+        });
+    }
+
+    initDatePicker(input);
+    
+    // zvýraznění týdne při přeskakování na další a předchozí stránky datepickeru
+    $('body').on('click', '.datepicker-dropdown th.prev, .datepicker-dropdown th.next', function(){
+        redrawActiveWeek();
+    });
+};

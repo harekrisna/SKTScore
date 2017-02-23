@@ -6,7 +6,7 @@
             <ol class="breadcrumb" n:snippet="resultsNavigation">
                 <li n:class="$presenter->isLinkCurrent('Result:setter') ? active"><a n:href="Result:setter, $setter_week, $setter_year">Zadávání</a></li>
                 <li n:if="$user->isInRole('superadmin') || $user->id == 5" n:class="$presenter->isLinkCurrent('ImportSkpn:importSkpn') ? active"><a n:href="ImportSkpn:importSkpn">Import z SKPN</a></li>
-                <li n:class="$presenter->isLinkCurrent('Result:personsOverview') ? active"><a n:href="Result:personsOverview, $week_from, $year_from, $week_to, $year_to">Osoby</a></li>
+                <li n:class="$presenter->isLinkCurrent('Result:personsOverview') || $presenter->isLinkCurrent('Result:personsOverviewOneWeek') ? active"><a n:href="Result:personsOverview, $week_from, $year_from, $week_to, $year_to">Osoby</a></li>
                 <li n:class="$presenter->isLinkCurrent('Result:booksOverview') ? active"><a n:href="Result:booksOverview, $week_from, $year_from, $week_to, $year_to">Knihy</a></li>
                 <li n:class="$presenter->isLinkCurrent('ResultSettings:showCenters') ? active"><a n:href="ResultSettings:showCenters">Nastavení</a></li>
             </ol>

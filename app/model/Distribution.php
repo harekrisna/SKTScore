@@ -60,6 +60,8 @@ class Distribution extends TableExtended
 
 
     public function getPersonsCategoriesDistribution($week, $year) {
+        $week = str_pad($week, 2, "0", STR_PAD_LEFT);
+
         $result = $this->findBy(['week' => $week,
                                  'year' => $year])
                        ->group('person_id, book.category.id')
@@ -175,6 +177,8 @@ class Distribution extends TableExtended
     }
 
     public function getPersonsSumPoints($week, $year) {
+        $week = str_pad($week, 2, "0", STR_PAD_LEFT);
+        
         $result = $this->findBy(['week' => $week,
                                  'year' => $year])
                        ->group('person_id')
@@ -298,6 +302,7 @@ class Distribution extends TableExtended
 
     public function getPersonsBooksDistribution($week, $year) {
 	    $week = str_pad($week, 2, '0', STR_PAD_LEFT);
+      Debugger::fireLog($week);
         
         $result = $this->findBy(['week' => $week,
                                  'year' => $year]);

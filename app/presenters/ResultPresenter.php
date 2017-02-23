@@ -85,6 +85,11 @@ class ResultPresenter extends BasePresenter {
 		}
 	}
 
+    public function actionPersonsOverviewOneWeek($week, $year) {
+        $this->setView('personsOverview');
+        $this->renderPersonsOverview($week, $year, $week, $year);
+    }
+
     public function renderPersonsOverview($week_from, $year_from, $week_to, $year_to) {
         $week_from == null ? $week_from = $_SESSION['week_from'] : $_SESSION['week_from'] = $week_from;
         $year_from == null ? $year_from = $_SESSION['year_from'] : $_SESSION['year_from'] = $year_from;

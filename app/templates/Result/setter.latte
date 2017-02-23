@@ -16,7 +16,7 @@
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title modified">
-        				<input id="week_from_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
+        				<input id="week_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
                         {*
                         <div class="ibox-tools">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -156,103 +156,31 @@
 
     <!-- Date picker -->
     <script src="{$basePath}/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="{$basePath}/js/libs/date-functions.js"></script>
     <script src="{$basePath}/js/libs/week-picker.js"></script>
 
     <!-- Page-Level Scripts -->
     <script>
         $(document).ready(function() {
-            var selected_week_number;
-        
-            function redrawActiveWeek() {
-                var active_tr = $(".datepicker-dropdown table td.cw").filter(function() { // najdeme řádek obsahující číslo vybraného týdne
-                    return $(this).text() == selected_week_number;
-                }).parent();
+            var picker = new weekPicker('#week_input', {link setter});
+            picker.setWeekPicker({$year}, {$week});
 
-                active_tr.find('td.active').removeClass('active');
-                active_tr.addClass('active');
-                
-                // odstranění hover efektu nad neaktivnímy týdny
-                active_tr = $(".datepicker-dropdown table tbody tr").each(function() {
-                    var cells = $(this).find('td.disabled');
-                    if(cells.length > 0) {
-                        var first_cell = $(this).find('td:first-child');
-                        first_cell.addClass('disabled');
-                    }
-                });
-            }
-
-            // ajaxová obsluha inputu pro výběr týdne
-            function bindWeekPicker(input) {
-                $(input).datepicker({
-                    todayBtn: "linked",
-                    keyboardNavigation: false,
-                    forceParse: false,
-                    calendarWeeks: true,
-                    autoclose: true,
-                    format: 'yyyy-mm-dd',
-                    language: 'cs',
-                })
-                .click(function() { // při kliknutí na input se zvýrazní vybraný týden
-                    redrawActiveWeek();
-                })
-
-                .keyup(function() { // při kliknutí na input se zvýrazní vybraný týden
-                    redrawActiveWeek();
-                });
-                
-                $(input).on('change', function (e) { // při změně týdne ze změní zvýrazněný
-                    var value = $(input).val();
-                    var only_int_value = value.replace(/-/g, '');
-
-                    if(!isNaN(only_int_value)) {
-                        date = new Date();
-                        if(value == "") {
-                            value = date.nowMySQLdate();
-                        }
-                        var active_tr = $('.datepicker-dropdown table td.active.day').parent();
-                        active_tr.find('td.active').removeClass('active');
-                        active_tr.addClass('active');
-                                      
-                        var week_number = date.getWeek(value);
-                        selected_week_number = week_number;
-                        var year = value.substring(0, 4);
-                        setWeekPicker(input, year, week_number);
-                        
-                        week_number = padLeft(week_number, 2);
-                        
-                        $('#resultsTable').fadeOut(); 
-                        $('#fountainG').fadeIn();
-                        $(input).prop('disabled', true);
-
-                        $.get("result/setter", {"week": week_number, "year": year}, function(payload) {
-                            $.nette.success(payload);
-                            $('#resultsTable').footable();
-                            generateScoreTableOrder('#resultsTable', 9);
-                            $('#resultsTable').hide();
-                            $('#resultsTable').fadeIn();
-                            $('#fountainG').fadeOut();
-                            changeUrl("?week=" + week_number + "&year=" + year );
-                            $(input).prop('disabled', false);
-                        });
-                    }
-                });
-            }
-
-            function setWeekPicker(input, year, week_number) {
-                $(input).val("Rok " + year + ": týden " + week_number);
-                selected_week_number = week_number;
-            }
-
-            bindWeekPicker('#week_from_input');
-            setWeekPicker('#week_from_input', {$year}, {$week});
-            
-            // zvýraznění týdne při přeskakování na další a předchozí stránky datepickeru
-            $('body').on('click', '.datepicker-dropdown th.prev, .datepicker-dropdown th.next', function(){
-                redrawActiveWeek();
+            picker.beforeSend(function() {
+                $('#resultsTable').fadeOut(); 
+                $('#fountainG').fadeIn();
             });
-            
+
+            picker.afterReceive(function() {
+                $('#resultsTable').footable();
+                $('#resultsTable').hide();
+                generateScoreTableOrder('#resultsTable', 9);
+                $('#resultsTable').fadeIn();
+                $('#fountainG').fadeOut();
+            });
+
             $('#resultsTable').footable();
             generateScoreTableOrder('#resultsTable', 9);
+
             //  ajaxvá obsluha uložení výsledků osoby
             $("#snippet--resultsTable").on("submit", "form", function(event) {
 	            var is_superadmin = {$user->isInRole('superadmin')};
