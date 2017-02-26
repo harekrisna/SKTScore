@@ -51,7 +51,7 @@
             <td>{isset($category_sum_distribution['Small']) ? $category_sum_distribution['Small'] : "0"}</td>
             <td>{isset($category_sum_distribution['Mag']) ? $category_sum_distribution['Mag'] : "0"}</td>
             <td>{$mahabig_sum_distribution}</td>
-            <td>{if $allsum_points < 100000}{$allsum_points|number:2:'.':' '}{else}{$allsum_points|number:2:'.':''}{/if}</td>
+            <td>{if $allsum_points < 10000}{$allsum_points|number:2:'.':' '}{else}{$allsum_points|number:2:'.':''}{/if}</td>
         </tr>
     </tfoot>
 </table>
