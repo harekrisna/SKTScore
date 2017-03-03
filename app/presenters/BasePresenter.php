@@ -95,5 +95,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 		}
 		
         $this->template->addFilter('round', $this->context->getService("filters")->round);
+        $this->template->persons_count = $this->person->findAll()->count();
+        $this->template->distribution_count = $this->distribution->findAll()->sum('quantity');
 	}
 }
