@@ -20,11 +20,11 @@
                                 <th class="noselect">Centrum</th>
                                 <th data-filterable="false" class="noselect th-small" data-type="html">Aktivní</th>
                                 <th data-filterable="false" data-sortable="false" data-name="controls" class="controls"></th>
+                                <th data-breakpoints="all"></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr n:foreach="$records as $record">
-	                            {dump $record->center->title}
+                            <tr n:foreach="$records as $record" data-id="{$record->id}">
                                 <td data-sort-value="{$record->name|webalize}">{$record->name}</td>
                                 <td data-sort-value="{$record->center->title|webalize}">{$record->center->title}</td>
                                 <td data-sort-value="{$record->active}">
@@ -42,6 +42,7 @@
                                     <a class="row-edit" n:href="edit, $record->id"><span class="glyphicon glyphicon-edit"></span></a>
                                     <a class="row-delete" data-delete_name="{$record->name}" n:href="delete, $record->id"><span class="glyphicon glyphicon-remove"></span></a>
                                 </td>
+                                <td></td>
                             </tr>
                         </tbody>
                         <tfoot>
@@ -65,7 +66,7 @@
     <script src="{$basePath}/js/plugins/sweetalert/sweetalert.min.js"></script>
 
     <!-- Page-Level Scripts -->
-    <script>
+    <script> 
         $(document).ready(function() {
             initFooTable('#personsTable', "Osoba byla smazána.", "Nelze smazat osobu dokud má přiřazené výsledky.");
         });

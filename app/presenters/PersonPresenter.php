@@ -33,4 +33,9 @@ class PersonPresenter extends ComplexPresenter {
 
         $this->sendPayload();
     }    
+
+    public function renderExpandRow($record_id) {
+        $this->template->person_id = $record_id;
+        parent::renderExpandRow($record_id);
+    }
 }

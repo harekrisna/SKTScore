@@ -38,6 +38,11 @@ class ComplexPresenter extends BasePresenter {
 		$this->template->records = $this->model->findAll();
 	}
 
+	public function renderExpandRow($record_id) {
+        $this->setLayout(false);
+        $this->setView('list-expand-row');
+    }
+
 	protected function createComponentForm() {
 		$form = $this->factory->create($this->record);
 		
