@@ -58,7 +58,7 @@ class Distribution extends TableExtended
         }
     }   
 
-
+    // pole osob s polem kategorií s hodnotou kolik rozdal v této kategorii a za jaké centrum za daný týden
     public function getPersonsCategoriesDistribution($week, $year) {
         $week = str_pad($week, 2, "0", STR_PAD_LEFT);
 
@@ -161,6 +161,7 @@ class Distribution extends TableExtended
         return $result['mahabig_quantity_sum'];
     } 
 
+    // pole katekorií se součtem rozdaných knih pro danou osobu
     public function getPersonCategoriesDistribution($person_id, $week, $year) {
         $result = $this->findBy(['week' => $week,
                                  'year' => $year,
@@ -300,10 +301,23 @@ class Distribution extends TableExtended
         return $points_sum;
     }
 
-    public function getPersonsBooksDistribution($week, $year) {
-	    $week = str_pad($week, 2, '0', STR_PAD_LEFT);
-      Debugger::fireLog($week);
+
+    // pole knih s počtem rozdaných knih pro konkrétní osobu
+    public function getPersonBooksDistribution($person_id) {
+        $result = $this->getTable()->select('book.title AS book_title, SUM(quantity) AS quantity')
+                                   ->where('person_id', $person_id)
+                                   ->group('book_id');
+        $score = [];
+        foreach ($result as $row) {
+            $score[$row['book_title']] = $row['quantity'];
+        }
         
+        return $score;
+    }
+
+    // pole osob s polem knih s počtem rozdaných knih za konkrétní týden
+    public function getPersonsBooksDistribution($week, $year) {
+        $week = str_pad($week, 2, '0', STR_PAD_LEFT);
         $result = $this->findBy(['week' => $week,
                                  'year' => $year]);
         $score = [];

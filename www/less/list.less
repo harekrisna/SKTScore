@@ -1,0 +1,88 @@
+.footable {
+	td.center {
+		text-align: center;
+	}
+
+	td.left {
+		text-align: left;
+		padding-left: 10px;
+	}
+
+	td.right {
+		text-align: right;
+		padding-right: 10px;
+	}
+
+	td.bold {
+		font-weight: bold;
+	}
+
+	thead, tfood {
+		th {
+			-webkit-touch-callout: none; 
+			-webkit-user-select: none; 
+			-khtml-user-select: none; 
+			-moz-user-select: none; 
+			-ms-user-select: none; 
+			user-select: none;
+		}
+
+		th.wide {
+			width: 30% !important;
+		}
+
+		th.medium {
+			width: 90px;
+		}
+
+		th.th-small {
+			width: 75px !important;
+		}
+
+		th.thin {
+			width: 10px;
+		}
+
+		th span.footable-sort-indicator {
+			display: inline !important;
+		}
+	}
+
+	.switch.active {
+		margin-left: 8px;
+	}
+
+	.onoffswitch-label {
+		margin-bottom: -2px;
+	}
+
+	.footable-detail-row {
+		.ajax-loading {
+			display: block;
+			margin: 0 auto;
+		}
+	}
+}
+
+tr.footable-detail-row {
+	.result-detail {
+		margin: 0 20px 0px 15px;
+
+		tr {
+			height: 30px;
+
+			th {
+				width: 250px;
+				font-weight: bold;
+				overflow: hidden; 
+				text-overflow: ellipsis; 
+				white-space: nowrap;
+				padding-right: 15px;
+			}
+
+			td {
+				width: 100px;
+			}
+		}
+	}
+}

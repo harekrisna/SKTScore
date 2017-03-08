@@ -1,0 +1,111 @@
+{layout 'layout.latte'}
+{block head}
+    <!-- Sweet Alert -->
+    <link href="{$basePath}/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+{/block}
+{block content}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title empty">
+                </div>
+                <div class="ibox-content">
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">Přesun výsledků</div>
+                        <div id="collapse-migration">
+                            <div class="panel-body">
+                            {form migratePersonForm, class => "form-horizontal"}
+                                <div class="form-group">
+                                    {label source_person_id, class => "col-sm-2 control-label" /}
+                                    <div class="col-sm-10">
+                                        {input source_person_id, class => "form-control medium"}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"></label>
+                                    <div class="col-sm-10">
+                                        <span class="fa fa-arrow-down" style="font-size: 25px; margin-left: 140px"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    {label target_person_id, class => "col-sm-2 control-label" /}
+                                    <div class="col-sm-10">
+                                        {input target_person_id, class => "form-control medium"}
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 col-sm-offset-2">
+                                        {input save, class => "btn btn-danger"}
+                                    </div>
+                                </div>
+                            {/form}
+                            </div>
+                            <div class="panel-footer"><span class="fa fa-warning" style="font-size: 16px; margin-right: 5px"></span>Při přesunu dojde ke sloučení výsledků k přiřazované osobě a odstranění výsledků u původní osoby, jedná se o nevratnou operaci! Takže buď opatrnej a pořádně si rozmysli co děláš.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+{block scripts}    
+    <!-- Jquery Validate -->
+    <script src="{$basePath}/js/plugins/validate/jquery.validate.min.js"></script>
+
+    <!-- Sweet alert -->
+    <script src="{$basePath}/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+			jQuery.extend(jQuery.validator.messages, {
+				required: "Vyber osobu.",
+			});
+
+            jQuery.validator.addMethod("notEqualTo", function(value, element, param) {
+                var form = $(element).closest('form');
+                return this.optional(element) || value != form.find('[name='+param+']').val();
+            }, "Vyber různé osoby.");
+
+            $("#frm-migratePersonForm").validate({
+                rules: {
+                    source_person_id: {
+                        required: true,
+                    },
+                    target_person_id: {
+                        required: true,
+                        notEqualTo: "source_person_id"
+                    }
+                },
+
+                success: function() {
+                    $("#frm-migratePersonForm").submit(function (event) {
+                        event.preventDefault();
+
+                        var source_person = $('select[name=source_person_id] option:selected');
+                        var target_person = $('select[name=target_person_id] option:selected');
+
+                        if(source_person.val() != "" && target_person.val() != "" && 
+                          (source_person.val() != target_person.val())) {
+
+                            swal({
+                                title: "Opravdu si přejete přesunout výsledky " + source_person.text() + " k osobě " + target_person.text() + "?",
+                                text: "Tato operace je nevratná!",
+                                type: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#DD6B55",
+                                confirmButtonText: "Ano, přesunout!",
+                                cancelButtonText: "Zrušit!",
+                                closeOnConfirm: false,
+                            }, function(){
+                                $("#frm-migratePersonForm").off("submit").submit();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+        
+    </script>
+{/block}  

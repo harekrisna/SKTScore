@@ -31,6 +31,7 @@ services:
 	- App\Forms\CenterFormFactory
 	- App\Forms\CountryFormFactory
 	- App\Forms\PersonFormFactory
+	- App\Forms\PersonMigrateFormFactory
 	- App\Forms\ChooseCentersFormFactory
 	- App\Forms\PersonResultsFormFactory
 	- App\Forms\BookFormFactory

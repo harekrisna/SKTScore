@@ -1,1 +1,18 @@
-<span style="color: red">{$person_id}</span>
+<div class="panel-body">
+    <div class="panel-group" id="accordion-{$person_id}">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion-{$person_id}" href="#collapse-{$person_id}">Celková distribuce knih</a>
+                </h5>
+            </div>
+            <div id="collapse-{$person_id}" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <table n:inner-foreach="$books_distribution as $book_title => $quantity" class="result-detail">   
+                        <tr><th>{$book_title}</th><td>{$quantity}</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

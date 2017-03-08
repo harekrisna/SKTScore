@@ -7,12 +7,8 @@
  * @version     0.2
  */
 
-jQuery.extend({
-	nette: {
-		updateSnippet: function (id, html) {
-			$("#" + id).html(html);
-		},
-
+(function($) {
+	$.nette = {
 		success: function (payload) {
 			// redirect
 			if (payload.redirect) {
@@ -23,7 +19,7 @@ jQuery.extend({
 			// snippets
 			if (payload.snippets) {
 				for (var i in payload.snippets) {
-					jQuery.nette.updateSnippet(i, payload.snippets[i]);
+					$.nette.updateSnippet(i, payload.snippets[i]);
 				}
 			}
 
@@ -46,9 +42,13 @@ jQuery.extend({
 					}
 				}
 			}
-		}
+		},
+
+		updateSnippet: function(id, html) {
+			$('#' + id).html(html);
+		}	
 	}
-});
+})(jQuery);
 
 jQuery.ajaxSetup({
 	success: jQuery.nette.success,

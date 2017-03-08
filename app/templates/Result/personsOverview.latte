@@ -29,19 +29,14 @@
                             <label class="control-label tiny-label" for="week_one_input">týden</label>
                             <input id="week_one_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
                         </div>
+                        <div class="week-input-container">
+                            <label class="control-label tiny-label" for="month_full_input">měsíc</label>
+                            <input id="month_full_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
+                        </div>
                     </div>
                     
                     <div class="ibox-content relative" style="min-height: 200px;">
-                        <div id="fountainG" class="ajax-loading">
-                            <div id="fountainG_1" class="fountainG"></div>
-                            <div id="fountainG_2" class="fountainG"></div>
-                            <div id="fountainG_3" class="fountainG"></div>
-                            <div id="fountainG_4" class="fountainG"></div>
-                            <div id="fountainG_5" class="fountainG"></div>
-                            <div id="fountainG_6" class="fountainG"></div>
-                            <div id="fountainG_7" class="fountainG"></div>
-                            <div id="fountainG_8" class="fountainG"></div>
-                        </div>
+                        {include ajax-loading}
                         {snippet overviewTable}
                         {if count($category_distribution) == 0}
                         <table class="table table-striped table-bordered table-hover toggle-arrow-tiny score-table empty" id="overviewTable">
@@ -200,6 +195,7 @@
     <script src="{$basePath}/js/libs/date-functions.js"></script>
     <script src="{$basePath}/js/libs/week-interval-picker.js"></script>
     <script src="{$basePath}/js/libs/week-picker.js"></script>
+    <script src="{$basePath}/js/libs/month-picker.js"></script>
 
     <!-- Page-Level Scripts -->
     <script>
@@ -241,7 +237,6 @@
                 $('#fountainG').fadeOut();
             });
 
-
             $('#week_one_input').on('change', function (e) { 
                 week_interval_picker.setFrom(week_picker.getYear(), week_picker.getWeek());
                 week_interval_picker.setTo(week_picker.getYear(), week_picker.getWeek());
@@ -255,6 +250,24 @@
                 else {
                     week_picker.clear();
                 }
+            });
+
+            var month_picker = new monthPicker('#month_full_input', {link personsOverview});
+
+            month_picker.beforeSend(function() {
+                $('#overviewTable').fadeOut();   
+                $('#fountainG').fadeIn();
+                week_interval_picker.setFrom(month_picker.getYearFrom(), month_picker.getWeekFrom());
+                week_interval_picker.setTo(month_picker.getYearTo(), month_picker.getWeekTo());
+                week_picker.clear();
+            });
+
+            month_picker.afterReceive(function() {
+                $('#overviewTable').footable();
+                $('#overviewTable').hide();
+                generateScoreTableOrder('#overviewTable:not(.empty)', 10);
+                $('#overviewTable').fadeIn();
+                $('#fountainG').fadeOut();
             });
 
             generateScoreTableOrder('#overviewTable:not(.empty)', 10);

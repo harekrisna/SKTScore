@@ -6,6 +6,7 @@
             <ol class="breadcrumb">
                 <li n:class="$presenter->isLinkCurrent('Person:add') ? active"><a n:href="Person:add">Přidat</a></li>
                 <li n:class="$presenter->isLinkCurrent('Person:list') ? active"><a n:href="Person:list">Přehled</a></li>
+                <li n:if="$user->isInRole('superadmin')" n:class="$presenter->isLinkCurrent('Person:migrate') ? active"><a n:href="Person:migrate">Přesun výsledků</a></li>
             </ol>
 	    </div>
 	</div>

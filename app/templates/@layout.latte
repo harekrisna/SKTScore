@@ -49,6 +49,7 @@
 	                    <ul class="nav nav-second-level collapse">
 	                        <li n:class="$presenter->isLinkCurrent('Person:add') ? active"><a n:href="Person:add">Přidat</a></li>
 	                        <li n:class="$presenter->isLinkCurrent('Person:list') ? active"><a n:href="Person:list">Přehled</a></li>
+                            <li n:if="$user->isInRole('superadmin')" n:class="$presenter->isLinkCurrent('Person:migrate') ? active"><a n:href="Person:migrate">Přesun výsledků</a></li>
 	                    </ul>
 	                </li>
 					<li n:class="$presenter->isLinkCurrent('Book:*') ? active">
@@ -158,3 +159,16 @@
 </body>
 
 </html>
+
+{define ajax-loading}
+<div id="fountainG" class="ajax-loading">
+    <div id="fountainG_1" class="fountainG"></div>
+    <div id="fountainG_2" class="fountainG"></div>
+    <div id="fountainG_3" class="fountainG"></div>
+    <div id="fountainG_4" class="fountainG"></div>
+    <div id="fountainG_5" class="fountainG"></div>
+    <div id="fountainG_6" class="fountainG"></div>
+    <div id="fountainG_7" class="fountainG"></div>
+    <div id="fountainG_8" class="fountainG"></div>
+</div>
+{/define}

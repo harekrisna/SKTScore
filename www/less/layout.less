@@ -31,65 +31,6 @@ ol.breadcrumb li.active {
 	padding-right: 0;	
 }
 
-.footable {
-	td.center {
-		text-align: center;
-	}
-
-	td.left {
-		text-align: left;
-		padding-left: 10px;
-	}
-
-	td.right {
-		text-align: right;
-		padding-right: 10px;
-	}
-
-	td.bold {
-		font-weight: bold;
-	}
-
-	thead, tfood {
-		th {
-			-webkit-touch-callout: none; 
-			-webkit-user-select: none; 
-			-khtml-user-select: none; 
-			-moz-user-select: none; 
-			-ms-user-select: none; 
-			user-select: none;
-		}
-
-		th.wide {
-			width: 30% !important;
-		}
-
-		th.medium {
-			width: 90px;
-		}
-
-		th.th-small {
-			width: 75px !important;
-		}
-
-		th.thin {
-			width: 10px;
-		}
-
-		th span.footable-sort-indicator {
-			display: inline !important;
-		}
-	}
-
-	.switch.active {
-		margin-left: 8px;
-	}
-
-	.onoffswitch-label {
-		margin-bottom: 0px;
-	}
-}
-
 .main-ajax-spinner {
 	opacity: 0;
 	top: 5px;
@@ -114,13 +55,20 @@ ol.breadcrumb li.active {
 
 .table {
 	th.controls {
-		width: 46px;
+		width: 54px;
 	}
 
 	td.controls {
 		a {
+			font-size: 16px;
+			margin-bottom: -10px;
 			float: left;
 			color: #2F4050;
+
+			&.row-delete {
+				font-size: 18px;
+			}
+
 			&:not(:last-child) {
 				margin-right: 3px;
 			}

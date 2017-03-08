@@ -21,55 +21,6 @@ ol.breadcrumb li.active {
 .nopadding-right {
   padding-right: 0;
 }
-.footable td.center {
-  text-align: center;
-}
-.footable td.left {
-  text-align: left;
-  padding-left: 10px;
-}
-.footable td.right {
-  text-align: right;
-  padding-right: 10px;
-}
-.footable td.bold {
-  font-weight: bold;
-}
-.footable thead th,
-.footable tfood th {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-.footable thead th.wide,
-.footable tfood th.wide {
-  width: 30% !important;
-}
-.footable thead th.medium,
-.footable tfood th.medium {
-  width: 90px;
-}
-.footable thead th.th-small,
-.footable tfood th.th-small {
-  width: 75px !important;
-}
-.footable thead th.thin,
-.footable tfood th.thin {
-  width: 10px;
-}
-.footable thead th span.footable-sort-indicator,
-.footable tfood th span.footable-sort-indicator {
-  display: inline !important;
-}
-.footable .switch.active {
-  margin-left: 8px;
-}
-.footable .onoffswitch-label {
-  margin-bottom: 0px;
-}
 .main-ajax-spinner {
   opacity: 0;
   top: 5px;
@@ -87,11 +38,16 @@ ol.breadcrumb li.active {
   position: relative;
 }
 .table th.controls {
-  width: 46px;
+  width: 54px;
 }
 .table td.controls a {
+  font-size: 16px;
+  margin-bottom: -10px;
   float: left;
   color: #2F4050;
+}
+.table td.controls a.row-delete {
+  font-size: 18px;
 }
 .table td.controls a:not(:last-child) {
   margin-right: 3px;
@@ -381,6 +337,76 @@ textarea.form-control.import-source {
 .upload-control {
   padding: 0;
   border: 0;
+}
+.footable td.center {
+  text-align: center;
+}
+.footable td.left {
+  text-align: left;
+  padding-left: 10px;
+}
+.footable td.right {
+  text-align: right;
+  padding-right: 10px;
+}
+.footable td.bold {
+  font-weight: bold;
+}
+.footable thead th,
+.footable tfood th {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.footable thead th.wide,
+.footable tfood th.wide {
+  width: 30% !important;
+}
+.footable thead th.medium,
+.footable tfood th.medium {
+  width: 90px;
+}
+.footable thead th.th-small,
+.footable tfood th.th-small {
+  width: 75px !important;
+}
+.footable thead th.thin,
+.footable tfood th.thin {
+  width: 10px;
+}
+.footable thead th span.footable-sort-indicator,
+.footable tfood th span.footable-sort-indicator {
+  display: inline !important;
+}
+.footable .switch.active {
+  margin-left: 8px;
+}
+.footable .onoffswitch-label {
+  margin-bottom: -2px;
+}
+.footable .footable-detail-row .ajax-loading {
+  display: block;
+  margin: 0 auto;
+}
+tr.footable-detail-row .result-detail {
+  margin: 0 20px 0px 15px;
+}
+tr.footable-detail-row .result-detail tr {
+  height: 30px;
+}
+tr.footable-detail-row .result-detail tr th {
+  width: 250px;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 15px;
+}
+tr.footable-detail-row .result-detail tr td {
+  width: 100px;
 }
 .dropdown-form {
   width: 240px;

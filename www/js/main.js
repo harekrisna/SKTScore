@@ -92,21 +92,19 @@ function initFooTable(table, success_message = "Záznam byl smazán.", error_mes
                 next.show(); // expand
         }
         else { // expand first
-            row.after('<tr class="footable-detail-row"><td colspan="4"><img src="../images/ajax-loader.png"/></td></tr>'); // add expanded row
+            row.after('<tr class="footable-detail-row"><td colspan="4"><img class="ajax-loading" src="../images/ajax-loader.png"/></td></tr>'); // add expanded row
             expand_td = row.next().find("td");
             var record_id = row.data('id');
             
-            /*
             $.get({
                 url: 'expand-row',
                 data: {"record_id": record_id}, 
                 dataType : "html",
                 success: function (data) {
+                    $.nette.success(data);
                     expand_td.html(data);
-                    clearInterval(loading);
                 }
             });
-            */
         }
     });
 }
