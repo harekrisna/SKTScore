@@ -52,7 +52,7 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
 
         $(".datepicker-dropdown table tr").removeClass('active');
         active_tr.find('td.active').removeClass('active');
-        active_tr.addClass('active');
+        active_tr.attr('class', "active");
         
         // odstranění hover efektu nad neaktivnímy týdny
         active_tr = $(".datepicker-dropdown table tbody tr").each(function() {

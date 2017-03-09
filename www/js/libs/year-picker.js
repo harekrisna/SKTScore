@@ -1,4 +1,4 @@
-var monthPicker = function(input, ajax_handler) {
+var yearPicker = function(input, ajax_handler) {
     var week_from, 
         week_to, 
         year_from, 
@@ -22,21 +22,12 @@ var monthPicker = function(input, ajax_handler) {
 
     this.redraw = function() {
         if(year_from != year_to) {
-            $(input).val("");    
+            $(input).val("");
         }
         else {
-            is_in_mounth_range = false;
-            for (month_index = 1; month_index <= 12; month_index++) { 
-                start_week = this.getMonthStartWeek(year_from, month_index);
-                last_week = this.getMonthLastWeek(year_from, month_index);
-                if(start_week == week_from && last_week == week_to) {
-                    is_in_mounth_range = true;
-                    break;
-                }
-            }
-
-            if(is_in_mounth_range) {
-                $(input).val("Rok " + year_from + ": " + years_title[month_index-1]);
+            date = new Date();
+            if(week_from == 1 && week_to == date.weeksInYear(year_from)) {
+                $(input).val("Rok " + year_from);
             }
             else {
                 $(input).val("");
@@ -57,64 +48,28 @@ var monthPicker = function(input, ajax_handler) {
     this.getYearFrom = function() { return year_from; }
     this.getYearTo = function() { return year_to; }
 
-    this.getMonthStartWeek = function(year, month) {
-        var first_day_of_month = year + "-" + month + "-01";
-        //console.log(first_day_of_month);
-        date = new Date(first_day_of_month);
-        first_day_of_month_daynum = date.getDay();
-        if(first_day_of_month_daynum == 0) first_day_of_month_daynum = 7; // korekce na neděli
-        
-        week = date.getWeek(first_day_of_month);
-        if(first_day_of_month_daynum > 3) { // pokud měsíc začíná déle než ve středu budeme začínat od následujícího týdne, protože první týden náleží minulému měsíci
-            week = week + 1;
-        }
-
-        if(date.getMonth() == 0) // v lednu začínáme prvním týdnem
-            week = 1;
-
-        return week;
-    }
-
-    this.getMonthLastWeek = function(year, month) {
-        month = parseInt(month, 10);
-        var date = new Date(year, month, 0);
-
-        last_day_of_month_daynum = date.getDay();
-        if(last_day_of_month_daynum == 0) last_day_of_month_daynum = 7; // korekce na neděli
-
-        week = date.getWeek(date);
-        if(last_day_of_month_daynum < 3) { // pokud měsíc končí v pondělí nebo v úterý tak ten týden se započítává až do dalšího
-            week = week - 1;
-        }
-
-        if(date.getMonth() + 1 == 12) // pokud se jedná o prosinec nastaví se poslední týden v roce
-            week = date.weeksInYear(date.getFullYear());
-
-        return week;
-    }
-
     this.clear = function() { 
         selected_month = null;
         $(input).val(""); 
     }
 
     // ajaxová obsluha inputu pro výběr týdne
-    function initMonthPicker(input) {
+    function initYearPicker(input) {
         $(input).datepicker({
             keyboardNavigation: false,
             forceParse: false,
             autoclose: true,
-            format: 'yyyy-mm',
-            viewMode: "months", 
-            minViewMode: "months",
+            format: 'yyyy',
+            viewMode: "years", 
+            minViewMode: "years",
             language: 'cs',
         })
         .click(function() { // při kliknutí na input se zvýrazní vybraný týden
-            redrawActiveWeek();
+            //redrawActiveWeek();
         })
 
         .keyup(function() { // při kliknutí na input se zvýrazní vybraný týden
-            redrawActiveWeek();
+            //SredrawActiveWeek();
         });
         
         $(input).on('change', function (e) { // při změně týdne ze změní zvýrazněný
@@ -122,12 +77,13 @@ var monthPicker = function(input, ajax_handler) {
             
             var only_int_value = value.replace(/-/g, '');
             if(!isNaN(only_int_value)) {
-                
-                week_from = self.getMonthStartWeek(value.substring(0, 4), value.substring(5, 7));
-                week_to = self.getMonthLastWeek(value.substring(0, 4), value.substring(5, 7));
+                year = value;
+                date = new Date();
+                week_from = 1;
+                week_to = date.weeksInYear(year);
 
-                year_from = year_to = date.getFullYear();
-                selected_month = date.getMonth();
+                year_from = year_to = year;
+                selected_year = year;
 
                 self.redraw();
                 
@@ -149,5 +105,5 @@ var monthPicker = function(input, ajax_handler) {
         });
     }
 
-    initMonthPicker(input);
+    initYearPicker(input);
 };

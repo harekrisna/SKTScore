@@ -18,20 +18,24 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-title modified" style="overflow:auto;">
                         <div class="week-input-container">
-                            <label class="control-label tiny-label" for="week_from_input">od</label>
+                            <label class="control-label tiny-label week-input-label" for="week_from_input">od</label>
             				<input id="week_from_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
                         </div>
                         <div class="week-input-container">
-                            <label class="control-label tiny-label" for="week_to_input">do</label>
+                            <label class="control-label tiny-label week-input-label" for="week_to_input">do</label>
                             <input id="week_to_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
                         </div>
                         <div class="week-input-container">
-                            <label class="control-label tiny-label" for="week_one_input">týden</label>
+                            <label class="control-label tiny-label week-input-label" for="week_one_input">týden</label>
                             <input id="week_one_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
                         </div>
                         <div class="week-input-container">
-                            <label class="control-label tiny-label" for="month_full_input">měsíc</label>
+                            <label class="control-label tiny-label week-input-label" for="month_full_input">měsíc</label>
                             <input id="month_full_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
+                        </div>
+                        <div class="week-input-container">
+                            <label class="control-label tiny-label week-input-label" for="year_full_input">rok</label>
+                            <input id="year_full_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
                         </div>
                     </div>
                     
@@ -196,63 +200,76 @@
     <script src="{$basePath}/js/libs/week-interval-picker.js"></script>
     <script src="{$basePath}/js/libs/week-picker.js"></script>
     <script src="{$basePath}/js/libs/month-picker.js"></script>
+    <script src="{$basePath}/js/libs/year-picker.js"></script>
 
     <!-- Page-Level Scripts -->
     <script>
         $(document).ready(function() {
             $('#overviewTable').footable();
 
-            var week_interval_picker = new weekIntervalPicker('#week_from_input', '#week_to_input', {link personsOverview});
-            week_interval_picker.setFrom({$year_from}, {$week_from});
-            week_interval_picker.setTo({$year_to}, {$week_to});
-            
-            week_interval_picker.beforeSend(function() {
-                $('#overviewTable').fadeOut();   
-                $('#fountainG').fadeIn();
-            });
-
-            week_interval_picker.afterReceive(function() {
+            function redrawScoreTable() {
                 $('#overviewTable').footable();
                 $('#overviewTable').hide();
                 generateScoreTableOrder('#overviewTable:not(.empty)', 10);
                 $('#overviewTable').fadeIn();
                 $('#fountainG').fadeOut();
-            });
+            }
 
+            var week_interval_picker = new weekIntervalPicker('#week_from_input', '#week_to_input', {link personsOverview});
+            week_interval_picker.setFrom({$year_from}, {$week_from});
+            week_interval_picker.setTo({$year_to}, {$week_to});
+            
             var week_picker = new weekPicker('#week_one_input', {link personsOverviewOneWeek});
             {if $year_from == $year_to && $week_from == $week_to}
                 week_picker.setWeekPicker({$year_from}, {$week_from});
             {/if}
 
-            week_picker.beforeSend(function() {
+            var month_picker = new monthPicker('#month_full_input', {link personsOverview});
+            month_picker.setFrom({$year_from}, {$week_from});
+            month_picker.setTo({$year_to}, {$week_to});
+
+            var year_picker = new yearPicker('#year_full_input', {link personsOverview});
+            year_picker.setFrom({$year_from}, {$week_from});
+            year_picker.setTo({$year_to}, {$week_to});
+
+            week_interval_picker.beforeSend(function() {
                 $('#overviewTable').fadeOut();   
                 $('#fountainG').fadeIn();
-            });
-
-            week_picker.afterReceive(function() {
-                $('#overviewTable').footable();
-                $('#overviewTable').hide();
-                generateScoreTableOrder('#overviewTable:not(.empty)', 10);
-                $('#overviewTable').fadeIn();
-                $('#fountainG').fadeOut();
-            });
-
-            $('#week_one_input').on('change', function (e) { 
-                week_interval_picker.setFrom(week_picker.getYear(), week_picker.getWeek());
-                week_interval_picker.setTo(week_picker.getYear(), week_picker.getWeek());
-            });
-            
-            $('#week_from_input, #week_to_input').on('change', function (e) { 
                 if(week_interval_picker.getWeekFrom() == week_interval_picker.getWeekTo() && 
                    week_interval_picker.getYearFrom() == week_interval_picker.getYearTo()) {
-                    week_picker.setWeekPicker(week_interval_picker.getYearFrom(), week_interval_picker.getWeekFrom());
+                   week_picker.setWeekPicker(week_interval_picker.getYearFrom(), week_interval_picker.getWeekFrom());
                 }
                 else {
                     week_picker.clear();
                 }
+
+                month_picker.setFrom(week_interval_picker.getYearFrom(), week_interval_picker.getWeekFrom());
+                month_picker.setTo(week_interval_picker.getYearTo(), week_interval_picker.getWeekTo());
+                month_picker.redraw();
+
+                year_picker.setFrom(week_interval_picker.getYearFrom(), week_interval_picker.getWeekFrom());
+                year_picker.setTo(week_interval_picker.getYearTo(), week_interval_picker.getWeekTo());
+                year_picker.redraw();
             });
 
-            var month_picker = new monthPicker('#month_full_input', {link personsOverview});
+            week_interval_picker.afterReceive(function() {
+                redrawScoreTable();
+            });
+
+            
+            week_picker.beforeSend(function() {
+                $('#overviewTable').fadeOut();   
+                $('#fountainG').fadeIn();
+                week_interval_picker.setFrom(week_picker.getYear(), week_picker.getWeek());
+                week_interval_picker.setTo(week_picker.getYear(), week_picker.getWeek());
+                month_picker.clear();
+                year_picker.clear();
+            });
+
+            week_picker.afterReceive(function() {
+                redrawScoreTable();
+            });
+
 
             month_picker.beforeSend(function() {
                 $('#overviewTable').fadeOut();   
@@ -260,16 +277,30 @@
                 week_interval_picker.setFrom(month_picker.getYearFrom(), month_picker.getWeekFrom());
                 week_interval_picker.setTo(month_picker.getYearTo(), month_picker.getWeekTo());
                 week_picker.clear();
+                year_picker.clear();
             });
 
             month_picker.afterReceive(function() {
-                $('#overviewTable').footable();
-                $('#overviewTable').hide();
-                generateScoreTableOrder('#overviewTable:not(.empty)', 10);
-                $('#overviewTable').fadeIn();
-                $('#fountainG').fadeOut();
+                redrawScoreTable();
             });
 
+            month_picker.redraw();
+
+            year_picker.beforeSend(function() {
+                $('#overviewTable').fadeOut();   
+                $('#fountainG').fadeIn();
+                week_interval_picker.setFrom(year_picker.getYearFrom(), year_picker.getWeekFrom());
+                week_interval_picker.setTo(year_picker.getYearTo(), year_picker.getWeekTo());
+                week_picker.clear();
+                month_picker.clear();
+            });
+
+            year_picker.afterReceive(function() {
+                redrawScoreTable();
+            });
+
+            
+            year_picker.redraw();
             generateScoreTableOrder('#overviewTable:not(.empty)', 10);
         });
     </script>

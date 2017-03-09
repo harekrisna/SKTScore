@@ -901,6 +901,7 @@
 		},
 
 		click: function(e){
+
 			e.preventDefault();
 			var target = $(e.target).closest('span, td, th'),
 				year, month, day;

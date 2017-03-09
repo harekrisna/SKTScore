@@ -160,16 +160,21 @@ class ResultPresenter extends BasePresenter {
         $this->template->centers_weeks_distribution = $this->distribution->getCentersWeeksDistribution($week_from, $year_from, $week_to, $year_to);
     }
 
+    public function actionBooksOverviewOneWeek($week, $year) {
+        $this->setView('booksOverview');
+        $this->renderBooksOverview($week, $year, $week, $year);
+    }
+
     public function renderBooksOverview($week_from, $year_from, $week_to, $year_to) {
+        $week_from == null ? $week_from = $_SESSION['week_from'] : $_SESSION['week_from'] = $week_from;
+        $year_from == null ? $year_from = $_SESSION['year_from'] : $_SESSION['year_from'] = $year_from;
+        $week_to == null ? $week_to = $_SESSION['week_to'] : $_SESSION['week_to'] = $week_to;
+        $year_to == null ? $year_to = $_SESSION['year_to'] : $_SESSION['year_to'] = $year_to;
+        
         $this->template->week_from = $week_from;
         $this->template->year_from = $year_from;
         $this->template->week_to = $week_to;
         $this->template->year_to = $year_to;
-
-        $_SESSION['week_from'] = $week_from;
-        $_SESSION['year_from'] = $year_from;
-        $_SESSION['week_to'] = $week_to;
-        $_SESSION['year_to'] = $year_to;
         
 		$this->template->persons = $this->person->findAll();
         $this->template->books = $this->book->findAll();
