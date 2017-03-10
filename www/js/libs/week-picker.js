@@ -23,8 +23,8 @@ var weekPicker = function(input, ajax_handler) {
         afterReceive = func_declaration;
     }
 
-    this.getWeek = function() { return week_number; }
-    this.getYear = function() { return year; }
+    this.getWeek = function() { return self.week_number; }
+    this.getYear = function() { return self.year; }
 
     this.clear = function() { 
         self.week_number = null;
@@ -90,9 +90,9 @@ var weekPicker = function(input, ajax_handler) {
 
     }
 
+    initDatePicker(input);
+
     $('body').on('click', '.datepicker-dropdown th.prev, .datepicker-dropdown th.next', function(){
         highlightActiveWeek();
     });
-
-    initDatePicker(input);
 };

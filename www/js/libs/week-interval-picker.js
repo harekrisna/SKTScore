@@ -1,35 +1,26 @@
 var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
-    var week_from, 
-        week_to, 
-        year_from, 
-        year_to,
-        beforeSend = function() {},
-        afterReceive = function() {};
+    this.week_from, 
+    this.week_to, 
+    this.year_from, 
+    this.year_to,
+    this.year_to,
+    this.beforeSend = function() {},
+    this.afterReceive = function() {};
 
     var selected_week_number;
     
     var self = this;
 
     this.setFrom = function(year, week_number) {
+        self.year_from = year;
+        self.week_from = week_number;
         $(input_from).val("Rok " + year + ": týden " + week_number);
-        year_from = year;
-        week_from = week_number;
-
-        var date = new Date();
-        var monday_date = date.getMondayOfWeek(week_number, year);
-        var monday_mysql = date.convertDateToMySQLdate(monday_date);
-        //$(input_to).datepicker('setStartDate', monday_mysql);
     }
     
     this.setTo = function(year, week_number) {
+        self.year_to = year;
+        self.week_to = week_number;
         $(input_to).val("Rok " + year + ": týden " + week_number);
-        year_to = year;
-        week_to = week_number;
-
-        var date = new Date();
-        var sunday_date = date.getSundayOfWeek(week_number, year);
-        var sunday_mysql = date.convertDateToMySQLdate(sunday_date);
-        //$(input_from).datepicker('setEndDate', sunday_mysql);
     }
 
     this.beforeSend = function(func_declaration) {
@@ -46,22 +37,18 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
     this.getYearTo = function() { return year_to; }
 
     function redrawActiveWeek() {
-        var active_tr = $(".datepicker-dropdown table td.cw").filter(function() {
-            return $(this).text() == selected_week_number;
-        }).parent();
+        var table_year_title_th = $(".datepicker-dropdown table thead tr th.datepicker-switch");
+        var table_year_title = $(table_year_title_th).first().html().replace(/[^\d.]/g, '');
 
-        $(".datepicker-dropdown table tr").removeClass('active');
-        active_tr.find('td.active').removeClass('active');
-        active_tr.attr('class', "active");
-        
-        // odstranění hover efektu nad neaktivnímy týdny
-        active_tr = $(".datepicker-dropdown table tbody tr").each(function() {
-            var cells = $(this).find('td.disabled');
-            if(cells.length > 0) {
-                var first_cell = $(this).find('td:first-child');
-                first_cell.addClass('disabled');
-            }
-        });
+        if(table_year_title == self.year) {
+            var active_tr = $(".datepicker-dropdown table td.cw").filter(function() {
+                return $(this).text() == selected_week_number;
+            }).parent();
+
+            $(".datepicker-dropdown table tr").removeClass('active');
+            active_tr.find('td.active').removeClass('active');
+            active_tr.attr('class', "active");
+        }
     }
 
     function initDatePicker(input) {
@@ -75,10 +62,10 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
         })
         .click(function() { // při kliknutí na input se zvýrazní vybraný týden
             if('#' + this.id == input_from) {
-                selected_week_number = week_from;
+                selected_week_number = self.week_from;
             }
             else if('#' + this.id == input_to) {
-                selected_week_number = week_to;
+                selected_week_number = self.week_to;
             }
             redrawActiveWeek();
         })
@@ -95,16 +82,15 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
             var week_number = date.getWeek();
             var year = date.getFullYear();
 
-
             if('#' + event.target.id == input_from) { // změna od
                 self.setFrom(year, week_number);
-                if(year + padLeft(week_number, 2) > year_to + padLeft(week_to, 2)) { // pokud je vybrán týden od, který je větší než do, týden do se navýší
+                if(year + padLeft(week_number, 2) > self.year_to + padLeft(self.week_to, 2)) { // pokud je vybrán týden od, který je větší než do, týden do se navýší
                     self.setTo(year, week_number);    
                 }
             }
             else if('#' + event.target.id == input_to) { // změna do
                 self.setTo(year, week_number);
-                if(year + padLeft(week_number, 2) < year_from + padLeft(week_from, 2)) { // pokud je vybrán týden do, který je menší než od, týden od se sníží
+                if(year + padLeft(week_number, 2) < self.year_from + padLeft(self.week_from, 2)) { // pokud je vybrán týden do, který je menší než od, týden od se sníží
                     self.setFrom(year, week_number);    
                 }
             }
@@ -113,25 +99,28 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
             $(input_from).prop('disabled', true);
             $(input_to).prop('disabled', true);
 
-
-            $.get(ajax_handler, {"week_from": week_from, 
-                                 "year_from": year_from,
-                                 "week_to": week_to, 
-                                 "year_to": year_to,
+            $.get(ajax_handler, {"week_from": self.week_from, 
+                                 "year_from": self.year_from,
+                                 "week_to": self.week_to, 
+                                 "year_to": self.year_to,
                                 }, 
                 function(payload) {
                     $.nette.success(payload);
                     afterReceive();
                     $(input_from).prop('disabled', false);
                     $(input_to).prop('disabled', false);
-                    changeUrl("?week_from=" + week_from + "&year_from=" + year_from + "&week_to=" + week_to + "&year_to=" + year_to);
+                    changeUrl("?week_from=" + self.week_from + "&year_from=" + self.year_from + "&week_to=" + self.week_to + "&year_to=" + self.year_to);
                 }
             );
         })
 
-        .keyup(function() { // při kliknutí na input se zvýrazní vybraný týden
+        .on("show", function(e) {
             redrawActiveWeek();
-        });
+        })
+
+        .keyup(function(e) {
+            redrawActiveWeek();
+        })
     }
 
     initDatePicker(input_from);
