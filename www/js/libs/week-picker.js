@@ -1,34 +1,18 @@
 var weekPicker = function(input, ajax_handler) {
-    var week_number,
-        year,
-        selected_week_number,
-        beforeSend = function() {},
-        afterReceive = function() {};
+    this.week_number,
+    this.year,
+    this.beforeSend = function() {},
+    this.afterReceive = function() {};
 
     var self = this;
 
-    function redrawActiveWeek() {
-        var active_tr = $(".datepicker-dropdown table td.cw").filter(function() { // najdeme řádek obsahující číslo vybraného týdne
-            return $(this).text() == selected_week_number;
-        }).parent();
-
-        $(".datepicker-dropdown table tr").removeClass('active');
-        active_tr.find('td.active').removeClass('active');
-        active_tr.addClass('active');
-        
-        // odstranění hover efektu nad neaktivnímy týdny
-        active_tr = $(".datepicker-dropdown table tbody tr").each(function() {
-            var cells = $(this).find('td.disabled');
-            if(cells.length > 0) {
-                var first_cell = $(this).find('td:first-child');
-                first_cell.addClass('disabled');
-            }
-        });
-    }
-
     this.setWeekPicker = function(year, week_number) {
-        $(input).val("Rok " + year + ": týden " + week_number);
-        selected_week_number = week_number;
+        self.week_number = week_number;
+        self.year = year;
+        date = new Date();
+        monday = date.getMondayOfWeek(self.week_number, self.year);
+        $(input).datepicker('update', monday);
+        $(input).val("Rok " + self.year + ": týden " + self.week_number);
     }
 
     this.beforeSend = function(func_declaration) {
@@ -43,8 +27,24 @@ var weekPicker = function(input, ajax_handler) {
     this.getYear = function() { return year; }
 
     this.clear = function() { 
-        selected_week_number = null;
+        self.week_number = null;
+        self.year = null;
         $(input).val(""); 
+    }
+
+    function highlightActiveWeek() {
+        var table_year_title_th = $(".datepicker-dropdown table thead tr th.datepicker-switch");
+        var table_year_title = $(table_year_title_th).first().html().replace(/[^\d.]/g, '');
+
+        if(table_year_title == self.year) {
+            var active_tr = $(".datepicker-dropdown table td.cw").filter(function() { // najdeme řádek obsahující číslo vybraného týdne
+                return $(this).text() == self.week_number;
+            }).parent();
+
+            $(".datepicker-dropdown table tr").removeClass('active');
+            active_tr.find('td.active').removeClass('active');
+            active_tr.addClass('active');
+        }
     }
 
     // ajaxová obsluha inputu pro výběr týdne
@@ -58,49 +58,41 @@ var weekPicker = function(input, ajax_handler) {
             format: 'yyyy-mm-dd',
             language: 'cs',
         })
-        .click(function() { // při kliknutí na input se zvýrazní vybraný týden
-            redrawActiveWeek();
+
+        .on("changeDate", function(e) {
+            var value = $(input).val();
+            if(isNaN(Date.parse(value)))
+                return;
+
+            date = new Date(value);
+            week_number = date.getWeek();
+            year = date.getFullYear();            
+            self.setWeekPicker(year, week_number);
+            
+            beforeSend();
+            $(input).prop('disabled', true);
+
+            $.get(ajax_handler, {"week": week_number, "year": year}, function(payload) {
+                $.nette.success(payload);
+                afterReceive();
+                changeUrl("?week=" + week_number + "&year=" + year );
+                $(input).prop('disabled', false);
+            });  
         })
 
-        .keyup(function() { // při kliknutí na input se zvýrazní vybraný týden
-            redrawActiveWeek();
-        });
-        
-        $(input).on('change', function (e) { // při změně týdne ze změní zvýrazněný
-            var value = $(input).val();
-            var only_int_value = value.replace(/-/g, '');
+        .on("show", function(e) {
+            highlightActiveWeek();
+        })
 
-            if(!isNaN(only_int_value)) {
-                date = new Date();
-                if(value == "") {
-                    value = date.nowMySQLdate();
-                }
-                var active_tr = $('.datepicker-dropdown table td.active.day').parent();
-                active_tr.find('td.active').removeClass('active');
-                active_tr.addClass('active');
-                              
-                week_number = date.getWeek(value);
-                selected_week_number = week_number;
-                year = value.substring(0, 4);
-                self.setWeekPicker(year, week_number);
-                
-                beforeSend();
-                $(input).prop('disabled', true);
+        .keyup(function(e) {
+            highlightActiveWeek();
+        })
 
-                $.get(ajax_handler, {"week": week_number, "year": year}, function(payload) {
-                    $.nette.success(payload);
-                    afterReceive();
-                    changeUrl("?week=" + week_number + "&year=" + year );
-                    $(input).prop('disabled', false);
-                });
-            }
-        });
     }
 
-    initDatePicker(input);
-    
-    // zvýraznění týdne při přeskakování na další a předchozí stránky datepickeru
     $('body').on('click', '.datepicker-dropdown th.prev, .datepicker-dropdown th.next', function(){
-        redrawActiveWeek();
+        highlightActiveWeek();
     });
+
+    initDatePicker(input);
 };

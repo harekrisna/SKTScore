@@ -82,60 +82,55 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
             }
             redrawActiveWeek();
         })
+        .on("changeDate", function(event) {
+            var value = $(input).val();            
+            if(isNaN(Date.parse(value)))
+                return;
+            
+            date = new Date(value);
+            var active_tr = $('.datepicker-dropdown table td.active.day').parent();
+            active_tr.find('td.active').removeClass('active');
+            active_tr.addClass('active');
+                                
+            var week_number = date.getWeek();
+            var year = date.getFullYear();
+
+
+            if('#' + event.target.id == input_from) { // změna od
+                self.setFrom(year, week_number);
+                if(year + padLeft(week_number, 2) > year_to + padLeft(week_to, 2)) { // pokud je vybrán týden od, který je větší než do, týden do se navýší
+                    self.setTo(year, week_number);    
+                }
+            }
+            else if('#' + event.target.id == input_to) { // změna do
+                self.setTo(year, week_number);
+                if(year + padLeft(week_number, 2) < year_from + padLeft(week_from, 2)) { // pokud je vybrán týden do, který je menší než od, týden od se sníží
+                    self.setFrom(year, week_number);    
+                }
+            }
+
+            beforeSend();
+            $(input_from).prop('disabled', true);
+            $(input_to).prop('disabled', true);
+
+
+            $.get(ajax_handler, {"week_from": week_from, 
+                                 "year_from": year_from,
+                                 "week_to": week_to, 
+                                 "year_to": year_to,
+                                }, 
+                function(payload) {
+                    $.nette.success(payload);
+                    afterReceive();
+                    $(input_from).prop('disabled', false);
+                    $(input_to).prop('disabled', false);
+                    changeUrl("?week_from=" + week_from + "&year_from=" + year_from + "&week_to=" + week_to + "&year_to=" + year_to);
+                }
+            );
+        })
 
         .keyup(function() { // při kliknutí na input se zvýrazní vybraný týden
             redrawActiveWeek();
-        });
-
-        $(input).on('change', function (e) { // při změně týdne ze změní zvýrazněný
-            var value = $(input).val();
-            var only_int_value = value.replace(/-/g, '');
-
-            if(!isNaN(only_int_value)) {
-                date = new Date()
-                if(value == "") {
-                    value = date.nowMySQLdate();
-                }
-
-                var active_tr = $('.datepicker-dropdown table td.active.day').parent();
-                active_tr.find('td.active').removeClass('active');
-                active_tr.addClass('active');
-                                    
-                var week_number = date.getWeek(value);
-                var year = value.substring(0, 4);
-
-                if('#' + this.id == input_from) { // změna od
-                    self.setFrom(year, week_number);
-                    if(year + padLeft(week_number, 2) > year_to + padLeft(week_to, 2)) { // pokud je vybrán týden od, který je větší než do, týden do se navýší
-                        self.setTo(year, week_number);    
-                    }
-                }
-                else if('#' + this.id == input_to) { // změna do
-                    self.setTo(year, week_number);
-                    if(year + padLeft(week_number, 2) < year_from + padLeft(week_from, 2)) { // pokud je vybrán týden do, který je menší než od, týden od se sníží
-                        self.setFrom(year, week_number);    
-                    }
-                }
-
-                beforeSend();
-                $(input_from).prop('disabled', true);
-                $(input_to).prop('disabled', true);
-
-
-                $.get(ajax_handler, {"week_from": week_from, 
-                                     "year_from": year_from,
-                                     "week_to": week_to, 
-                                     "year_to": year_to,
-                                    }, 
-                    function(payload) {
-                        $.nette.success(payload);
-                        afterReceive();
-                        $(input_from).prop('disabled', false);
-                        $(input_to).prop('disabled', false);
-                        changeUrl("?week_from=" + week_from + "&year_from=" + year_from + "&week_to=" + week_to + "&year_to=" + year_to);
-                    }
-                );
-            }
         });
     }
 

@@ -1,5 +1,9 @@
-Date.prototype.getWeek = function(date_string) {
-	var date = new Date(date_string);
+Date.prototype.getWeek = function(date_string = null) {
+    if(date_string != null)
+	   var date = new Date(date_string);
+    else
+       var date = this;
+
 	date.setHours(0, 0, 0, 0);
 	// Thursday in current week decides the year.
 	date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
