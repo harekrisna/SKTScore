@@ -16,11 +16,11 @@ var weekPicker = function(input, ajax_handler) {
     }
 
     this.beforeSend = function(func_declaration) {
-        beforeSend = func_declaration;
+        this.beforeSend = func_declaration;
     }
 
     this.afterReceive = function(func_declaration) {
-        afterReceive = func_declaration;
+        this.afterReceive = func_declaration;
     }
 
     this.getWeek = function() { return self.week_number; }
@@ -69,12 +69,12 @@ var weekPicker = function(input, ajax_handler) {
             year = date.getFullYear();            
             self.setWeekPicker(year, week_number);
             
-            beforeSend();
+            self.beforeSend();
             $(input).prop('disabled', true);
 
             $.get(ajax_handler, {"week": week_number, "year": year}, function(payload) {
                 $.nette.success(payload);
-                afterReceive();
+                self.afterReceive();
                 changeUrl("?week=" + week_number + "&year=" + year );
                 $(input).prop('disabled', false);
             });  

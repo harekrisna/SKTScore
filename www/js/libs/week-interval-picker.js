@@ -3,7 +3,6 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
     this.week_to, 
     this.year_from, 
     this.year_to,
-    this.year_to,
     this.beforeSend = function() {},
     this.afterReceive = function() {};
 
@@ -12,29 +11,29 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
     var self = this;
 
     this.setFrom = function(year, week_number) {
-        self.year_from = year;
-        self.week_from = week_number;
+        this.year_from = year;
+        this.week_from = week_number;
         $(input_from).val("Rok " + year + ": týden " + week_number);
     }
     
     this.setTo = function(year, week_number) {
-        self.year_to = year;
-        self.week_to = week_number;
+        this.year_to = year;
+        this.week_to = week_number;
         $(input_to).val("Rok " + year + ": týden " + week_number);
     }
 
     this.beforeSend = function(func_declaration) {
-        beforeSend = func_declaration;
+        this.beforeSend = func_declaration;
     }
 
     this.afterReceive = function(func_declaration) {
-        afterReceive = func_declaration;
+        this.afterReceive = func_declaration;
     }
 
-    this.getWeekFrom = function() { return week_from; }
-    this.getWeekTo = function() { return week_to; }
-    this.getYearFrom = function() { return year_from; }
-    this.getYearTo = function() { return year_to; }
+    this.getWeekFrom = function() { return this.week_from; }
+    this.getWeekTo = function() { return this.week_to; }
+    this.getYearFrom = function() { return this.year_from; }
+    this.getYearTo = function() { return this.year_to; }
 
     function redrawActiveWeek() {
         var table_year_title_th = $(".datepicker-dropdown table thead tr th.datepicker-switch");
@@ -81,7 +80,7 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
                                 
             var week_number = date.getWeek();
             var year = date.getFullYear();
-
+			
             if('#' + event.target.id == input_from) { // změna od
                 self.setFrom(year, week_number);
                 if(year + padLeft(week_number, 2) > self.year_to + padLeft(self.week_to, 2)) { // pokud je vybrán týden od, který je větší než do, týden do se navýší
@@ -95,10 +94,12 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
                 }
             }
 
-            beforeSend();
+            self.beforeSend();
             $(input_from).prop('disabled', true);
             $(input_to).prop('disabled', true);
-
+			
+			
+			
             $.get(ajax_handler, {"week_from": self.week_from, 
                                  "year_from": self.year_from,
                                  "week_to": self.week_to, 
@@ -106,7 +107,7 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
                                 }, 
                 function(payload) {
                     $.nette.success(payload);
-                    afterReceive();
+                    self.afterReceive();
                     $(input_from).prop('disabled', false);
                     $(input_to).prop('disabled', false);
                     changeUrl("?week_from=" + self.week_from + "&year_from=" + self.year_from + "&week_to=" + self.week_to + "&year_to=" + self.year_to);
