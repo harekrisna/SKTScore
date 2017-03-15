@@ -1,56 +1,60 @@
 var yearPicker = function(input, ajax_handler) {
-    var week_from, 
-        week_to, 
-        year_from, 
-        year_to,
-        selected_month,
-        years_title = new Array("leden", "únor", "březen", "duben", "květen", "červen", "červenec", "srpen", "září", "říjen", "listopad", "prosinec"),
-        beforeSend = function() {},
-        afterReceive = function() {};
+    this.week_from, 
+    this.week_to, 
+    this.year_from, 
+    this.year_to,
+    this.years_title = new Array("leden", "únor", "březen", "duben", "květen", "červen", "červenec", "srpen", "září", "říjen", "listopad", "prosinec"),
+    this.beforeSend = function() {},
+    this.afterReceive = function() {};
 
     var self = this;
 
     this.setFrom = function(year, week) {
-        year_from = year;
-        week_from = week;
+        this.year_from = year;
+        this.week_from = week;
+        redraw();
     }
     
     this.setTo = function(year, week) {
-        year_to = year;
-        week_to = week;
+        this.year_to = year;
+        this.week_to = week;
+        redraw();
     }    
 
-    this.redraw = function() {
-        if(year_from != year_to) {
+    function redraw() {
+        if(self.year_from != self.year_to) {
             $(input).val("");
         }
         else {
             date = new Date();
-            if(week_from == 1 && week_to == date.weeksInYear(year_from)) {
-                $(input).val("Rok " + year_from);
+            if(self.week_from == 1 && self.week_to == date.weeksInYear(self.year_from)) {
+                $(input).datepicker('update', new Date(self.year_from, 1));
+                $(input).val("Rok " + self.year_from);
             }
             else {
+                $(input).datepicker('update', null);
                 $(input).val("");
             }
         }
     }
 
     this.beforeSend = function(func_declaration) {
-        beforeSend = func_declaration;
+        this.beforeSend = func_declaration;
     }
 
     this.afterReceive = function(func_declaration) {
-        afterReceive = func_declaration;
+        this.afterReceive = func_declaration;
     }
 
-    this.getWeekFrom = function() { return week_from; }
-    this.getWeekTo = function() { return week_to; }
-    this.getYearFrom = function() { return year_from; }
-    this.getYearTo = function() { return year_to; }
+    this.getWeekFrom = function() { return this.week_from; }
+    this.getWeekTo = function() { return this.week_to; }
+    this.getYearFrom = function() { return this.year_from; }
+    this.getYearTo = function() { return this.year_to; }
 
     this.clear = function() { 
-        selected_month = null;
-        $(input).val(""); 
+        this.week_from = this.week_to = this.year_from = this.year_to = null;
+        $(input).datepicker('update', null);
+        $(input).val("");
     }
 
     // ajaxová obsluha inputu pro výběr týdne
@@ -64,46 +68,39 @@ var yearPicker = function(input, ajax_handler) {
             minViewMode: "years",
             language: 'cs',
         })
-        .click(function() { // při kliknutí na input se zvýrazní vybraný týden
-            //redrawActiveWeek();
-        })
-
-        .keyup(function() { // při kliknutí na input se zvýrazní vybraný týden
-            //SredrawActiveWeek();
-        });
         
-        $(input).on('change', function (e) { // při změně týdne ze změní zvýrazněný
+        .on("changeDate", function(e) {
             var value = $(input).val();
+            if(isNaN(Date.parse(value)))
+                return;
+
+            year = value;
+            date = new Date();
+            week_from = 1;
+            week_to = date.weeksInYear(year);
+
+            self.setFrom(year, week_from);
+            self.setTo(year, week_to);
             
-            var only_int_value = value.replace(/-/g, '');
-            if(!isNaN(only_int_value)) {
-                year = value;
-                date = new Date();
-                week_from = 1;
-                week_to = date.weeksInYear(year);
+            self.beforeSend();
 
-                year_from = year_to = year;
-                selected_year = year;
+            $(input).prop('disabled', true);
 
-                self.redraw();
-                
-                beforeSend();
-                $(input).prop('disabled', true);
-
-                $.get(ajax_handler,  {"week_from": week_from, 
-                                      "year_from": year_from,
-                                      "week_to": week_to, 
-                                      "year_to": year_to,
-                                     }, 
-                    function(payload) {
-                        $.nette.success(payload);
-                        afterReceive();
-                        changeUrl("?week_from=" + week_from + "&year_from=" + year_from + "&week_to=" + week_to + "&year_to=" + year_to);
-                        $(input).prop('disabled', false);
-                });
-            }
+            $.get(ajax_handler,  {"week_from": week_from, 
+                                  "year_from": year,
+                                  "week_to": week_to, 
+                                  "year_to": year,
+                                 }, 
+                function(payload) {
+                    $.nette.success(payload);
+                    self.afterReceive();
+                    changeUrl("?week_from=" + week_from + "&year_from=" + year + "&week_to=" + week_to + "&year_to=" + year);
+                    $(input).prop('disabled', false);
+            });
         });
     }
 
     initYearPicker(input);
 };
+
+

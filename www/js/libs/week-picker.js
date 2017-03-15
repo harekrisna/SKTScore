@@ -7,12 +7,12 @@ var weekPicker = function(input, ajax_handler) {
     var self = this;
 
     this.setWeekPicker = function(year, week_number) {
-        self.week_number = week_number;
-        self.year = year;
+        this.week_number = week_number;
+        this.year = year;
         date = new Date();
-        monday = date.getMondayOfWeek(self.week_number, self.year);
+        monday = date.getMondayOfWeek(week_number, year);
         $(input).datepicker('update', monday);
-        $(input).val("Rok " + self.year + ": týden " + self.week_number);
+        $(input).val("Rok " + year + ": týden " + week_number);
     }
 
     this.beforeSend = function(func_declaration) {
@@ -23,26 +23,27 @@ var weekPicker = function(input, ajax_handler) {
         this.afterReceive = func_declaration;
     }
 
-    this.getWeek = function() { return self.week_number; }
-    this.getYear = function() { return self.year; }
+    this.getWeek = function() { return this.week_number; }
+    this.getYear = function() { return this.year; }
 
     this.clear = function() { 
-        self.week_number = null;
-        self.year = null;
+        this.week_number = null;
+        this.year = null;
         $(input).val(""); 
     }
 
-    function highlightActiveWeek() {
+    function redrawActiveWeek() {
         var table_year_title_th = $(".datepicker-dropdown table thead tr th.datepicker-switch");
         var table_year_title = $(table_year_title_th).first().html().replace(/[^\d.]/g, '');
+        
+        $(".datepicker-dropdown table tr").removeClass('active');
+        $(".datepicker-dropdown table tr td.active").removeClass('active');
 
         if(table_year_title == self.year) {
             var active_tr = $(".datepicker-dropdown table td.cw").filter(function() { // najdeme řádek obsahující číslo vybraného týdne
                 return $(this).text() == self.week_number;
             }).parent();
 
-            $(".datepicker-dropdown table tr").removeClass('active');
-            active_tr.find('td.active').removeClass('active');
             active_tr.addClass('active');
         }
     }
@@ -80,19 +81,14 @@ var weekPicker = function(input, ajax_handler) {
             });  
         })
 
-        .on("show", function(e) {
-            highlightActiveWeek();
+        .on("show", function(event) {
+            redrawActiveWeek();
         })
 
-        .keyup(function(e) {
-            highlightActiveWeek();
+        .keyup(function(event) {
+            redrawActiveWeek();
         })
-
     }
 
     initDatePicker(input);
-
-    $('body').on('click', '.datepicker-dropdown th.prev, .datepicker-dropdown th.next', function(){
-        highlightActiveWeek();
-    });
 };

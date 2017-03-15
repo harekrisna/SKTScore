@@ -245,11 +245,9 @@
 
                 month_picker.setFrom(week_interval_picker.getYearFrom(), week_interval_picker.getWeekFrom());
                 month_picker.setTo(week_interval_picker.getYearTo(), week_interval_picker.getWeekTo());
-                month_picker.redraw();
 
                 year_picker.setFrom(week_interval_picker.getYearFrom(), week_interval_picker.getWeekFrom());
                 year_picker.setTo(week_interval_picker.getYearTo(), week_interval_picker.getWeekTo());
-                year_picker.redraw();
             });
 
             week_interval_picker.afterReceive(function() {
@@ -283,8 +281,6 @@
                 redrawScoreTable();
             });
 
-            month_picker.redraw();
-
             year_picker.beforeSend(function() {
                 $('#overviewTable').fadeOut();   
                 $('#fountainG').fadeIn();
@@ -298,8 +294,6 @@
                 redrawScoreTable();
             });
 
-            
-            year_picker.redraw();
             generateScoreTableOrder('#overviewTable:not(.empty)', 10);
         });
     </script>

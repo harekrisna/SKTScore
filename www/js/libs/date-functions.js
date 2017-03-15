@@ -49,6 +49,44 @@ Date.prototype.getSundayOfWeek = function(w, y) {
     return ISOweekStart;
 }
 
+// číslo prvního týdne v daném měsíc a v daném roce
+Date.prototype.getMonthStartWeek = function(year, month) {
+    var first_day_of_month = year + "-" + month + "-01";
+    //console.log(first_day_of_month);
+    date = new Date(first_day_of_month);
+    first_day_of_month_daynum = date.getDay();
+    if(first_day_of_month_daynum == 0) first_day_of_month_daynum = 7; // korekce na neděli
+    
+    week = date.getWeek(first_day_of_month);
+    if(first_day_of_month_daynum > 3) { // pokud měsíc začíná déle než ve středu budeme začínat od následujícího týdne, protože první týden náleží minulému měsíci
+        week = week + 1;
+    }
+
+    if(date.getMonth() == 0) // v lednu začínáme prvním týdnem
+        week = 1;
+
+    return week;
+}
+
+// číslo posledního týdne v daném měsíc a v daném roce
+Date.prototype.getMonthLastWeek = function(year, month) {
+    month = parseInt(month, 10);
+    var date = new Date(year, month, 0);
+
+    last_day_of_month_daynum = date.getDay();
+    if(last_day_of_month_daynum == 0) last_day_of_month_daynum = 7; // korekce na neděli
+
+    week = date.getWeek(date);
+    if(last_day_of_month_daynum < 3) { // pokud měsíc končí v pondělí nebo v úterý tak ten týden se započítává až do dalšího
+        week = week - 1;
+    }
+
+    if(date.getMonth() + 1 == 12) // pokud se jedná o prosinec nastaví se poslední týden v roce
+        week = date.weeksInYear(date.getFullYear());
+
+    return week;
+}
+
 Date.prototype.convertDateToMySQLdate = function(date) {
     return date.getFullYear()  + '-' +
            ('0' + (date.getMonth()+1)).slice(-2) + "-" +
