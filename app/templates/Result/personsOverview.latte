@@ -150,6 +150,7 @@
                                 <tr>
                                     <td colspan="10">
                                         <button onclick="window.open({link resultsTablePrintout, $week_from, $year_from, $week_to, $year_to}, 'Náhled pro tisk', 'width=900, height=700, scrollbars=yes').focus()" type="button" class="btn btn-primary tfoot-button">Zobrazit výsledkovou listinu</button>
+                                        <button onclick="window.open({link wsnResults, $week_from, $year_from, $week_to, $year_to}, 'WSN', 'width=900, height=700, scrollbars=yes').focus()" type="button" class="btn btn-success tfoot-button pull-right">Generovat výstup pro WSN</button>
                                         <!--<ul class="pagination pull-right"></ul>-->
                                     </td>
                                 </tr>
@@ -157,26 +158,6 @@
                         </table>
                         {/if}
                         {/snippet}
-                        {* // výsledková listina v modálním okne, kvůli problémům při tisku už se nepoužívá
-                        <div class="modal inmodal fade" id="result_list" tabindex="-1" role="dialog" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                        <h4 class="modal-title">Výsledky {$score_title}</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        
-                                        
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-white" data-dismiss="modal">Zavřít</button>
-                                        <button type="button" class="btn btn-primary" onclick="window.print();">Tisknout</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        *}
                     </div>
                 </div>
             </div>

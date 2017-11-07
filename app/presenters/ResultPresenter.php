@@ -18,6 +18,9 @@ class ResultPresenter extends BasePresenter {
     /** @var ChooseCentersFormFactory @inject */
     public $chooseCentersFormFactory;
 
+    /** @inject @var Nette\Http\Response */
+    public $httpResponse;
+
     public function beforeRender() {
         parent::beforeRender();
         $this->template->addFilter('decimalNumber', $this->context->getService("filters")->decimalNumber);
@@ -158,6 +161,58 @@ class ResultPresenter extends BasePresenter {
 
         $this->template->score_title = $score_title;  
         $this->template->centers_weeks_distribution = $this->distribution->getCentersWeeksDistribution($week_from, $year_from, $week_to, $year_to);
+    }
+
+    public function renderWsnResults($week_from, $year_from, $week_to, $year_to) {
+        $this->setLayout("layout.empty");
+        $this->setView('wsn');
+        
+        $persons = $this->person->findBy(['center_id' => $this->user->center_id]);
+
+        $persons_assoc = [];
+        $name_length_max = 0;
+        
+        foreach ($persons as $person) {
+            $persons_assoc[$person->id] = $person;
+        }
+
+        $this->distribution->setCentersToShow($this->center->findBy(['id' => $this->user->center_id]));
+        $book_points = $this->distribution->getPersonsSumPointsInterval($week_from, $year_from, $week_to, $year_to);
+                                      
+        foreach ($book_points as $person_id => $sum_points) {
+            if(mb_strlen($persons_assoc[$person_id]->name) > $name_length_max)
+                $name_length_max = mb_strlen($persons_assoc[$person_id]->name);
+        }
+
+        $allsum_points_ceil = $this->distribution->getAllSumPointsCeilInterval($week_from, $year_from, $week_to, $year_to);
+        $allsum_points_ceil = number_format($allsum_points_ceil, 0, ".", "'");
+
+        $category_sum_distribution_db = $this->distribution->getCategoriesDistributionSumInterval($week_from, $year_from, $week_to, $year_to);
+        $category_sum_distribution = [];
+
+        foreach ($category_sum_distribution_db as $category => $sum_distribution) {
+            $number = number_format($sum_distribution, 0, ".", "'");
+
+            $category_sum_distribution[$category] = ['number' => $number,
+                                                     'length' => max(strlen($number), 2)];
+        }
+
+        $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
+        $this->template->allsum_points_ceil = $allsum_points_ceil;
+        $this->template->allsum_points_ceil_length = max(strlen($allsum_points_ceil), 6);
+        
+
+        $this->template->category_sum_distribution = $category_sum_distribution;
+        $this->template->names_pad_right = $name_length_max + 1;
+        $this->template->book_points = $book_points;
+        $this->template->center = $this->center->get($this->user->center_id);
+        $this->template->persons = $persons_assoc;
+        $this->template->year = $year_from;
+        $this->template->week_from = $week_from;
+        $this->template->week_to = $week_to;
+        $this->template->timestamp_from = strtotime($year_from."W".$week_from) - (86400 * 1);
+        $this->template->timestamp_to = strtotime($year_to."W".$week_to) + (86400 * 5);
+        
     }
 
     public function actionBooksOverviewOneWeek($week, $year) {

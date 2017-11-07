@@ -70,5 +70,15 @@ class Filters extends Nette\Object {
     
     public function round($number) {
 	    return round($number, 0);
-    }   
+    }
+
+    public function padRightEx($input, $pad_length, $pad_string = ".") {
+        $string = str_pad($input, strlen($input) - mb_strlen($input, "UTF-8") + $pad_length, "~", STR_PAD_RIGHT);
+        return str_replace('~', $pad_string, $string);
+    }
+
+    public function padLeftEx($input, $pad_length, $pad_string = ".") {
+        $string = str_pad($input, strlen($input) - mb_strlen($input, "UTF-8") + $pad_length, "~", STR_PAD_LEFT);
+        return str_replace('~', $pad_string, $string);
+    }    
 }

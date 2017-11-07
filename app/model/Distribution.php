@@ -22,6 +22,10 @@ class Distribution extends TableExtended
 
     }
 
+    public function setCentersToShow($centers_to_show) {
+        $this->centers_to_show = $centers_to_show;
+    }
+
     public function insertResult($person_id, $week, $year, $center_id, $book_id, $quantity) {
 		$week = str_pad($week, 2, "0", STR_PAD_LEFT);
 	    
@@ -201,8 +205,8 @@ class Distribution extends TableExtended
         $result = $this->getTable()->select('person_id, SUM(quantity * book.category.point_value) AS points_sum')
                                    ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
                                    ->where('person.center_id IN(?)', $this->centers_to_show)
-                                   ->group('person_id');
-                       
+                                   ->group('person_id')
+                                   ->order('points_sum DESC');
 
         $score = [];
         foreach ($result as $row) {
