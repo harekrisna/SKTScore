@@ -164,7 +164,6 @@ class ResultPresenter extends BasePresenter {
     }
 
     public function renderWsnResults($week_from, $year_from, $week_to, $year_to) {
-        $this->setLayout("layout.empty");
         $this->setView('wsn');
         
         $persons = $this->person->findBy(['center_id' => $this->user->center_id]);
@@ -188,7 +187,12 @@ class ResultPresenter extends BasePresenter {
         $allsum_points_ceil = number_format($allsum_points_ceil, 0, ".", "'");
 
         $category_sum_distribution_db = $this->distribution->getCategoriesDistributionSumInterval($week_from, $year_from, $week_to, $year_to);
-        $category_sum_distribution = [];
+        $default_sum_distribution = ['number' => 0, 'length' => 2];
+        $category_sum_distribution = ['Mag' => $default_sum_distribution, 
+                                      'Small' => $default_sum_distribution, 
+                                      'Medium' => $default_sum_distribution, 
+                                      'Big' => $default_sum_distribution, 
+                                      'Mahá' => $default_sum_distribution];
 
         foreach ($category_sum_distribution_db as $category => $sum_distribution) {
             $number = number_format($sum_distribution, 0, ".", "'");
@@ -197,6 +201,7 @@ class ResultPresenter extends BasePresenter {
                                                      'length' => max(strlen($number), 2)];
         }
 
+        Debugger::fireLog($category_sum_distribution);
         $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->allsum_points_ceil = $allsum_points_ceil;
         $this->template->allsum_points_ceil_length = max(strlen($allsum_points_ceil), 6);
@@ -210,8 +215,8 @@ class ResultPresenter extends BasePresenter {
         $this->template->year = $year_from;
         $this->template->week_from = $week_from;
         $this->template->week_to = $week_to;
-        $this->template->timestamp_from = strtotime($year_from."W".$week_from) - (86400 * 1);
-        $this->template->timestamp_to = strtotime($year_to."W".$week_to) + (86400 * 5);
+        $this->template->timestamp_from = strtotime($year_from."W".str_pad($week_from, 2, '0', STR_PAD_LEFT));
+        $this->template->timestamp_to = strtotime($year_to."W".str_pad($week_to, 2, '0', STR_PAD_LEFT)) + (86400 * 6);
         
     }
 
