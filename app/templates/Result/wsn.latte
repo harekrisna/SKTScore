@@ -31,14 +31,8 @@ Scores for {$center->title|webalize, " ", false}<br />
 {foreach $book_points as $person_id => $sum_points}
     {var $distribution = $category_distribution[$person_id]}
     
-    {if $persons[$person_id]->name == "﻿﻿﻿﻿﻿﻿Muktakeśa dās"}
-        {!$persons[$person_id]->name|webalize, " ()", false|replace: ["devi dasi", "das"], ["dd", "d"]|padRightEx: $names_pad_right + 6} {* ??? *}
-    {else}
-        {!$persons[$person_id]->name|webalize:" ()", false|replace: ["devi dasi", "das"], ["dd", "d"]|padRightEx: $names_pad_right}
-    {/if}
-
+    {!$persons[$person_id]->name|webalize:" ()", false|replace: ["devi dasi", "das"], ["dd", "d"]|padRightEx: $names_pad_right}
     {!$sum_points|number:0, ".", ""|padLeftEx: $allsum_points_ceil_length}
-
     {isset($distribution['Mag']) ? $distribution['Mag']|padLeftEx, $category_sum_distribution['Mag']['length']|noescape}
     {isset($distribution['Small']) ? $distribution['Small']|padLeftEx, $category_sum_distribution['Small']['length']|noescape}
     {isset($distribution['Medium']) ? $distribution['Medium']|padLeftEx, $category_sum_distribution['Medium']['length']|noescape}
