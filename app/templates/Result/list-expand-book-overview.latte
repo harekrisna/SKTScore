@@ -1,0 +1,26 @@
+<div class="panel-body">
+    <div class="panel-group" id="accordion-{$book_id}">
+        {foreach $centers as $center}
+        {continueIf empty($centers_distribution[$book_id][$center->id])}
+        <div class="panel panel-default float">
+            <div class="panel-heading">
+                <h5 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion-{$center->id}" href="#collapseCenter-{$center->id}">{$center->title}</a>
+                </h5>
+            </div>
+            <div id="collapseCenter-{$center->id}" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <table class="result-detail">
+                    {if isset($book_distribution[$book_id][$center->id])}
+                    {foreach $book_distribution[$book_id][$center->id] as $person_distribution}
+                        {var $person = $persons[$person_distribution['person_id']]}
+                        <tr><th>{$person->name}</th><td>{$person_distribution['quantity']}</td></tr>
+                    {/foreach}
+                    </table>
+                    {/if}
+                </div>
+            </div>
+        </div>
+        {/foreach}
+    </div>
+</div>

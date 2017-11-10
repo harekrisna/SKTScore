@@ -18,9 +18,6 @@ class ResultPresenter extends BasePresenter {
     /** @var ChooseCentersFormFactory @inject */
     public $chooseCentersFormFactory;
 
-    /** @inject @var Nette\Http\Response */
-    public $httpResponse;
-
     public function beforeRender() {
         parent::beforeRender();
         $this->template->addFilter('decimalNumber', $this->context->getService("filters")->decimalNumber);
@@ -35,32 +32,17 @@ class ResultPresenter extends BasePresenter {
         
         $_SESSION['setter_week'] = $week;
         $_SESSION['setter_year'] = $year;
-        
+
 		if($this->getSignal() == null) { // při odeslání personResultsForm nedělat nic
-			$book_distribution = $this->distribution->getPersonsBooksDistribution($week, $year);
-			$books = $this->book->findAll();
-			
-			$persons = $this->person->findBy(['center_id' => $this->user->center_id]);
-			if($this->getUser()->isInRole('superadmin'))
-				$persons = $this->person->findAll();
-			
-			foreach ($persons as $person) {
-				foreach ($books as $book) {
-					if(isset($book_distribution[$person->id][$book->id])) {
-						$this['personResultsForm'][$person->id]['results'][$book->id]->setDefaultValue($book_distribution[$person->id][$book->id]);
-					}
-					else {
-						$this['personResultsForm'][$person->id]['results'][$book->id]->setDefaultValue(0);
-					}
-				}
-			}
-			
-			$this->template->centers = $this->center->findAll()->fetchPairs('id', 'title');
+			$this->template->centers = $this->center->findAll()
+                                                    ->order('title')
+                                                    ->fetchPairs('id', 'title');
 			
             if($this->isAjax()) { // ajaxová změna týdne
                 $this->redrawControl('resultsTable');
             }
 		}
+
 	}
 
 	public function renderSetter() {
@@ -74,16 +56,9 @@ class ResultPresenter extends BasePresenter {
 			$this->template->persons = $this->person->findBy(['center_id' => $this->user->center_id]);
 			if($this->getUser()->isInRole('superadmin'))
 				$this->template->persons = $this->person->findAll();
-			
-            $this->template->primary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
-                                                                           'priority' => "primary"])
-                                                                 ->order('book.category.id, book.title');
-
-            $this->template->secondary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
-                                                                             'priority' => "secondary"])
-                                                                   ->order('book.category.id, book.title');
 
             $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistribution($this->week, $this->year);
+            $this->template->persons_rank = $this->distribution->getPersonsRankBySumPoints($this->week, $this->year);
             $this->template->book_points = $this->distribution->getPersonsSumPoints($this->week, $this->year);
 		}
 	}
@@ -104,14 +79,12 @@ class ResultPresenter extends BasePresenter {
         $this->template->week_to = $week_to;
         $this->template->year_to = $year_to;
 
-        $this->template->persons = $this->person->findAll();   
-        $this->template->books = $this->book->findAll();
-        $this->template->primary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
-                                                                       'priority' => "primary"]);
-
-        $this->template->secondary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
-                                                                         'priority' => "secondary"]);
-                                                                         
+        $this->template->persons = $this->person->findAll();
+        $this->template->centers = $this->center->findAll()
+                                        ->order('title')
+                                        ->fetchPairs('id', 'title');
+                                        
+        $this->template->persons_rank = $this->distribution->getPersonsRankBySumPointsInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->weeks_distribution = $this->distribution->getPersonsWeeksDistribution($week_from, $year_from, $week_to, $year_to);
         $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->category_sum_distribution = $this->distribution->getCategoriesDistributionSumInterval($week_from, $year_from, $week_to, $year_to);
@@ -120,8 +93,7 @@ class ResultPresenter extends BasePresenter {
         $this->template->book_points = $this->distribution->getPersonsSumPointsInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->allsum_points = $this->distribution->getAllSumPointsInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->allsum_points_ceil = $this->distribution->getAllSumPointsCeilInterval($week_from, $year_from, $week_to, $year_to);
-        $this->template->book_distribution = $this->distribution->getPersonsBooksDistributionInterval($week_from, $year_from, $week_to, $year_to);
-
+        
         if($this->isAjax()) {
 	        $this->redrawControl('overviewTable');
             $this->redrawControl('resultsNavigation');
@@ -201,11 +173,9 @@ class ResultPresenter extends BasePresenter {
                                                      'length' => max(strlen($number), 2)];
         }
 
-        Debugger::fireLog($category_sum_distribution);
         $this->template->category_distribution = $this->distribution->getPersonsCategoriesDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->allsum_points_ceil = $allsum_points_ceil;
-        $this->template->allsum_points_ceil_length = max(strlen($allsum_points_ceil), 6);
-        
+        $this->template->allsum_points_ceil_length = max(strlen($allsum_points_ceil), 6);        
 
         $this->template->category_sum_distribution = $category_sum_distribution;
         $this->template->names_pad_right = $name_length_max + 1;
@@ -239,6 +209,9 @@ class ResultPresenter extends BasePresenter {
 		$this->template->persons = $this->person->findAll();
         $this->template->books = $this->book->findAll();
         $this->template->centers = $this->center->findAll();
+        $this->template->categories = $this->category->findAll()
+                                                     ->order('point_value')
+                                                     ->fetchPairs('id', 'title');
         
         $this->template->books_sum_distribution = $this->distribution->getBooksSumDistributionInterval($week_from, $year_from, $week_to, $year_to);
         $this->template->centers_distribution = $this->distribution->getBooksCentersDistributionInterval($week_from, $year_from, $week_to, $year_to);
@@ -278,10 +251,11 @@ class ResultPresenter extends BasePresenter {
             $form->onError[] = array($this, 'sendError');
             return $form;
         });
+
 		return $form;
 	}
 
-    public function saveResults(Form $form, $values) {  
+    public function saveResults(Form $form, $values) { 
         foreach ($values->results as $book_id => $quantity) {
 	        if($this->getUser()->isInRole('superadmin')) {
             	$center_id = $values->center_id;
@@ -290,13 +264,63 @@ class ResultPresenter extends BasePresenter {
 	            $center_id = $this->admin->get($this->getUser()->id)->center_id;
             }
             
-            $this->distribution->insertResult($values->person_id, $this->week, $this->year, $center_id, $book_id, $quantity);    
+            $this->distribution->insertResult($values->person_id, $_SESSION['setter_week'], $_SESSION['setter_year'], $center_id, $book_id, $quantity);    
         }
 
-		$this->payload->categories_points = $this->distribution->getPersonCategoriesDistribution($values->person_id, $this->week, $this->year);
-        $this->payload->points_sum = $this->distribution->getPersonSumPoints($values->person_id, $this->week, $this->year);
+		$this->payload->categories_points = $this->distribution->getPersonCategoriesDistribution($values->person_id, $_SESSION['setter_week'], $_SESSION['setter_year']);
+        $this->payload->points_sum = $this->distribution->getPersonSumPoints($values->person_id, $_SESSION['setter_week'], $_SESSION['setter_year']);
         $this->payload->person_id = $values->person_id;
         $this->flashMessage("Výsledky byly uloženy", 'success');
         $this->sendPayload();
     }
+
+    public function actionExpandResultsRow($record_id) {
+        $book_distribution = $this->distribution->getPersonBooksDistributionInterval($record_id, $_SESSION['setter_week'], $_SESSION['setter_year'], $_SESSION['setter_week'], $_SESSION['setter_year']);
+        $books = $this->book->findAll();
+        
+        foreach ($books as $book) {
+            if(isset($book_distribution[$book->id])) {
+                $this['personResultsForm'][$record_id]['results'][$book->id]->setDefaultValue($book_distribution[$book->id]);
+            }
+            else {
+                $this['personResultsForm'][$record_id]['results'][$book->id]->setDefaultValue(0);
+            }
+        }
+    }
+
+    public function renderExpandResultsRow($record_id) {
+        $this->setLayout(false);
+        $this->setView('list-expand-row');
+        $this->template->person_id = $record_id;
+
+        $this->template->primary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
+                                                                       'priority' => "primary"])
+                                                             ->order('book.category.id, book.title');
+
+        $this->template->secondary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
+                                                                         'priority' => "secondary"])
+                                                               ->order('book.category.id, book.title');
+    }
+
+    public function renderExpandPersonOverviewRow($person_id) {
+        $this->setLayout(false);
+        $this->setView('list-expand-person-overview-row');
+        $this->template->person_id = $person_id;
+        $this->template->book_distribution = $this->distribution->getPersonsBooksDistributionInterval($_SESSION['week_from'], $_SESSION['year_from'], $_SESSION['week_to'], $_SESSION['year_to']);
+        $this->template->primary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
+                                                                       'priority' => "primary"]);
+
+        $this->template->secondary_books = $this->book_priority->findBy(['user_id' => $this->user->id,
+                                                                         'priority' => "secondary"]);
+    }   
+
+    public function renderExpandBookOverviewRow($book_id) {
+        $this->setLayout(false);
+        $this->setView('list-expand-book-overview');
+        $this->template->book_id = $book_id;
+        $this->template->persons = $this->person->findAll();
+        $this->template->centers = $this->center->findAll();
+        $this->template->centers_distribution = $this->distribution->getBooksCentersDistributionInterval($_SESSION['week_from'], $_SESSION['year_from'], $_SESSION['week_to'], $_SESSION['year_to']);
+        $this->template->book_distribution = $this->distribution->getBooksPersonsDistributionInterval($_SESSION['week_from'], $_SESSION['year_from'], $_SESSION['week_to'], $_SESSION['year_to']);
+    }       
 }

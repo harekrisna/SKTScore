@@ -30,8 +30,8 @@ class PersonMigrateFormFactory extends Nette\Object {
 		$form = $this->factory->create();
 	
 		$person_items = $this->person->findAll()
-									 ->fetchPairs('id', 'name')
-									 ->order('name');
+									 ->order('name')
+									 ->fetchPairs('id', 'name');
 
 		$form->addSelect("source_person_id", "Výsledky osoby", $person_items)
 		     ->setPrompt("--- vyber osobu ---")

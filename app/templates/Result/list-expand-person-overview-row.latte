@@ -1,0 +1,36 @@
+<div class="panel-body">
+    <div class="panel-group" id="accordion-{$person_id}">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion-{$person_id}" href="#collapseOne-{$person_id}">Hlavní knihy</a>
+                </h5>
+            </div>
+            <div id="collapseOne-{$person_id}" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    {foreach $primary_books as $book}
+                    <table class="result-detail">
+                        <tr><th>{$book->book->title}</th><td>{isset($book_distribution[$person_id][$book->book_id]) ? $book_distribution[$person_id][$book->book_id] : "0"}</td></tr>
+                    </table>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion-{$person_id} " href="#collapseTwo-{$person_id}">Vedlejší knihy</a>
+                </h5>
+            </div>
+            <div id="collapseTwo-{$person_id}" class="panel-collapse collapse">
+                <div class="panel-body">
+                    {foreach $secondary_books as $book}
+                    <table class="result-detail">
+                        <tr><th>{$book->book->title}</th><td>{isset($book_distribution[$person_id][$book->book_id]) ? $book_distribution[$person_id][$book->book_id] : "0"}</td></tr>
+                    </table>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

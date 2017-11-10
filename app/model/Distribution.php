@@ -97,17 +97,20 @@ class Distribution extends TableExtended
         }
         
         
-        $result = $this->getTable()->select('person_id, center.title AS center, COUNT(DISTINCT(distribution.center_id)) AS diff_centers')
+        $result = $this->getTable()->select('person_id, center.id AS center_id, center.title AS center_title, COUNT(DISTINCT(distribution.center_id)) AS diff_centers')
             								       ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
                                    ->where('person.center_id IN(?)', $this->centers_to_show)
             								       ->group('person_id');
                                
 	      foreach ($result as $row) {
 	          if($row->diff_centers > 1) { // osoba má v daném období výsledky patřící do více center 
-		        	  $score[$row['person_id']]['center'] = $this->person->get($row['person_id'])->center->title; // hlavní centrum osoby
+                $person = $this->person->get($row['person_id']);
+                $score[$row['person_id']]['center_id'] = $person->center->id; // hlavní centrum osoby
+		        	  $score[$row['person_id']]['center_title'] = $person->center->title; // hlavní centrum osoby
 		        } 
 	          else { // osoba má v daném období výsledky patřící do jednoho center 
-		            $score[$row['person_id']]['center'] = $row['center'];
+                $score[$row['person_id']]['center_id'] = $row['center_id'];
+		            $score[$row['person_id']]['center_title'] = $row['center_title'];
 	          }
         }
 		
@@ -195,6 +198,62 @@ class Distribution extends TableExtended
         }
         
         return $score;
+    }
+
+    public function getPersonsRankBySumPoints($week, $year) {
+        $week = str_pad($week, 2, "0", STR_PAD_LEFT);
+        
+        $result = $this->findBy(['week' => $week,
+                                 'year' => $year])
+                       ->group('person_id')
+                       ->select('person_id, SUM(quantity * book.category.point_value) AS points_sum')
+                       ->where('person.center_id IN(?)', $this->centers_to_show)
+                       ->order('points_sum DESC');
+
+        $ranks = [];
+        $rank = 0;
+        $iterator = 0;
+        $last_person_sum_points = INF;
+        
+        foreach ($result as $row) {
+            $iterator++;            
+            if($last_person_sum_points > $row['points_sum']) {
+               $rank = $iterator;
+            }
+
+            $ranks[$row['person_id']] = $rank;
+            $last_person_sum_points = $row['points_sum'];
+        }
+        
+        return $ranks;
+    }
+
+    public function getPersonsRankBySumPointsInterval($week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+        
+        $result = $this->getTable()->select('person_id, SUM(quantity * book.category.point_value) AS points_sum')
+                                   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person.center_id IN(?)', $this->centers_to_show)
+                                   ->group('person_id')
+                                   ->order('points_sum DESC');
+
+        $ranks = [];
+        $rank = 0;
+        $iterator = 0;
+        $last_person_sum_points = INF;
+        
+        foreach ($result as $row) {
+            $iterator++;            
+            if($last_person_sum_points > $row['points_sum']) {
+               $rank = $iterator;
+            }
+
+            $ranks[$row['person_id']] = $rank;
+            $last_person_sum_points = $row['points_sum'];
+        }
+        
+        return $ranks;
     }
 
     // pole osob se součtem bodů v časovém intervalu
@@ -305,7 +364,6 @@ class Distribution extends TableExtended
         return $points_sum;
     }
 
-
     // pole knih s počtem rozdaných knih pro konkrétní osobu
     public function getPersonBooksDistribution($person_id) {
         $result = $this->getTable()->select('book.title AS book_title, SUM(quantity) AS quantity')
@@ -314,6 +372,23 @@ class Distribution extends TableExtended
         $score = [];
         foreach ($result as $row) {
             $score[$row['book_title']] = $row['quantity'];
+        }
+        
+        return $score;
+    }
+
+    // pole knih s počtem rozdaných knih pro konkrétní osobu v daném intervalu
+    public function getPersonBooksDistributionInterval($person_id, $week_from, $year_from, $week_to, $year_to) {
+        $yearweek_from = $year_from.str_pad($week_from, 2, '0', STR_PAD_LEFT);
+        $yearweek_to = $year_to.str_pad($week_to, 2, '0', STR_PAD_LEFT);
+
+        $result = $this->getTable()->select('book.id AS book_id, SUM(quantity) AS quantity')
+                                   ->where('concat(year, week) >= ? AND concat(year, week) <= ?', $yearweek_from, $yearweek_to)
+                                   ->where('person_id', $person_id)
+                                   ->group('book_id');
+        $score = [];
+        foreach ($result as $row) {
+            $score[$row['book_id']] = $row['quantity'];
         }
         
         return $score;

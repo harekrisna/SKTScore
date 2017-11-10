@@ -1,0 +1,40 @@
+ {form personResultsForm-$person_id, data-person_id => $person_id}
+    <div class="panel-body">
+        <div class="panel-group" id="accordion-{$person_id}">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion-{$person_id}" href="#collapseOne-{$person_id}">Hlavní knihy</a>
+                    </h5>
+                </div>
+                <div id="collapseOne-{$person_id}" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <table class="result-detail">
+                        {foreach $primary_books as $book}
+                            <tr><th><label n:name="results-$book->book_id">{$book->book->title}{if $book->book->title != $book->book->category->title} ({$book->book->category->title}){/if}</label></th><td>{input results-$book->book_id}</td></tr>
+                        {/foreach}
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion-{$person_id} " href="#collapseTwo-{$person_id}">Vedlejší knihy</a>
+                    </h5>
+                </div>
+                <div id="collapseTwo-{$person_id}" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <table class="result-detail">
+                        {foreach $secondary_books as $book}
+                            <tr><th>{label results-$book->book_id /}</th><td>{input results-$book->book_id}</td></tr>
+                        {/foreach}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {input person_id}
+    {input save, class => "ladda-button ladda-button-demo btn btn-primary submit", data-style => "zoom-in"}
+{/form}
