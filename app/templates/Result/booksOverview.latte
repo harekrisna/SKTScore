@@ -66,7 +66,7 @@
                             </thead>
                             <tbody>
                                 <tr n:foreach="$books as $book" n:if="isset($centers_distribution[$book->id])" id="book-{$book->id}" data-expand-url="{link expandBookOverviewRow, $book->id}">
-                                    <td data-filter-value="{$book->title|webalize: " ", false}">{$book->title}</td>
+                                    <td data-sort-value="{$book->title|webalize}" data-filter-value="{$book->title|webalize: " ", false}">{$book->title}</td>
                                     <td data-filter-value="{$book->category->id}">{$book->category->title}</td>
                                     {foreach $centers as $center}
                                         {if isset($centers_distribution[$book->id][$center->id])}

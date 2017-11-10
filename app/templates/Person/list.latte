@@ -17,8 +17,8 @@
                     <table class="table table-striped table-bordered table-hover" id="personsTable" style="display: none;">
                         <thead>
                             <tr>
-                                <th class="wide noselect">Jméno</th>
-                                <th class="noselect">Centrum</th>
+                                <th class="wide noselect" data-sorted="true" data-direction="ASC">Jméno</th>
+                                <th class="noselect" data-name="center" >Centrum</th>
                                 <th data-filterable="false" class="noselect th-small" data-type="html">Aktivní</th>
                                 <th data-filterable="false" data-sortable="false" data-name="controls" class="controls"></th>
                                 <th data-breakpoints="all"></th>
@@ -27,7 +27,7 @@
                         <tbody>
                             <tr n:foreach="$records as $record" data-id="{$record->id}" data-expand-url="{link expandRow, $record->id}">
                                 <td data-sort-value="{$record->name|webalize}">{$record->name}</td>
-                                <td data-sort-value="{$record->center->title|webalize}">{$record->center->title}</td>
+                                <td data-sort-value="{$record->center->title|webalize}" data-filter-value="{$record->center->id}">{$record->center->title}</td>
                                 <td data-sort-value="{$record->active}">
                                     <div class="switch active">
                                         <div class="onoffswitch">
@@ -69,6 +69,11 @@
     <!-- Page-Level Scripts -->
     <script> 
         $(document).ready(function() {
+            {if $user->isInRole('superadmin')}
+                FooTable.CentersFiltering = createFooTableFilter('center', 'Všechna centra', {php echo json_encode($centers)});
+                FooTable.components.register('filtering', FooTable.CentersFiltering);
+            {/if}
+            
             initFooTable('#personsTable', "Osoba byla smazána.", "Nelze smazat osobu dokud má přiřazené výsledky.");
             $('#main_loading').fadeOut();
         });

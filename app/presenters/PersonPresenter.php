@@ -27,6 +27,10 @@ class PersonPresenter extends ComplexPresenter {
         if($this->getUser()->isInRole('superadmin')) {
             $this->template->records = $this->model->findAll()
                                                    ->order('center.title');
+
+            $this->template->centers = $this->center->findAll()
+                                                    ->order('title')
+                                                    ->fetchPairs('id', 'title');
         }
         else {
             $this->template->records = $this->model->findBy(['center_id' => $this->user->center_id]);
@@ -63,5 +67,16 @@ class PersonPresenter extends ComplexPresenter {
         $this->template->person_id = $record_id;
         $this->template->books_distribution = $this->distribution->getPersonBooksDistribution($record_id);
         parent::renderExpandRow($record_id);
+    }
+
+    public function actionDelete($id) {
+        $person = $this->model->get($id);
+        
+        if(!$this->getUser()->isInRole('superadmin') && $person->center_id != $this->user->center_id) {
+            throw new Nette\Application\ForbiddenRequestException("Nemůžete smazat osobu z jiného centra!");
+        }
+
+        $this->payload->success = $this->model->delete($id);
+        $this->sendPayload();
     }
 }
