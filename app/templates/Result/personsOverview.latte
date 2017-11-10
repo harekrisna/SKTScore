@@ -86,7 +86,7 @@
                                     {else}
                                         <td data-sort-value="999999999"></td>
                                     {/if}
-                                    <td>{$person->name}</td>
+                                    <td data-filter-value="{$person->name|webalize: " ", false}">{$person->name}</td>
                                     <td data-filter-value="{$distribution['center_id']}">{$distribution['center_title']}</td>
                                     <td data-category="wk" class="center">{isset($weeks_distribution[$person->id]) ? $weeks_distribution[$person->id] : "."}</td>
                                     <td data-category="maha" class="center">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
