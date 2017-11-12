@@ -43,15 +43,17 @@
                                     <td data-sort-value="999999999"></td>
                                 {/if}
                                 <td data-sort-value="{$person->name|webalize}" data-filter-value="{$person->name|webalize: " ", false}">{$person->name}</td>
-                                <td data-sort-value="{$person->center->title|webalize}" data-filter-value="{$person->center->id}">
-                                    {if $user->isInRole('superadmin')}
+                                {if $user->isInRole('superadmin')}
+                                <td data-sort-value="{$person->center->title|webalize}" data-filter-value="{$person->center->id}" class="td-selectable">
                                     <select n:inner-foreach="$centers as $center_id => $center_title" name="center_id[{$person->id}]">
                                     	<option value="{$center_id}"{if $distribution && $center_id == $distribution['center_id']} selected{elseif $center_id == $person->center_id} selected{/if}>{$center_title}</option>
-									</select>
-									{else}
-										{$person->center->title}
-									{/if}
+									</select>									
                                 </td>
+                                {else}
+                                <td data-sort-value="{$person->center->title|webalize}" data-filter-value="{$person->center->id}">
+									{$person->center->title}
+                                </td>
+                                {/if}
                                 <td data-category="maha">{isset($distribution['Mahá']) ? $distribution['Mahá'] : "."}</td>
                                 <td data-category="big">{isset($distribution['Big']) ? $distribution['Big'] : "."}</td>
                                 <td data-category="medium">{isset($distribution['Medium']) ? $distribution['Medium'] : "."}</td>

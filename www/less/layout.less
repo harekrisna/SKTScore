@@ -1,5 +1,13 @@
-.row.padding-bottom {
-	padding-bottom: 30px;
+.row {
+	&.padding-bottom {
+		padding-bottom: 30px;
+	}
+
+	@media (max-width: 768px) {
+		.col-lg-12 {
+			padding: 0;
+		}
+	}
 }
 
 .nav-header {
@@ -76,6 +84,10 @@ ol.breadcrumb li.active {
 
 .ibox-content {
 	min-height: 200px;
+	
+	@media (max-width: 768px) {
+		overflow-x: scroll;
+	}
 }
 
 .modal-lg {
