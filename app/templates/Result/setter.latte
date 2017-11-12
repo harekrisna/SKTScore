@@ -42,7 +42,7 @@
                                 {else}
                                     <td data-sort-value="999999999"></td>
                                 {/if}
-                                <td data-sort-value="{$person->name|webalize} data-filter-value="{$person->name|webalize: " ", false}">{$person->name}</td>
+                                <td data-sort-value="{$person->name|webalize}" data-filter-value="{$person->name|webalize: " ", false}">{$person->name}</td>
                                 <td data-sort-value="{$person->center->title|webalize}" data-filter-value="{$person->center->id}">
                                     {if $user->isInRole('superadmin')}
                                     <select n:inner-foreach="$centers as $center_id => $center_title" name="center_id[{$person->id}]">
