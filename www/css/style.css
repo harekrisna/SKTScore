@@ -59,11 +59,7 @@ ol.breadcrumb li.active {
 }
 .ibox-content {
   min-height: 200px;
-}
-@media (max-width: 768px) {
-  .ibox-content {
-    overflow-x: scroll;
-  }
+  overflow-x: scroll;
 }
 .modal-lg {
   width: 1000px;
