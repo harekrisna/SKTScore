@@ -133,12 +133,34 @@ label.error {
   margin-bottom: 0px;
 }
 .week-input-container {
-  width: 235px;
+  width: 328px;
   float: left;
+}
+.week-input-container .week-input {
+  font-weight: bold;
+  float: left;
+  height: 30px;
+  width: 175px;
 }
 .week-input-container .week-input-label {
   text-align: right;
   padding-right: 5px;
+}
+.week-input-container .btn {
+  width: 40px;
+  height: 30px;
+  font-size: 18px;
+  margin-bottom: 0;
+  padding-top: 2px;
+}
+.week-input-container .btn.btn-left {
+  border-radius: 3px 0 0 3px;
+  border-right: 0;
+  float: left;
+}
+.week-input-container .btn.btn-right {
+  border-radius: 0 3px 3px 0;
+  border-left: 0;
 }
 label.tiny-label {
   width: 41px;
@@ -297,13 +319,6 @@ tr.footable-detail-row .result-detail tr td {
   padding-top: 3px;
   padding-bottom: 3px;
   float: right;
-}
-.week-input {
-  font-weight: bold;
-  float: left;
-  height: 30px;
-  margin-left: 5px;
-  width: 175px;
 }
 .ibox-title.modified {
   padding-top: 10px;

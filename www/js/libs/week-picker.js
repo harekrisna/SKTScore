@@ -87,7 +87,16 @@ var weekPicker = function(input, ajax_handler) {
 
         .keyup(function(event) {
             redrawActiveWeek();
-        })
+        });
+
+        $(input).next('button.btn-right').on("click", function(event) {
+            console.log(self.week_number);
+        });
+
+        $(input).prev('button.btn-left').on("click", function(event) {
+            console.log(self.week_number);
+        });
+
     }
 
     initDatePicker(input);

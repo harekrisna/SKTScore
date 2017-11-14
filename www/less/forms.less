@@ -20,12 +20,38 @@ label.error {
 }
 
 .week-input-container {
-	width: 235px; 
+	width: 328px; 
 	float: left;
+	
+	.week-input {
+		font-weight: bold;
+		float: left;
+		height: 30px;
+	    width: 175px;
+	}
 
 	.week-input-label {
 		text-align: right;
 		padding-right: 5px;
+	}
+
+	.btn {
+		width: 40px;
+		height: 30px;
+		font-size: 18px;
+		margin-bottom: 0;
+		padding-top: 2px;
+
+		&.btn-left {
+			border-radius: 3px 0 0 3px;
+			border-right: 0;
+			float: left;
+		}
+
+		&.btn-right {
+			border-radius: 0 3px 3px 0;
+			border-left: 0;
+		}
 	}
 }
 
