@@ -6,6 +6,12 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
     this.beforeSend = function() {},
     this.afterReceive = function() {};
 
+    this.from_prev_button = $(input_from).prev('button.btn-left');
+    this.from_next_button = $(input_from).next('button.btn-right');
+    this.to_prev_button = $(input_to).prev('button.btn-left');
+    this.to_next_button = $(input_to).next('button.btn-right');
+
+
     var selected_week_number;
     
     var self = this;
@@ -41,6 +47,24 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
     this.getYearFrom = function() { return this.year_from; }
     this.getYearTo = function() { return this.year_to; }
 
+    this.disableControls = function() {
+        $(input_from).prop('disabled', true);
+        $(input_to).prop('disabled', true);
+        $(self.from_prev_button).prop('disabled', true);
+        $(self.from_next_button).prop('disabled', true);
+        $(self.to_prev_button).prop('disabled', true);
+        $(self.to_next_button).prop('disabled', true);
+    }
+
+    this.enableControls = function() {
+        $(input_from).prop('disabled', false);
+        $(input_to).prop('disabled', false);
+        $(self.from_prev_button).prop('disabled', false);
+        $(self.from_next_button).prop('disabled', false);
+        $(self.to_prev_button).prop('disabled', false);
+        $(self.to_next_button).prop('disabled', false);
+    }
+
     function redrawActiveWeek(event) {
         var table_year_title_th = $(".datepicker-dropdown table thead tr th.datepicker-switch");
         var table_year_title = $(table_year_title_th).first().html().replace(/[^\d.]/g, '');
@@ -64,6 +88,21 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
 
             active_tr.attr('class', "active");
         }
+    }
+
+    function sendRequest() {
+        $.get(ajax_handler, {"week_from": self.week_from, 
+                             "year_from": self.year_from,
+                             "week_to": self.week_to, 
+                             "year_to": self.year_to,
+                            }, 
+            function(payload) {
+                $.nette.success(payload);
+                self.afterReceive();
+                changeUrl("?week_from=" + self.week_from + "&year_from=" + self.year_from + "&week_to=" + self.week_to + "&year_to=" + self.year_to);
+                self.enableControls();
+            }
+        );
     }
 
     function initDatePicker(input) {
@@ -102,22 +141,8 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
             }
 
             self.beforeSend();
-            $(input_from).prop('disabled', true);
-            $(input_to).prop('disabled', true);
-			
-            $.get(ajax_handler, {"week_from": self.week_from, 
-                                 "year_from": self.year_from,
-                                 "week_to": self.week_to, 
-                                 "year_to": self.year_to,
-                                }, 
-                function(payload) {
-                    $.nette.success(payload);
-                    self.afterReceive();
-                    $(input_from).prop('disabled', false);
-                    $(input_to).prop('disabled', false);
-                    changeUrl("?week_from=" + self.week_from + "&year_from=" + self.year_from + "&week_to=" + self.week_to + "&year_to=" + self.year_to);
-                }
-            );
+            self.disableControls();
+            sendRequest();
         })
 
         .on("show", function(event) {
@@ -126,9 +151,85 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
 
         .keyup(function(event) {
             redrawActiveWeek(event);
-        })
+        });
+    }
+
+    function initButtonControlsFrom() {
+        $(self.from_next_button).on("click", function(event) {
+            var next_week_from = parseInt(self.week_from) + 1;
+            var year_from = parseInt(self.year_from);
+
+            if(next_week_from > date.weeksInYear(year_from)) {
+                year_from = year_from + 1;
+                next_week_from = 1;
+            }
+
+            self.setFrom(year_from, next_week_from);
+            
+            if(year_from + padLeft(next_week_from, 2) > self.year_to + padLeft(self.week_to, 2)) { // pokud je vybrán týden od, který je větší než do, týden do se navýší
+                self.setTo(year_from, next_week_from);    
+            }
+
+            self.beforeSend();
+            self.disableControls();
+            sendRequest();
+        });
+
+        $(self.from_prev_button).on("click", function(event) {
+            var prev_week_from = parseInt(self.week_from) - 1;
+            var year_from = parseInt(self.year_from);
+
+            if(prev_week_from == 0) {
+                year_from = year_from - 1;
+                prev_week_from = date.weeksInYear(year_from);
+            }
+
+            self.setFrom(year_from, prev_week_from);
+            self.beforeSend();
+            self.disableControls();
+            sendRequest();
+        });        
+    }
+
+    function initButtonControlsTo() {
+        $(self.to_next_button).on("click", function(event) {
+            var next_week_to = parseInt(self.week_to) + 1;
+            var year_to = parseInt(self.year_to);
+
+            if(next_week_to > date.weeksInYear(year_to)) {
+                year_to = year_to + 1;
+                next_week_to = 1;
+            }
+
+            self.setTo(year_to, next_week_to);
+            self.beforeSend();
+            self.disableControls();
+            sendRequest();
+        });
+
+        $(self.to_prev_button).on("click", function(event) {
+            var prev_week_to = parseInt(self.week_to) - 1;
+            var year_to = parseInt(self.year_to);
+
+            if(prev_week_to == 0) {
+                year_to = year_to - 1;
+                prev_week_to = date.weeksInYear(year_to);
+            }
+
+            self.setTo(year_to, prev_week_to);
+            
+            if(year_to + padLeft(prev_week_to, 2) < self.year_from + padLeft(self.week_from, 2)) { // pokud je vybrán týden do, který je menší než od, týden od se sníží
+                self.setFrom(year_to, prev_week_to);    
+            }
+
+            self.beforeSend();
+            self.disableControls();
+            sendRequest();
+        });        
     }
 
     initDatePicker(input_from);
+    initButtonControlsFrom();
     initDatePicker(input_to);
+    initButtonControlsTo();
 }

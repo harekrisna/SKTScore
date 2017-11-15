@@ -16,26 +16,36 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
-                    <div class="ibox-title modified">
+                    <div class="ibox-title modified week-inputs-container">
                         <div class="week-input-container">
                             <label class="control-label tiny-label week-input-label" for="week_from_input">od</label>
+                            <button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
             				<input id="week_from_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
+                            <button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
                         </div>
                         <div class="week-input-container">
                             <label class="control-label tiny-label week-input-label" for="week_to_input">do</label>
+                            <button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
                             <input id="week_to_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
+                            <button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
                         </div>
                         <div class="week-input-container">
                             <label class="control-label tiny-label week-input-label" for="week_one_input">týden</label>
+                            <button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
                             <input id="week_one_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
+                            <button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
                         </div>
                         <div class="week-input-container">
                             <label class="control-label tiny-label week-input-label" for="month_full_input">měsíc</label>
+                            {*<button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>*}
                             <input id="month_full_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
+                            {*<button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>*}
                         </div>
                         <div class="week-input-container">
                             <label class="control-label tiny-label week-input-label" for="year_full_input">rok</label>
+                            {*<button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>*}
                             <input id="year_full_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
+                            {*<button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>*}
                         </div>
                     </div>
 
@@ -154,6 +164,8 @@
                 $('#main_loading').fadeOut();
             }
 
+            var all_week_controls = $('.week-inputs-container input, .week-inputs-container button');
+
             var week_interval_picker = new weekIntervalPicker('#week_from_input', '#week_to_input', {link personsOverview});
             week_interval_picker.setFrom({$year_from}, {$week_from});
             week_interval_picker.setTo({$year_to}, {$week_to});
@@ -181,6 +193,8 @@
                 else {
                     week_picker.clear();
                 }
+                
+                week_picker.disableControls();
 
                 month_picker.setFrom(week_interval_picker.getYearFrom(), week_interval_picker.getWeekFrom());
                 month_picker.setTo(week_interval_picker.getYearTo(), week_interval_picker.getWeekTo());
@@ -191,6 +205,7 @@
 
             week_interval_picker.afterReceive(function() {
                 redrawScoreTable();
+                week_picker.enableControls();
             });
 
             
@@ -199,11 +214,13 @@
                 $('#main_loading').fadeIn();
                 week_interval_picker.setFrom(week_picker.getYear(), week_picker.getWeek());
                 week_interval_picker.setTo(week_picker.getYear(), week_picker.getWeek());
+                week_interval_picker.disableControls();
                 month_picker.clear();
                 year_picker.clear();
             });
 
             week_picker.afterReceive(function() {
+                week_interval_picker.enableControls();
                 redrawScoreTable();
             });
 

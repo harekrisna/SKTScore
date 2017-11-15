@@ -69,7 +69,8 @@
                                 <td><input n:name="$container.'-do_import'" checked class="i-checks"></td>
                                 <td>{$score['position']}</td>
                                 <td>{$score['name']}{input $container."-skpn_alias"}</td>
-                                <td class="no-padding">{input $container."-person_id", class => "form-control small in-table", required => ""}</td>
+                                <td class="no-padding">{input $container."-person_id", class => "form-control small in-table pull-left", required => ""}
+                                {input $container."-center_id", class => "form-control small in-table", required => ""}</td>
                                 <td>{$score['maha']}{input $container."-maha"}</td>
                                 <td>{$score['big']}{input $container."-big"}</td>
                                 <td>{$score['medium']}{input $container."-medium"}</td>
