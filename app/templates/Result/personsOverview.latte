@@ -37,15 +37,15 @@
                         </div>
                         <div class="week-input-container">
                             <label class="control-label tiny-label week-input-label" for="month_full_input">měsíc</label>
-                            {*<button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>*}
+                            <button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
                             <input id="month_full_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
-                            {*<button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>*}
+                            <button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
                         </div>
                         <div class="week-input-container">
                             <label class="control-label tiny-label week-input-label" for="year_full_input">rok</label>
-                            {*<button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>*}
+                            <button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
                             <input id="year_full_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
-                            {*<button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>*}
+                            <button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
                         </div>
                     </div>
 
@@ -157,11 +157,27 @@
             initFooTable('#overviewTable');
             $('#main_loading').fadeOut();
 
-            function redrawScoreTable() {
+            function beforeAnyRequest() {
+                $('#overviewTable').fadeOut();   
+                $('#main_loading').fadeIn();
+                $('.week-inputs-container button, .week-inputs-container input').prop('disabled', true);
+            }
+
+            function afterAnyReceive() {
                 initFooTable('#overviewTable');
                 $('#overviewTable').hide();
                 $('#overviewTable').fadeIn();
                 $('#main_loading').fadeOut();
+
+                $('.week-inputs-container input').each(function( index ) {
+                    $(this).prop('disabled', false);
+                    
+                    var picker_value = $(this).val();
+                    if(picker_value != "") {
+                        $(this).prev('button.btn-left').prop('disabled', false);
+                        $(this).next('button.btn-right').prop('disabled', false);
+                    }
+                });
             }
 
             var all_week_controls = $('.week-inputs-container input, .week-inputs-container button');
@@ -173,6 +189,8 @@
             var week_picker = new weekPicker('#week_one_input', {link personsOverviewOneWeek});
             {if $year_from == $year_to && $week_from == $week_to}
                 week_picker.setWeekPicker({$year_from}, {$week_from});
+            {else}
+                week_picker.clear();
             {/if}
 
             var month_picker = new monthPicker('#month_full_input', {link personsOverview});
@@ -184,70 +202,63 @@
             year_picker.setTo({$year_to}, {$week_to});
 
             week_interval_picker.beforeSend(function() {
-                $('#overviewTable').fadeOut();   
-                $('#main_loading').fadeIn();
-                if(week_interval_picker.getWeekFrom() == week_interval_picker.getWeekTo() && 
-                    week_interval_picker.getYearFrom() == week_interval_picker.getYearTo()) {
+                if(week_interval_picker.getWeekFrom() == week_interval_picker.getWeekTo() && week_interval_picker.getYearFrom() == week_interval_picker.getYearTo()) {
                     week_picker.setWeekPicker(week_interval_picker.getYearFrom(), week_interval_picker.getWeekFrom());
                 }
                 else {
                     week_picker.clear();
                 }
-                
-                week_picker.disableControls();
 
                 month_picker.setFrom(week_interval_picker.getYearFrom(), week_interval_picker.getWeekFrom());
                 month_picker.setTo(week_interval_picker.getYearTo(), week_interval_picker.getWeekTo());
 
                 year_picker.setFrom(week_interval_picker.getYearFrom(), week_interval_picker.getWeekFrom());
                 year_picker.setTo(week_interval_picker.getYearTo(), week_interval_picker.getWeekTo());
+
+                beforeAnyRequest();
             });
 
             week_interval_picker.afterReceive(function() {
-                redrawScoreTable();
-                week_picker.enableControls();
+                afterAnyReceive();
             });
 
-            
             week_picker.beforeSend(function() {
-                $('#overviewTable').fadeOut();   
-                $('#main_loading').fadeIn();
                 week_interval_picker.setFrom(week_picker.getYear(), week_picker.getWeek());
                 week_interval_picker.setTo(week_picker.getYear(), week_picker.getWeek());
-                week_interval_picker.disableControls();
                 month_picker.clear();
                 year_picker.clear();
+
+                beforeAnyRequest();
             });
 
             week_picker.afterReceive(function() {
-                week_interval_picker.enableControls();
-                redrawScoreTable();
+                afterAnyReceive();
             });
 
             month_picker.beforeSend(function() {
-                $('#overviewTable').fadeOut();   
-                $('#main_loading').fadeIn();
                 week_interval_picker.setFrom(month_picker.getYearFrom(), month_picker.getWeekFrom());
                 week_interval_picker.setTo(month_picker.getYearTo(), month_picker.getWeekTo());
                 week_picker.clear();
                 year_picker.clear();
+
+                beforeAnyRequest();
             });
 
             month_picker.afterReceive(function() {
-                redrawScoreTable();
+                afterAnyReceive();
             });
 
             year_picker.beforeSend(function() {
-                $('#overviewTable').fadeOut();   
-                $('#main_loading').fadeIn();
                 week_interval_picker.setFrom(year_picker.getYearFrom(), year_picker.getWeekFrom());
                 week_interval_picker.setTo(year_picker.getYearTo(), year_picker.getWeekTo());
                 week_picker.clear();
                 month_picker.clear();
+
+                beforeAnyRequest();
             });
 
             year_picker.afterReceive(function() {
-                redrawScoreTable();
+                afterAnyReceive();
             });
         });
     </script>

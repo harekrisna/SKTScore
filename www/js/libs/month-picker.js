@@ -7,6 +7,9 @@ var monthPicker = function(input, ajax_handler) {
     this.beforeSend = function() {},
     this.afterReceive = function() {};
 
+    this.prev_button = $(input).prev('button.btn-left');
+    this.next_button = $(input).next('button.btn-right');
+
     var self = this;
 
     this.setFrom = function(year, week) {
@@ -27,25 +30,17 @@ var monthPicker = function(input, ajax_handler) {
             $(input).val("");
         }
         else {
-            var is_in_mounth_range = false;
-            var date = new Date();
+            month_index = date.isInMonthRange(self.year_from, self.week_from, self.year_to, self.week_to);
 
-            for (month_index = 1; month_index <= 12; month_index++) { 
-                start_week = date.getMonthStartWeek(self.year_from, month_index);
-                last_week = date.getMonthLastWeek(self.year_from, month_index);
-                if(start_week == self.week_from && last_week == self.week_to) {
-                    is_in_mounth_range = true;
-                    break;
-                }
-            }
-
-            if(is_in_mounth_range) {
+            if(month_index) {
                 $(input).datepicker('update', new Date(self.year_from, month_index - 1, 1));
                 $(input).val("Rok " + self.year_from + ": " + self.years_title[month_index-1]);
+                self.enableButtons();
             }
             else {
                 $(input).datepicker('update', null);
                 $(input).val("");
+                self.disableButtons();
             }
         }
     }
@@ -68,6 +63,45 @@ var monthPicker = function(input, ajax_handler) {
         this.week_from = this.week_to = this.year_from = this.year_to = null;
         $(input).datepicker('update', null);
         $(input).val("");
+        this.disableButtons();
+    }
+
+    this.disableButtons = function() {
+        $(self.prev_button).prop('disabled', true);
+        $(self.next_button).prop('disabled', true);
+    }
+
+    this.enableButtons = function() {
+        $(self.prev_button).prop('disabled', false);
+        $(self.next_button).prop('disabled', false);
+    }
+
+    this.disableControls = function() {
+        $(input).prop('disabled', true);
+        self.disableButtons();
+    }
+
+    this.enableControls = function() {
+        $(input).prop('disabled', false);
+        self.enableButtons();
+    }
+
+    function sendRequest() {
+        self.beforeSend();
+        self.disableControls();
+
+        $.get(ajax_handler,  {"week_from": self.week_from, 
+                              "year_from": self.year_from,
+                              "week_to": self.week_to, 
+                              "year_to": self.year_to,
+                             }, 
+            function(payload) {
+                $.nette.success(payload);
+                self.afterReceive();
+                changeUrl("?week_from=" + self.week_from + "&year_from=" + self.year_from + "&week_to=" + self.week_to + "&year_to=" + self.year_to);
+                $(input).prop('disabled', false);
+                self.enableControls();
+        });
     }
 
     // ajaxová obsluha inputu pro výběr týdne
@@ -92,25 +126,50 @@ var monthPicker = function(input, ajax_handler) {
             week_to = date.getMonthLastWeek(date.getFullYear(), padLeft(date.getMonth() + 1, 2));
 
             year_from = year_to = date.getFullYear();
-            
+
             self.setFrom(year_from, week_from);
             self.setTo(year_to, week_to);
 
-            self.beforeSend();
-            $(input).prop('disabled', true);
+            sendRequest(); 
+        });
 
-            $.get(ajax_handler,  {"week_from": week_from, 
-                                  "year_from": year_from,
-                                  "week_to": week_to, 
-                                  "year_to": year_to,
-                                 }, 
-                function(payload) {
-                    $.nette.success(payload);
-                    self.afterReceive();
-                    changeUrl("?week_from=" + week_from + "&year_from=" + year_from + "&week_to=" + week_to + "&year_to=" + year_to);
-                    $(input).prop('disabled', false);
-            });
-        })
+        $(self.next_button).on("click", function(event) {
+            var month_index = date.isInMonthRange(self.year_from, self.week_from, self.year_to, self.week_to);
+            var year = parseInt(self.year_from);
+
+            month_index = month_index + 1;
+            if(month_index > 12)  {
+                month_index = 1;
+                year = year + 1;
+            }
+
+            week_from = date.getMonthStartWeek(year, padLeft(month_index , 2));
+            week_to = date.getMonthLastWeek(year, padLeft(month_index, 2));
+            year_from = year_to = year;
+
+            self.setFrom(year_from, week_from);
+            self.setTo(year_to, week_to);
+            sendRequest();
+        });
+
+        $(self.prev_button).on("click", function(event) {
+            var month_index = date.isInMonthRange(self.year_from, self.week_from, self.year_to, self.week_to);
+            var year = parseInt(self.year_from);
+
+            month_index = month_index - 1;
+            if(month_index < 1)  {
+                month_index = 12;
+                year = year - 1;
+            }
+
+            week_from = date.getMonthStartWeek(year, padLeft(month_index , 2));
+            week_to = date.getMonthLastWeek(year, padLeft(month_index, 2));
+            year_from = year_to = year;
+
+            self.setFrom(year_from, week_from);
+            self.setTo(year_to, week_to);
+            sendRequest();
+        });
     }
 
     initMonthPicker(input);

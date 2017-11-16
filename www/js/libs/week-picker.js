@@ -16,6 +16,7 @@ var weekPicker = function(input, ajax_handler) {
         monday = date.getMondayOfWeek(week_number, year);
         $(input).datepicker('update', monday);
         $(input).val("Rok " + year + ": týden " + week_number);
+        self.enableButtons();
     }
 
     this.beforeSend = function(func_declaration) {
@@ -33,18 +34,27 @@ var weekPicker = function(input, ajax_handler) {
         this.week_number = null;
         this.year = null;
         $(input).val(""); 
+        this.disableButtons();
+    }
+
+    this.disableButtons = function() {
+        $(this.prev_button).prop('disabled', true);
+        $(this.next_button).prop('disabled', true);
+    }
+
+    this.enableButtons = function() {
+        $(this.prev_button).prop('disabled', false);
+        $(this.next_button).prop('disabled', false);
     }
 
     this.disableControls = function() {
         $(input).prop('disabled', true);
-        $(self.prev_button).prop('disabled', true);
-        $(self.next_button).prop('disabled', true);
+        this.disableButtons();
     }
 
     this.enableControls = function() {
         $(input).prop('disabled', false);
-        $(self.prev_button).prop('disabled', false);
-        $(self.next_button).prop('disabled', false);
+        this.enableButtons();
     }
 
     function redrawActiveWeek() {
@@ -61,6 +71,18 @@ var weekPicker = function(input, ajax_handler) {
 
             active_tr.addClass('active');
         }
+    }
+
+    function sendRequest() {
+        self.beforeSend();
+        self.disableControls();
+
+        $.get(ajax_handler, {"week": self.week_number, "year": self.year}, function(payload) {
+            $.nette.success(payload);
+            self.afterReceive();
+            changeUrl("?week=" + self.week_number + "&year=" + self.year );
+            self.enableControls();
+        }); 
     }
 
     // ajaxová obsluha inputu pro výběr týdne
@@ -85,15 +107,7 @@ var weekPicker = function(input, ajax_handler) {
             year = date.getFullYear();            
             
             self.setWeekPicker(year, week_number);
-            self.beforeSend();
-            self.disableControls();
-
-            $.get(ajax_handler, {"week": week_number, "year": year}, function(payload) {
-                $.nette.success(payload);
-                self.afterReceive();
-                changeUrl("?week=" + week_number + "&year=" + year );
-                self.enableControls();
-            });  
+            sendRequest(); 
         })
 
         .on("show", function(event) {
@@ -114,16 +128,7 @@ var weekPicker = function(input, ajax_handler) {
             }
 
             self.setWeekPicker(year, next_week);
-            self.beforeSend();
-            self.disableControls();
-
-            $.get(ajax_handler, {"week": next_week, "year": year}, function(payload) {
-                $.nette.success(payload);
-                self.afterReceive();
-                self.setWeekPicker(year, next_week);
-                changeUrl("?week=" + next_week + "&year=" + year );
-                self.enableControls();
-            });
+            sendRequest();
         });
 
         $(self.prev_button).on("click", function(event) {
@@ -136,15 +141,7 @@ var weekPicker = function(input, ajax_handler) {
             }
 
             self.setWeekPicker(year, prev_week);
-            self.beforeSend();
-            self.disableControls();
-
-            $.get(ajax_handler, {"week": prev_week, "year": year}, function(payload) {
-                $.nette.success(payload);
-                self.afterReceive();
-                changeUrl("?week=" + prev_week + "&year=" + year );
-                self.enableControls();
-            });
+            sendRequest();
         });
     }
 

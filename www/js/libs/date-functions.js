@@ -128,3 +128,22 @@ Date.prototype.weeksInYear = function(year) {
     var week = getWeekNumber(d)[1];
     return week == 1? getWeekNumber(d.setDate(24))[1] : week;
 }
+
+Date.prototype.isInMonthRange = function(year_from, week_from, year_to, week_to) {
+    var is_in_mounth_range = false;
+    var date = new Date();
+
+    for (month_index = 1; month_index <= 12; month_index++) { 
+        start_week = date.getMonthStartWeek(year_from, month_index);
+        last_week = date.getMonthLastWeek(year_from, month_index);
+        if(start_week == week_from && last_week == week_to) {
+            is_in_mounth_range = true;
+            break;
+        }
+    }
+
+    if(is_in_mounth_range)
+        return month_index;
+    else
+        return false;
+}

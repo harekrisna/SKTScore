@@ -91,6 +91,9 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
     }
 
     function sendRequest() {
+        self.beforeSend();
+        self.disableControls();
+
         $.get(ajax_handler, {"week_from": self.week_from, 
                              "year_from": self.year_from,
                              "week_to": self.week_to, 
@@ -140,8 +143,6 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
                 }
             }
 
-            self.beforeSend();
-            self.disableControls();
             sendRequest();
         })
 
@@ -170,8 +171,6 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
                 self.setTo(year_from, next_week_from);    
             }
 
-            self.beforeSend();
-            self.disableControls();
             sendRequest();
         });
 
@@ -185,8 +184,6 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
             }
 
             self.setFrom(year_from, prev_week_from);
-            self.beforeSend();
-            self.disableControls();
             sendRequest();
         });        
     }
@@ -202,8 +199,6 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
             }
 
             self.setTo(year_to, next_week_to);
-            self.beforeSend();
-            self.disableControls();
             sendRequest();
         });
 
@@ -222,8 +217,6 @@ var weekIntervalPicker = function(input_from, input_to, ajax_handler) {
                 self.setFrom(year_to, prev_week_to);    
             }
 
-            self.beforeSend();
-            self.disableControls();
             sendRequest();
         });        
     }
