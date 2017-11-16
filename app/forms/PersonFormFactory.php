@@ -76,7 +76,7 @@ class PersonFormFactory extends Nette\Object {
 			}
 		}
 		catch(\App\Model\DuplicateException $e) {
-			$form['data']['name']->addError("Osoba s tímto jménem již existuje.");
+			$form['data']['name']->addError("Osoba s tímto jménem v tomto centru již existuje.");
 		}
 	}
 }
