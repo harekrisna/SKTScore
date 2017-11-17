@@ -48,6 +48,13 @@
 	                </li>
 	                <li n:class="$presenter->isLinkCurrent('Result:*') ? active">
 	                    <a n:href="Result:setter, $setter_week, $setter_year" title="Výsledky"><i class="fa fa-th-large"></i><span class="nav-label">Výsledky</span><span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level collapse">
+                            <li n:class="$presenter->isLinkCurrent('Result:setter') ? active"><a n:href="Result:setter, $setter_week, $setter_year">Zadávání</a></li>
+                            <li n:if="$user->isInRole('superadmin') || $user->id == 5" n:class="$presenter->isLinkCurrent('ImportSkpn:importSkpn') ? active"><a n:href="ImportSkpn:importSkpn">Import z SKPN</a></li>
+                            <li n:class="$presenter->isLinkCurrent('Result:personsOverview') || $presenter->isLinkCurrent('Result:personsOverviewOneWeek') ? active"><a n:href="Result:personsOverview, $week_from, $year_from, $week_to, $year_to">Osoby</a></li>
+                            <li n:class="$presenter->isLinkCurrent('Result:booksOverview') || $presenter->isLinkCurrent('Result:booksOverviewOneWeek') ? active"><a n:href="Result:booksOverview, $week_from, $year_from, $week_to, $year_to">Knihy</a></li>
+                            <li n:class="$presenter->isLinkCurrent('ResultSettings:showCenters') ? active"><a n:href="ResultSettings:showCenters">Nastavení</a></li>
+                        </ul>
 	                </li>
 	                <li n:class="$presenter->isLinkCurrent('Person:*') ? active">
 	                    <a n:href="Person:list" title="Osoby"><i class="fa fa-child"></i><span class="nav-label">Osoby</span><span class="fa arrow"></span></a>

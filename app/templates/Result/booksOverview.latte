@@ -11,26 +11,36 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
-                    <div class="ibox-title modified">
+                    <div class="ibox-title modified week-inputs-container">
                         <div class="week-input-container">
                             <label class="control-label tiny-label week-input-label" for="week_from_input">od</label>
+                            <button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
                             <input id="week_from_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
+                            <button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
                         </div>
                         <div class="week-input-container">
                             <label class="control-label tiny-label week-input-label" for="week_to_input">do</label>
+                            <button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
                             <input id="week_to_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
+                            <button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
                         </div>
                         <div class="week-input-container">
                             <label class="control-label tiny-label week-input-label" for="week_one_input">týden</label>
+                            <button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
                             <input id="week_one_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
+                            <button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
                         </div>
                         <div class="week-input-container">
                             <label class="control-label tiny-label week-input-label" for="month_full_input">měsíc</label>
+                            <button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
                             <input id="month_full_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
+                            <button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
                         </div>
                         <div class="week-input-container">
                             <label class="control-label tiny-label week-input-label" for="year_full_input">rok</label>
+                            <button class="btn btn-white btn-left" type="button"><i class="fa fa-arrow-left" aria-hidden="true"></i></button>
                             <input id="year_full_input" class="form-control week-input" onkeydown="return false" readonly="true"/>
+                            <button class="btn btn-white btn-right" type="button"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
                         </div>
                     </div>
                     
@@ -123,12 +133,30 @@
             initFooTable('#overviewTable');
             $('#main_loading').fadeOut();
 
-            function redrawScoreTable() {
+            function beforeAnyRequest() {
+                $('#overviewTable').fadeOut();   
+                $('#main_loading').fadeIn();
+                $('.week-inputs-container button, .week-inputs-container input').prop('disabled', true);
+            }
+
+            function afterAnyReceive() {
                 initFooTable('#overviewTable');
                 $('#overviewTable').hide();
                 $('#overviewTable').fadeIn();
                 $('#main_loading').fadeOut();
+
+                $('.week-inputs-container input').each(function( index ) {
+                    $(this).prop('disabled', false);
+                    
+                    var picker_value = $(this).val();
+                    if(picker_value != "") {
+                        $(this).prev('button.btn-left').prop('disabled', false);
+                        $(this).next('button.btn-right').prop('disabled', false);
+                    }
+                });
             }
+
+            var all_week_controls = $('.week-inputs-container input, .week-inputs-container button');
 
             var week_interval_picker = new weekIntervalPicker('#week_from_input', '#week_to_input', {link booksOverview});
             week_interval_picker.setFrom({$year_from}, {$week_from});
@@ -137,6 +165,8 @@
             var week_picker = new weekPicker('#week_one_input', {link booksOverviewOneWeek});
             {if $year_from == $year_to && $week_from == $week_to}
                 week_picker.setWeekPicker({$year_from}, {$week_from});
+            {else}
+                week_picker.clear();
             {/if}
 
             var month_picker = new monthPicker('#month_full_input', {link booksOverview});
@@ -148,11 +178,8 @@
             year_picker.setTo({$year_to}, {$week_to});
 
             week_interval_picker.beforeSend(function() {
-                $('#overviewTable').fadeOut();   
-                $('#main_loading').fadeIn();
-                if(week_interval_picker.getWeekFrom() == week_interval_picker.getWeekTo() && 
-                   week_interval_picker.getYearFrom() == week_interval_picker.getYearTo()) {
-                   week_picker.setWeekPicker(week_interval_picker.getYearFrom(), week_interval_picker.getWeekFrom());
+                if(week_interval_picker.getWeekFrom() == week_interval_picker.getWeekTo() && week_interval_picker.getYearFrom() == week_interval_picker.getYearTo()) {
+                    week_picker.setWeekPicker(week_interval_picker.getYearFrom(), week_interval_picker.getWeekFrom());
                 }
                 else {
                     week_picker.clear();
@@ -163,56 +190,52 @@
 
                 year_picker.setFrom(week_interval_picker.getYearFrom(), week_interval_picker.getWeekFrom());
                 year_picker.setTo(week_interval_picker.getYearTo(), week_interval_picker.getWeekTo());
+
+                beforeAnyRequest();
             });
 
             week_interval_picker.afterReceive(function() {
-                redrawScoreTable();
+                afterAnyReceive();
             });
 
-            
             week_picker.beforeSend(function() {
-                $('#overviewTable').fadeOut();   
-                $('#main_loading').fadeIn();
                 week_interval_picker.setFrom(week_picker.getYear(), week_picker.getWeek());
                 week_interval_picker.setTo(week_picker.getYear(), week_picker.getWeek());
                 month_picker.clear();
                 year_picker.clear();
+
+                beforeAnyRequest();
             });
 
             week_picker.afterReceive(function() {
-                redrawScoreTable();
+                afterAnyReceive();
             });
 
-
             month_picker.beforeSend(function() {
-                $('#overviewTable').fadeOut();   
-                $('#main_loading').fadeIn();
                 week_interval_picker.setFrom(month_picker.getYearFrom(), month_picker.getWeekFrom());
                 week_interval_picker.setTo(month_picker.getYearTo(), month_picker.getWeekTo());
                 week_picker.clear();
                 year_picker.clear();
+
+                beforeAnyRequest();
             });
 
             month_picker.afterReceive(function() {
-                redrawScoreTable();
+                afterAnyReceive();
             });
 
-
             year_picker.beforeSend(function() {
-                $('#overviewTable').fadeOut();   
-                $('#main_loading').fadeIn();
                 week_interval_picker.setFrom(year_picker.getYearFrom(), year_picker.getWeekFrom());
                 week_interval_picker.setTo(year_picker.getYearTo(), year_picker.getWeekTo());
                 week_picker.clear();
                 month_picker.clear();
+
+                beforeAnyRequest();
             });
 
             year_picker.afterReceive(function() {
-                redrawScoreTable();
+                afterAnyReceive();
             });
-
-            
-            
         });
     </script>
 {/block}

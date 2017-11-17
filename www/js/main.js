@@ -67,11 +67,12 @@ function initFooTable(table, success_message = "Záznam byl smazán.", error_mes
             var table = this.inputValue;  
   	        var table = $(table).data('footable');
   	        var row = $(invoker).parents('tr:first');
+            row = FooTable.getRow(row);
   	        $.get(invoker.href, 
   	            function (payload) { 
   	                $.nette.success(payload);
   	                if(payload.success) {
-  	                	  table.removeRow(row);
+  	                	  row.delete();
   	                	  swal("Smazáno!", success_message, "success");
   	                }
   	               	else {

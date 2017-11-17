@@ -19,4 +19,11 @@ class CenterPresenter extends ComplexPresenter {
         }
 		$this->model = $this->center;
 	}
+
+	public function renderList() {
+    	parent::renderList();
+        $this->template->countries = $this->country->findAll()
+                                                   ->order('title')
+                                                   ->fetchPairs('id', 'title');
+    }	
 }

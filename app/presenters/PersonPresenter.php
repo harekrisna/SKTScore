@@ -23,7 +23,6 @@ class PersonPresenter extends ComplexPresenter {
 	}
 
     public function renderList() {
-
         if($this->getUser()->isInRole('superadmin')) {
             $this->template->records = $this->model->findAll()
                                                    ->order('center.title');
