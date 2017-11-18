@@ -1,17 +1,47 @@
-<div class="panel-body">
-    <div class="panel-group" id="accordion-{$person_id}">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h5 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion-{$person_id}" href="#collapse-{$person_id}">Celková distribuce knih</a>
-                </h5>
+<div class="tabs-container">
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#person_{$person->id}-tab-1">Celková distribuce knih</a></li>
+        <li class=""><a data-toggle="tab" href="#person_{$person->id}-tab-2">Týdny</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="person_{$person->id}-tab-1" class="tab-pane active">
+            <div class="panel-body">
+                <table n:inner-foreach="$books_distribution as $book_title => $quantity" class="result-detail">   
+                    <tr><th>{$book_title}</th><td>{$quantity}</td></tr>
+                </table>
             </div>
-            <div id="collapse-{$person_id}" class="panel-collapse collapse in">
-                <div class="panel-body">
-                    <table n:inner-foreach="$books_distribution as $book_title => $quantity" class="result-detail">   
-                        <tr><th>{$book_title}</th><td>{$quantity}</td></tr>
-                    </table>
-                </div>
+        </div>
+        <div id="person_{$person->id}-tab-2" class="tab-pane">
+            <div class="panel-body">
+	            <canvas id="distribution_chart_{$person->id}"></canvas>
+	            <script>
+			            var ctx = $("#distribution_chart_" + {$person->id});
+			            
+				        var myChart = new Chart($(ctx), {
+						    type: 'bar',
+						    data: {
+						        labels: [{foreach $chart_data as $label => $value}{$label}{sep}, {/sep}{/foreach}],
+						        datasets: [{
+						            label: {$person->name},
+						            data: [{foreach $chart_data as $label => $value}{$value}{sep}, {/sep}{/foreach}],
+						            borderWidth: 1
+						        }]
+						    },
+						    options: {
+						        scales: {
+						            yAxes: [{
+						                ticks: {
+						                    beginAtZero:true
+						                },
+						                scaleLabel: {
+									        display: true,
+									        labelString: 'book points'
+									    }
+						            }]
+						        }
+						    }
+						});
+		        </script>
             </div>
         </div>
     </div>

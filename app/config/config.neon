@@ -47,4 +47,5 @@ services:
 	book_priority: App\Model\BookPriority
 	category: App\Model\Category
 	distribution: App\Model\Distribution
+	chartsData: App\Model\ChartsData
 	week: App\Model\Week

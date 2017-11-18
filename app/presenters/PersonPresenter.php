@@ -63,8 +63,16 @@ class PersonPresenter extends ComplexPresenter {
     }
 
     public function renderExpandRow($record_id) {
-        $this->template->person_id = $record_id;
+        $this->template->person = $this->person->get($record_id);
         $this->template->books_distribution = $this->distribution->getPersonBooksDistribution($record_id);
+        $weeks = $this->chartsData->getPersonWeeksDistribution($record_id);
+        
+        $chart_data = [];
+        foreach($weeks as $week) {
+	        $chart_data[substr($week->year, 2, 2)." ".$week->week] = $week->points_sum;
+        }
+        
+        $this->template->chart_data = $chart_data;
         parent::renderExpandRow($record_id);
     }
 
