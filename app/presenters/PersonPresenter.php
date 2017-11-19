@@ -23,6 +23,19 @@ class PersonPresenter extends ComplexPresenter {
 	}
 
     public function renderList() {
+	    $first_week = $this->chartsData->getPersonFirstWeeksDistribution(320);
+	    $last_week = $this->chartsData->getPersonLastWeeksDistribution(320);
+	    
+	    $weeks = $this->chartsData->generateWeeksAxis($first_week->year, $first_week->week, $last_week->year, $last_week->week);
+	    $x_axis = [];
+	    foreach($weeks as $year => $year_weeks) {
+		    foreach ($year_weeks as $week => $points) {
+			 	$x_axis[] = $year." ".$week;   
+		    }
+	    }
+	    
+	    $this->template->x_axis = $x_axis;
+	    
         if($this->getUser()->isInRole('superadmin')) {
             $this->template->records = $this->model->findAll()
                                                    ->order('center.title');
@@ -69,7 +82,7 @@ class PersonPresenter extends ComplexPresenter {
         
         $chart_data = [];
         foreach($weeks as $week) {
-	        $chart_data[substr($week->year, 2, 2)." ".$week->week] = $week->points_sum;
+	        $chart_data[$week->year."/".$week->week] = $week->points_sum;
         }
         
         $this->template->chart_data = $chart_data;

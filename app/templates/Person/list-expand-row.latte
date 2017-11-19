@@ -13,34 +13,52 @@
         </div>
         <div id="person_{$person->id}-tab-2" class="tab-pane">
             <div class="panel-body">
-	            <canvas id="distribution_chart_{$person->id}"></canvas>
+	            <canvas id="distribution_chart_{$person->id}" height="120"></canvas>
 	            <script>
-			            var ctx = $("#distribution_chart_" + {$person->id});
-			            
-				        var myChart = new Chart($(ctx), {
-						    type: 'bar',
-						    data: {
-						        labels: [{foreach $chart_data as $label => $value}{$label}{sep}, {/sep}{/foreach}],
-						        datasets: [{
-						            label: {$person->name},
-						            data: [{foreach $chart_data as $label => $value}{$value}{sep}, {/sep}{/foreach}],
-						            borderWidth: 1
-						        }]
-						    },
-						    options: {
-						        scales: {
-						            yAxes: [{
-						                ticks: {
-						                    beginAtZero:true
-						                },
-						                scaleLabel: {
-									        display: true,
-									        labelString: 'book points'
-									    }
-						            }]
-						        }
-						    }
-						});
+		            var ctx = $("#distribution_chart_" + {$person->id});
+		            
+			        var myChart = new Chart($(ctx), {
+					    type: 'bar',
+					    data: {
+					        labels: [{foreach $chart_data as $label => $value}{$label}{sep}, {/sep}{/foreach}],
+					        datasets: [{
+					            label: {$person->name},
+					            data: [{foreach $chart_data as $label => $value}{$value}{sep}, {/sep}{/foreach}],
+					            backgroundColor: "#63be7b",
+								borderColor: '#1ab394',
+					            borderWidth: 1
+					        }]
+					    },
+					    options: {
+					        scales: {
+					            yAxes: [{
+						            type: 'linear',
+					                ticks: {
+					                    beginAtZero: true,
+					                    max: 1300,
+					                },	
+					                scaleLabel: {
+								        display: true,
+								        labelString: 'book points'
+								    },	
+					            }]
+					        },
+					        tooltips: {
+						        mode: 'index',
+			                    intersect: false,
+			            		callbacks: {
+			                		title: function(tooltipItem, data){
+				                		var xLabel = tooltipItem[0].xLabel
+				                		var xLabel_parts = xLabel.split("/");
+			                    		return "Rok " + xLabel_parts[0] + " - týden " + xLabel_parts[1];
+			                    	},
+			                    	label: function(tooltipItem, data) {
+						                return " " + tooltipItem.yLabel + " bodů";
+						            }
+			                	}
+			            	}
+					    }
+					});
 		        </script>
             </div>
         </div>
