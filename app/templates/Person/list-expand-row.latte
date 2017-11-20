@@ -16,17 +16,16 @@
 	            <canvas id="distribution_chart_{$person->id}" height="120"></canvas>
 	            <script>
 		            var ctx = $("#distribution_chart_" + {$person->id});
-		            
 			        var myChart = new Chart($(ctx), {
 					    type: 'bar',
 					    data: {
-					        labels: [{foreach $chart_data as $label => $value}{$label}{sep}, {/sep}{/foreach}],
+					        xLabels: {$x_axis},
 					        datasets: [{
 					            label: {$person->name},
-					            data: [{foreach $chart_data as $label => $value}{$value}{sep}, {/sep}{/foreach}],
+					            data: {$x_data},
 					            backgroundColor: "#63be7b",
 								borderColor: '#1ab394',
-					            borderWidth: 1
+					            borderWidth: 1,		            
 					        }]
 					    },
 					    options: {

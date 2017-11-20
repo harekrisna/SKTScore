@@ -20,13 +20,20 @@ class ChartsData extends TableExtended
  
 
     // pole osob s polem kategorií s hodnotou kolik rozdal v této kategorii a za jaké centrum za daný týden
-    public function getPersonWeeksDistribution($person_id) {
+    public function getWeeksPersonSumDistribution($person_id) {
         $result = $this->findBy(['person_id' => $person_id])
                        ->group('year, week')
                        ->select("person_id, year, week, SUM(quantity * book.category.point_value) AS points_sum")
                        ->order('year, week');
 
-        return $result;
+        $distribution = [];
+		
+		foreach($result as $row) {
+			$week = ltrim($row->week, '0');
+            $distribution[$row->year][$week] = $row->points_sum;
+        }
+	        
+        return $distribution;
     }
     
     // první měsíc s výsledky dané osoby
@@ -58,13 +65,10 @@ class ChartsData extends TableExtended
 	    return ($date->format("W") === "53" ? 53 : 52);
 	}
 	
-	function generateWeeksAxis($year_from, $week_form, $year_to, $week_to) {		    
+	function generateWeeksAxis($year_from, $week_form, $year_to, $week_to) {
+		$week_form = intval($week_form);
+		$week_to = intval($week_to);
 	    $weeks_axis = [];
-	    
-	    Debugger::fireLog($year_from);
-	    Debugger::fireLog($week_form);
-	    Debugger::fireLog($year_to);
-	    Debugger::fireLog($week_to);
 	    
 	    for($year = $year_from; $year <= $year_to; $year++) {
 		    $weeks_in_year = $this->getIsoWeeksInYear($year);
@@ -73,17 +77,17 @@ class ChartsData extends TableExtended
 		    // první rok
 		    if($year == $year_from) {
 				for($week = $week_form; $week <= $weeks_in_year; $week++) {
-					$year_weeks[$week] = 0;    
+					$year_weeks[$week] = null;    
 		    	}    
 		    }
 		    elseif($year == $year_to) { // poslední rok
 			    for($week = 1; $week <= $week_to; $week++) {
-					$year_weeks[$week] = 0;    
+					$year_weeks[$week] = null;    
 		    	}
 		    }
 		    else { // roky mezi
 				for($week = 1; $week <= $weeks_in_year; $week++) {
-					$year_weeks[$week] = 0;    
+					$year_weeks[$week] = null;    
 			    }		        
 		    }
 		    

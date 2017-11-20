@@ -27,7 +27,7 @@ class Distribution extends TableExtended
     }
 
     public function insertResult($person_id, $week, $year, $center_id, $book_id, $quantity) {
-		$week = str_pad($week, 2, "0", STR_PAD_LEFT);
+        $week = str_pad($week, 2, "0", STR_PAD_LEFT);
 	    
         $distribution_record = $this->findBy(['person_id' => $person_id, 
                                               'week' => $week,
