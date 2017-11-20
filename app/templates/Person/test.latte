@@ -1,0 +1,72 @@
+{layout 'layout.latte'}
+{block head}
+    <!-- FooTable -->
+    <link href="{$basePath}/css/plugins/footable/footable.bootstrap.min.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="{$basePath}/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+{/block}
+{block content}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title empty">
+                </div>
+                <div class="ibox-content">
+	               	<canvas id="distribution_chart_test" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+{block scripts}
+    <!-- ChartJS-->
+    <script src="{$basePath}/js/plugins/chartJs/Chart.min.js"></script>
+    
+    <!-- Page-Level Scripts -->
+    <script> 
+        var ctx = $("#distribution_chart_test");
+        var myChart = new Chart($(ctx), {
+		    type: 'bar',
+		    data: {
+		        xLabels: {$x_axis},
+		        datasets: [{
+		            label: {$person->name},
+		            data: {$x_data},
+		            backgroundColor: "#63be7b",
+					borderColor: '#1ab394',
+		            borderWidth: 1,		            
+		        }]
+		    },
+		    options: {
+		        scales: {
+		            yAxes: [{
+			            type: 'linear',
+		                ticks: {
+		                    beginAtZero: true,
+		                    max: 2500,
+		                },	
+		                scaleLabel: {
+					        display: true,
+					        labelString: 'book points'
+					    },	
+		            }]
+		        },
+		        tooltips: {
+			        mode: 'index',
+                    intersect: false,
+            		callbacks: {
+                		title: function(tooltipItem, data){
+	                		var xLabel = tooltipItem[0].xLabel
+	                		var xLabel_parts = xLabel.split("/");
+                    		return "Rok " + xLabel_parts[0] + " - " + mesic[xLabel_parts[1]-1];
+                    	},
+                    	label: function(tooltipItem, data) {
+			                return " " + tooltipItem.yLabel + " bodů";
+			            }
+                	}
+            	}
+		    }
+		});
+    </script>
+{/block}

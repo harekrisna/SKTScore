@@ -1,3 +1,5 @@
+var mesic = new Array("leden", "únor", "březen", "duben", "květen", "červen", "červenec", "srpen", "září", "říjen", "listopad", "prosinec");
+
 $(document).ready(function () {
 	;(function($){
 		if($.fn.datepicker){

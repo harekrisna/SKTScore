@@ -2,6 +2,7 @@
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#person_{$person->id}-tab-1">Celková distribuce knih</a></li>
         <li class=""><a data-toggle="tab" href="#person_{$person->id}-tab-2">Týdny</a></li>
+        <li class=""><a data-toggle="tab" href="#person_{$person->id}-tab-3">Měsíce</a></li>
     </ul>
     <div class="tab-content">
         <div id="person_{$person->id}-tab-1" class="tab-pane active">
@@ -13,16 +14,16 @@
         </div>
         <div id="person_{$person->id}-tab-2" class="tab-pane">
             <div class="panel-body">
-	            <canvas id="distribution_chart_{$person->id}" height="120"></canvas>
+	            <canvas id="distribution_chart_weeks_{$person->id}" height="120"></canvas>
 	            <script>
-		            var ctx = $("#distribution_chart_" + {$person->id});
-			        var myChart = new Chart($(ctx), {
+		            var ctx = $("#distribution_chart_weeks_" + {$person->id});
+			        var weeksChart = new Chart($(ctx), {
 					    type: 'bar',
 					    data: {
-					        xLabels: {$x_axis},
+					        xLabels: {$x_axis_weeks},
 					        datasets: [{
 					            label: {$person->name},
-					            data: {$x_data},
+					            data: {$x_data_weeks},
 					            backgroundColor: "#63be7b",
 								borderColor: '#1ab394',
 					            borderWidth: 1,		            
@@ -50,6 +51,57 @@
 				                		var xLabel = tooltipItem[0].xLabel
 				                		var xLabel_parts = xLabel.split("/");
 			                    		return "Rok " + xLabel_parts[0] + " - týden " + xLabel_parts[1];
+			                    	},
+			                    	label: function(tooltipItem, data) {
+						                return " " + tooltipItem.yLabel + " bodů";
+						            }
+			                	}
+			            	}
+					    }
+					});
+		        </script>
+            </div>
+        </div>
+        <div id="person_{$person->id}-tab-3" class="tab-pane">
+            <div class="panel-body">
+	            <canvas id="distribution_chart_months_{$person->id}" height="120"></canvas>
+	            <script>
+			        var ctx = $("#distribution_chart_months_" + {$person->id});
+
+			        var monthsChart = new Chart($(ctx), {
+					    type: 'bar',
+					    data: {
+					        xLabels: {$x_axis_months},
+					        datasets: [{
+					            label: {$person->name},
+					            data: {$x_data_months},
+					            backgroundColor: "#63be7b",
+								borderColor: '#1ab394',
+					            borderWidth: 1,		            
+					        }]
+					    },
+					    options: {
+					        scales: {
+					            yAxes: [{
+						            type: 'linear',
+					                ticks: {
+					                    beginAtZero: true,
+					                    max: 2500,
+					                },	
+					                scaleLabel: {
+								        display: true,
+								        labelString: 'book points'
+								    },	
+					            }]
+					        },
+					        tooltips: {
+						        mode: 'index',
+			                    intersect: false,
+			            		callbacks: {
+			                		title: function(tooltipItem, data){
+				                		var xLabel = tooltipItem[0].xLabel
+				                		var xLabel_parts = xLabel.split("/");
+			                    		return "Rok " + xLabel_parts[0] + " - " + mesic[xLabel_parts[1]-1];
 			                    	},
 			                    	label: function(tooltipItem, data) {
 						                return " " + tooltipItem.yLabel + " bodů";
