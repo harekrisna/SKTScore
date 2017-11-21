@@ -64,7 +64,7 @@
 					};
 
 			        var weeksChart = new Chart($(ctx), options);
-			        var padding_bottom = 50 - (weeksChart.height - weeksChart.chartArea.bottom);
+			        var padding_bottom = 30 - (weeksChart.height - weeksChart.chartArea.bottom);
 			        weeksChart.destroy();
 			        options.options.layout.padding.bottom = padding_bottom;
 			        weeksChart = new Chart($(ctx), options);
@@ -122,7 +122,7 @@
 					}
 
 			        var monthsChart = new Chart($(ctx), options);
-			        var padding_bottom = 50 - (monthsChart.height - monthsChart.chartArea.bottom);
+			        var padding_bottom = 30 - (monthsChart.height - monthsChart.chartArea.bottom);
 			        monthsChart.destroy();
 			        options.options.layout.padding.bottom = padding_bottom;
 			        monthsChart = new Chart($(ctx), options);
@@ -184,7 +184,7 @@
 			        }
 
 					var yearsChart = new Chart($(ctx), options);
-			        var padding_bottom = 50 - (yearsChart.height - yearsChart.chartArea.bottom);
+			        var padding_bottom = 30 - (yearsChart.height - yearsChart.chartArea.bottom);
 			        yearsChart.destroy();
 			        options.options.layout.padding.bottom = padding_bottom;
 			        yearsChart = new Chart($(ctx), options);
