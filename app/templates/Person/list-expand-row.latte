@@ -3,6 +3,7 @@
         <li class="active"><a data-toggle="tab" href="#person_{$person->id}-tab-1">Celková distribuce knih</a></li>
         <li class=""><a data-toggle="tab" href="#person_{$person->id}-tab-2">Týdny</a></li>
         <li class=""><a data-toggle="tab" href="#person_{$person->id}-tab-3">Měsíce</a></li>
+        <li class=""><a data-toggle="tab" href="#person_{$person->id}-tab-4">Roky</a></li>
     </ul>
     <div class="tab-content">
         <div id="person_{$person->id}-tab-1" class="tab-pane active">
@@ -17,16 +18,15 @@
 	            <canvas id="distribution_chart_weeks_{$person->id}" height="120"></canvas>
 	            <script>
 		            var ctx = $("#distribution_chart_weeks_" + {$person->id});
-			        var weeksChart = new Chart($(ctx), {
+		            var options = {
 					    type: 'bar',
 					    data: {
-					        xLabels: {$x_axis_weeks},
+					        xLabels: {$weeks_chart_data['x_data_weeks'] ?: []},
 					        datasets: [{
 					            label: {$person->name},
-					            data: {$x_data_weeks},
+					            data: {$weeks_chart_data['y_data_points'] ?: []},
 					            backgroundColor: "#63be7b",
-								borderColor: '#1ab394',
-					            borderWidth: 1,		            
+								borderColor: '#1ab394',            
 					        }]
 					    },
 					    options: {
@@ -46,6 +46,9 @@
 					        tooltips: {
 						        mode: 'index',
 			                    intersect: false,
+			                    xAlign: 'center',
+                    			yAlign: 'top',
+                    			position: 'custom',
 			            		callbacks: {
 			                		title: function(tooltipItem, data){
 				                		var xLabel = tooltipItem[0].xLabel
@@ -58,7 +61,13 @@
 			                	}
 			            	}
 					    }
-					});
+					};
+
+			        var weeksChart = new Chart($(ctx), options);
+			        var padding_bottom = 50 - (weeksChart.height - weeksChart.chartArea.bottom);
+			        weeksChart.destroy();
+			        options.options.layout.padding.bottom = padding_bottom;
+			        weeksChart = new Chart($(ctx), options);
 		        </script>
             </div>
         </div>
@@ -66,18 +75,16 @@
             <div class="panel-body">
 	            <canvas id="distribution_chart_months_{$person->id}" height="120"></canvas>
 	            <script>
-			        var ctx = $("#distribution_chart_months_" + {$person->id});
-
-			        var monthsChart = new Chart($(ctx), {
+			        ctx = $("#distribution_chart_months_" + {$person->id});
+			        options = {
 					    type: 'bar',
 					    data: {
-					        xLabels: {$x_axis_months},
+					        xLabels: {$months_chart_data['x_data_months'] ?: []},
 					        datasets: [{
 					            label: {$person->name},
-					            data: {$x_data_months},
+					            data: {$months_chart_data['y_data_points'] ?: []},
 					            backgroundColor: "#63be7b",
 								borderColor: '#1ab394',
-					            borderWidth: 1,		            
 					        }]
 					    },
 					    options: {
@@ -97,6 +104,9 @@
 					        tooltips: {
 						        mode: 'index',
 			                    intersect: false,
+			                    xAlign: 'center',
+			                    yAlign: 'top',
+			                    position: 'custom',
 			            		callbacks: {
 			                		title: function(tooltipItem, data){
 				                		var xLabel = tooltipItem[0].xLabel
@@ -109,7 +119,76 @@
 			                	}
 			            	}
 					    }
-					});
+					}
+
+			        var monthsChart = new Chart($(ctx), options);
+			        var padding_bottom = 50 - (monthsChart.height - monthsChart.chartArea.bottom);
+			        monthsChart.destroy();
+			        options.options.layout.padding.bottom = padding_bottom;
+			        monthsChart = new Chart($(ctx), options);
+
+		        </script>
+            </div>
+        </div>
+        <div id="person_{$person->id}-tab-4" class="tab-pane">
+            <div class="panel-body">
+	            <canvas id="distribution_chart_years_{$person->id}" height="120"></canvas>
+	            <script>
+			   		ctx = $("#distribution_chart_years_" + {$person->id});
+			   		options = {
+			            type: 'bar',
+			            data: {
+			                xLabels: {$years_chart_data['x_data_years'] ?: []},
+			                datasets: [{
+			                    label: {$person->name},
+			                    data: {$years_chart_data['y_data_points'] ?: []},
+			                    backgroundColor: "#63be7b",
+			                    borderColor: '#1ab394',             
+			                }]
+			            },
+			            options: {
+			                animation: {
+						        onComplete: function() {
+						           console.log(this);
+						        }
+						    },
+			                scales: {
+			                    yAxes: [{
+			                        type: 'linear',
+			                        ticks: {
+			                            beginAtZero: true,
+			                            max: 10000,
+			                        },  
+			                        scaleLabel: {
+			                            display: true,
+			                            labelString: 'book points'
+			                        },  
+			                    }]
+			                },
+			                tooltips: {
+			                    mode: 'index',
+			                    intersect: false,
+			                    xAlign: 'center',
+			                    yAlign: 'top',
+			                    position: 'custom',
+			                    callbacks: {
+			                        title: function(tooltipItem, data){
+			                            return "Rok " + tooltipItem[0].xLabel;
+			                        },
+			                        label: function(tooltipItem, data) {
+			                            return " " + tooltipItem.yLabel + " bodů";
+			                        }
+			                    }
+			                },
+			            }
+			        }
+
+					var yearsChart = new Chart($(ctx), options);
+			        var padding_bottom = 50 - (yearsChart.height - yearsChart.chartArea.bottom);
+			        yearsChart.destroy();
+			        options.options.layout.padding.bottom = padding_bottom;
+			        yearsChart = new Chart($(ctx), options);
+
 		        </script>
             </div>
         </div>

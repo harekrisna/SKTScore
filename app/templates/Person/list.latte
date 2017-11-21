@@ -85,50 +85,12 @@
         function change_person_activity(person_id, active) {
             $.get({link setPersonActivity!}, {'person_id': person_id, 'active': active})
         }
-        {*
-        var ctx = $("#distribution_chart_test");
-        var myChart = new Chart($(ctx), {
-		    type: 'bar',
-		    data: {
-		        xLabels: {$x_axis},
-		        datasets: [{
-		            label: "Sankírtan dás",
-		            data: {$x_data},
-		            backgroundColor: "#63be7b",
-					borderColor: '#1ab394',
-		            borderWidth: 1,		            
-		        }]
-		    },
-		    options: {
-		        scales: {
-		            yAxes: [{
-			            type: 'linear',
-		                ticks: {
-		                    beginAtZero: true,
-		                    max: 1300,
-		                },	
-		                scaleLabel: {
-					        display: true,
-					        labelString: 'book points'
-					    },	
-		            }]
-		        },
-		        tooltips: {
-			        mode: 'index',
-                    intersect: false,
-            		callbacks: {
-                		title: function(tooltipItem, data){
-	                		var xLabel = tooltipItem[0].xLabel
-	                		var xLabel_parts = xLabel.split("/");
-                    		return "Rok " + xLabel_parts[0] + " - týden " + xLabel_parts[1];
-                    	},
-                    	label: function(tooltipItem, data) {
-			                return " " + tooltipItem.yLabel + " bodů";
-			            }
-                	}
-            	}
-		    }
-		});
-        *}
+
+        Chart.Tooltip.positioners.custom = function(elements, eventPosition) {       
+            return {
+                x: elements[0]._view.x,
+                y: elements[0]._chart.chartArea.bottom
+            };
+        }
     </script>
 {/block}

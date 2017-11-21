@@ -24,42 +24,40 @@ class PersonPresenter extends ComplexPresenter {
 	}
 
     public function renderTest($record_id) {
-
-        
-
-        $first_month = $this->chartsData->getFirstMonthPersonDistribution($record_id);
-        $last_monnth = $this->chartsData->getLastMonthPersonDistribution($record_id);
-
-        $months_set = $this->chartsData->generateMonthsAxis($first_month['year'], $first_month['month'], $last_monnth['year'], $last_monnth['month']);
-        $months_data = $this->chartsData->getMonthsPersonSumDistribution($record_id);
-
-        $x_axis = [];
-        foreach($months_set as $year => $months) {
-            foreach ($months as $month => $value) {
-                $x_axis[] = $year."/".$month;
-                $x_data[] = isset($months_data[$year][$month]) ? $months_data[$year][$month] : 0;
-            }
-        }
-
-
-        /*
         $first_week = $this->chartsData->getPersonFirstWeekDistribution($record_id);
         $last_week = $this->chartsData->getPersonLastWeekDistribution($record_id);
-        
-        $weeks_set = $this->chartsData->generateWeeksAxis($first_week->year, $first_week->week, $last_week->year, $last_week->week);
-        $weeks_data = $this->chartsData->getWeeksPersonSumDistribution($record_id);
 
-        $x_axis = [];
-        foreach($weeks_set as $year => $weeks) {
-            foreach ($weeks as $week => $value) {
-                $x_axis[] = $year."/".$week;
-                $x_data[] = isset($weeks_data[$year][$week]) ? $weeks_data[$year][$week] : 0;
-            }
+        $weeks_chart_data = null;
+
+        if($first_week && $last_week) {
+            $weeks_chart_data = $this->chartsData->generatePersonWeeksChartData($record_id, $first_week->year, $first_week->week, $last_week->year, $last_week->week);
         }
-    */
+
+        $this->template->weeks_chart_data = $weeks_chart_data;
+
+        $months_chart_data = null;
+
+        $first_month = $this->chartsData->getPersonFirstMonthDistribution($record_id);
+        $last_month = $this->chartsData->getPersonLastMonthDistribution($record_id);
+
+        if($first_month && $last_month) {
+            $months_chart_data = $this->chartsData->generatePersonMonthsChartData($record_id, $first_month['year'], $first_month['month'], $last_month['year'], $last_month['month']);
+        }
+
+        $this->template->months_chart_data = $months_chart_data;
+
+
+        $years_chart_data = null;
+
+        $first_year = $this->chartsData->getPersonFirstYearDistribution($record_id);
+        $last_year = $this->chartsData->getPersonLastYearDistribution($record_id);
+
+        if($first_year && $last_year) {
+            $years_chart_data = $this->chartsData->generatePersonYearsChartData($record_id, $first_year->year, $last_year->year);
+        }
+
+        $this->template->years_chart_data = $years_chart_data;
         $this->template->person = $this->person->get($record_id);
-        $this->template->x_axis = $x_axis;
-        $this->template->x_data = $x_data;
     }
 
     public function renderList() {
@@ -106,48 +104,39 @@ class PersonPresenter extends ComplexPresenter {
         $this->template->person = $this->person->get($record_id);
         $this->template->books_distribution = $this->distribution->getPersonBooksDistribution($record_id);
         
-        $x_axis_weeks = [];
-        $x_data_weeks = [];
-
         $first_week = $this->chartsData->getPersonFirstWeekDistribution($record_id);
         $last_week = $this->chartsData->getPersonLastWeekDistribution($record_id);
         
+        $weeks_chart_data = null;
+
         if($first_week && $last_week) {
-            $weeks_set = $this->chartsData->generateWeeksAxis($first_week->year, $first_week->week, $last_week->year, $last_week->week);
-            $chart_data = $this->chartsData->getWeeksPersonSumDistribution($record_id);
-        
-            foreach($weeks_set as $year => $weeks) {
-                foreach ($weeks as $week => $value) {
-                    $x_axis_weeks[] = $year."/".$week;
-                    $x_data_weeks[] = isset($chart_data[$year][$week]) ? $chart_data[$year][$week] : 0;
-                }
-            }
+            $weeks_chart_data = $this->chartsData->generatePersonWeeksChartData($record_id, $first_week->year, $first_week->week, $last_week->year, $last_week->week);
         }
 
-        $this->template->x_axis_weeks = $x_axis_weeks;
-        $this->template->x_data_weeks = $x_data_weeks;
+        $this->template->weeks_chart_data = $weeks_chart_data;
 
-        $x_axis_months = [];
-        $x_data_months = [];
-
-        $first_month = $this->chartsData->getFirstMonthPersonDistribution($record_id);
-        $last_month = $this->chartsData->getLastMonthPersonDistribution($record_id);
+        $first_month = $this->chartsData->getPersonFirstMonthDistribution($record_id);
+        $last_month = $this->chartsData->getPersonLastMonthDistribution($record_id);
+        
+        $months_chart_data = null;
 
         if($first_month && $last_month) {
-            $months_set = $this->chartsData->generateMonthsAxis($first_month['year'], $first_month['month'], $last_month['year'], $last_month['month']);
-            $months_data = $this->chartsData->getMonthsPersonSumDistribution($record_id);
-
-            foreach($months_set as $year => $months) {
-                foreach ($months as $month => $value) {
-                    $x_axis_months[] = $year."/".$month;
-                    $x_data_months[] = isset($months_data[$year][$month]) ? $months_data[$year][$month] : 0;
-                }
-            }
+            $months_chart_data = $this->chartsData->generatePersonMonthsChartData($record_id, $first_month['year'], $first_month['month'], $last_month['year'], $last_month['month']);
         }
+
+        $this->template->months_chart_data = $months_chart_data;
         
-        $this->template->x_axis_months = $x_axis_months;
-        $this->template->x_data_months = $x_data_months;
-        
+        $years_chart_data = null;
+
+        $first_year = $this->chartsData->getPersonFirstYearDistribution($record_id);
+        $last_year = $this->chartsData->getPersonLastYearDistribution($record_id);
+
+        if($first_year && $last_year) {
+            $years_chart_data = $this->chartsData->generatePersonYearsChartData($record_id, $first_year->year, $last_year->year);
+        }
+
+        $this->template->years_chart_data = $years_chart_data;
+
         parent::renderExpandRow($record_id);
     }
 
