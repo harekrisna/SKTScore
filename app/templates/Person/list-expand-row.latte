@@ -1,9 +1,9 @@
 <div class="tabs-container">
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#person_{$person->id}-tab-1">Celková distribuce knih</a></li>
-        <li class=""><a data-toggle="tab" href="#person_{$person->id}-tab-2">Týdny</a></li>
-        <li class=""><a data-toggle="tab" href="#person_{$person->id}-tab-3">Měsíce</a></li>
-        <li class=""><a data-toggle="tab" href="#person_{$person->id}-tab-4">Roky</a></li>
+        <li class=""><a data-toggle="tab" href="#tab_{$person->id}-weeks">Týdny</a></li>
+        <li class=""><a data-toggle="tab" href="#tab_{$person->id}-months">Měsíce</a></li>
+        <li class=""><a data-toggle="tab" href="#tab_{$person->id}-years">Roky</a></li>
     </ul>
     <div class="tab-content">
         <div id="person_{$person->id}-tab-1" class="tab-pane active">
@@ -13,182 +13,135 @@
                 </table>
             </div>
         </div>
-        <div id="person_{$person->id}-tab-2" class="tab-pane">
+        <script type="text/javascript">
+        	var ctx_{$person->id};
+        	var weeksChart_{$person->id};
+        	var monthsChart_{$person->id};
+        	var yearsChart_{$person->id};
+        	var padding_bottom_{$person->id};
+        	var options_{$person->id} = {
+			    type: 'bar',
+			    animation: false,
+			    data: {
+			        xLabels: [],
+			        datasets: [{
+			            label: {$person->name},
+			            data: [],
+			            backgroundColor: "#63be7b",
+						borderColor: '#1ab394',            
+			        }]
+			    },
+			    options: {
+			        scales: {
+			        	xAxes: [{
+				            afterFit: (scale) => {
+				                scale.height = 50;
+				            }
+				        }],
+			            yAxes: [{
+				            type: 'linear',
+			                ticks: {
+			                    beginAtZero: true,
+			                },	
+			                scaleLabel: {
+						        display: true,
+						        labelString: 'book points'
+						    },	
+			            }]
+			        },
+			        tooltips: {
+				        mode: 'index',
+	                    intersect: false,
+	                    xAlign: 'center',
+            			yAlign: 'top',
+            			position: 'custom',
+	            		callbacks: {
+	                    	label: function(tooltipItem, data) {
+				                return " " + tooltipItem.yLabel + " bodů";
+				            }
+	                	}
+	            	}
+			    }
+			};
+        </script>
+        <div id="tab_{$person->id}-weeks" class="tab-pane">
             <div class="panel-body">
 	            <canvas id="distribution_chart_weeks_{$person->id}" height="120"></canvas>
 	            <script>
-		            var ctx = $("#distribution_chart_weeks_" + {$person->id});
-		            var options = {
-					    type: 'bar',
-					    data: {
-					        xLabels: {$weeks_chart_data['x_data_weeks'] ?: []},
-					        datasets: [{
-					            label: {$person->name},
-					            data: {$weeks_chart_data['y_data_points'] ?: []},
-					            backgroundColor: "#63be7b",
-								borderColor: '#1ab394',            
-					        }]
-					    },
-					    options: {
-					        scales: {
-					            yAxes: [{
-						            type: 'linear',
-					                ticks: {
-					                    beginAtZero: true,
-					                    max: 1300,
-					                },	
-					                scaleLabel: {
-								        display: true,
-								        labelString: 'book points'
-								    },	
-					            }]
-					        },
-					        tooltips: {
-						        mode: 'index',
-			                    intersect: false,
-			                    xAlign: 'center',
-                    			yAlign: 'top',
-                    			position: 'custom',
-			            		callbacks: {
-			                		title: function(tooltipItem, data){
-				                		var xLabel = tooltipItem[0].xLabel
-				                		var xLabel_parts = xLabel.split("/");
-			                    		return "Rok " + xLabel_parts[0] + " - týden " + xLabel_parts[1];
-			                    	},
-			                    	label: function(tooltipItem, data) {
-						                return " " + tooltipItem.yLabel + " bodů";
-						            }
-			                	}
-			            	}
-					    }
-					};
+	            	$("a[href='#tab_{$person->id}-weeks']").on('shown.bs.tab', function() {
+	            		if(typeof weeksChart_{$person->id} !== "undefined")
+	            			weeksChart_{$person->id}.destroy();
 
-			        var weeksChart = new Chart($(ctx), options);
-			        var padding_bottom = 30 - (weeksChart.height - weeksChart.chartArea.bottom);
-			        weeksChart.destroy();
-			        options.options.layout.padding.bottom = padding_bottom;
-			        weeksChart = new Chart($(ctx), options);
+			            ctx_{$person->id} = $("#distribution_chart_weeks_" + {$person->id});
+						
+						options_{$person->id}.data.xLabels = {$weeks_chart_data['x_data_weeks'] ?: []};
+						options_{$person->id}.data.datasets[0].data = {$weeks_chart_data['y_data_points'] ?: []};
+						options_{$person->id}.options.scales.yAxes[0].ticks.max = 1300;
+						
+						weeksChart_{$person->id} = new Chart($(ctx_{$person->id}), options_{$person->id});
+						
+						weeksChart_{$person->id}.tooltip._options.callbacks.title = function(tooltipItem, data){
+	                		var xLabel = tooltipItem[0].xLabel
+	                		var xLabel_parts = xLabel.split("/");
+                    		return "Rok " + xLabel_parts[0] + " - týden " + xLabel_parts[1];
+                    	};
+
+			        	weeksChart_{$person->id}.update();
+			        });
+
 		        </script>
             </div>
         </div>
-        <div id="person_{$person->id}-tab-3" class="tab-pane">
+        <div id="tab_{$person->id}-months" class="tab-pane">
             <div class="panel-body">
 	            <canvas id="distribution_chart_months_{$person->id}" height="120"></canvas>
 	            <script>
-			        ctx = $("#distribution_chart_months_" + {$person->id});
-			        options = {
-					    type: 'bar',
-					    data: {
-					        xLabels: {$months_chart_data['x_data_months'] ?: []},
-					        datasets: [{
-					            label: {$person->name},
-					            data: {$months_chart_data['y_data_points'] ?: []},
-					            backgroundColor: "#63be7b",
-								borderColor: '#1ab394',
-					        }]
-					    },
-					    options: {
-					        scales: {
-					            yAxes: [{
-						            type: 'linear',
-					                ticks: {
-					                    beginAtZero: true,
-					                    max: 2500,
-					                },	
-					                scaleLabel: {
-								        display: true,
-								        labelString: 'book points'
-								    },	
-					            }]
-					        },
-					        tooltips: {
-						        mode: 'index',
-			                    intersect: false,
-			                    xAlign: 'center',
-			                    yAlign: 'top',
-			                    position: 'custom',
-			            		callbacks: {
-			                		title: function(tooltipItem, data){
-				                		var xLabel = tooltipItem[0].xLabel
-				                		var xLabel_parts = xLabel.split("/");
-			                    		return "Rok " + xLabel_parts[0] + " - " + mesic[xLabel_parts[1]-1];
-			                    	},
-			                    	label: function(tooltipItem, data) {
-						                return " " + tooltipItem.yLabel + " bodů";
-						            }
-			                	}
-			            	}
-					    }
-					}
+					$("a[href='#tab_{$person->id}-months']").on('shown.bs.tab', function() {
+						if(typeof monthsChart_{$person->id} !== "undefined")
+							monthsChart_{$person->id}.destroy();
+				        
+				        ctx_{$person->id} = $("#distribution_chart_months_" + {$person->id});
+				        
+				        options_{$person->id}.data.xLabels = {$months_chart_data['x_data_months'] ?: []};
+						options_{$person->id}.data.datasets[0].data = {$months_chart_data['y_data_points'] ?: []};
+						options_{$person->id}.options.scales.yAxes[0].ticks.max = 2500;
+						
+						monthsChart_{$person->id} = new Chart($(ctx_{$person->id}), options_{$person->id});
 
-			        var monthsChart = new Chart($(ctx), options);
-			        var padding_bottom = 30 - (monthsChart.height - monthsChart.chartArea.bottom);
-			        monthsChart.destroy();
-			        options.options.layout.padding.bottom = padding_bottom;
-			        monthsChart = new Chart($(ctx), options);
 
+						monthsChart_{$person->id}.tooltip._options.callbacks.title = function(tooltipItem, data){
+	                		var xLabel = tooltipItem[0].xLabel
+	                		var xLabel_parts = xLabel.split("/");
+                    		return "Rok " + xLabel_parts[0] + " - " + mesic[xLabel_parts[1]-1];
+                    	},
+
+			        	monthsChart_{$person->id}.update();
+					});
 		        </script>
             </div>
         </div>
-        <div id="person_{$person->id}-tab-4" class="tab-pane">
+        <div id="tab_{$person->id}-years" class="tab-pane">
             <div class="panel-body">
 	            <canvas id="distribution_chart_years_{$person->id}" height="120"></canvas>
 	            <script>
-			   		ctx = $("#distribution_chart_years_" + {$person->id});
-			   		options = {
-			            type: 'bar',
-			            data: {
-			                xLabels: {$years_chart_data['x_data_years'] ?: []},
-			                datasets: [{
-			                    label: {$person->name},
-			                    data: {$years_chart_data['y_data_points'] ?: []},
-			                    backgroundColor: "#63be7b",
-			                    borderColor: '#1ab394',             
-			                }]
-			            },
-			            options: {
-			                animation: {
-						        onComplete: function() {
-						           console.log(this);
-						        }
-						    },
-			                scales: {
-			                    yAxes: [{
-			                        type: 'linear',
-			                        ticks: {
-			                            beginAtZero: true,
-			                            max: 10000,
-			                        },  
-			                        scaleLabel: {
-			                            display: true,
-			                            labelString: 'book points'
-			                        },  
-			                    }]
-			                },
-			                tooltips: {
-			                    mode: 'index',
-			                    intersect: false,
-			                    xAlign: 'center',
-			                    yAlign: 'top',
-			                    position: 'custom',
-			                    callbacks: {
-			                        title: function(tooltipItem, data){
-			                            return "Rok " + tooltipItem[0].xLabel;
-			                        },
-			                        label: function(tooltipItem, data) {
-			                            return " " + tooltipItem.yLabel + " bodů";
-			                        }
-			                    }
-			                },
-			            }
-			        }
+	            	$("a[href='#tab_{$person->id}-years']").on('shown.bs.tab', function() { 
+	            		if(typeof yearsChart_{$person->id} !== "undefined")
+	            			yearsChart_{$person->id}.destroy();
 
-					var yearsChart = new Chart($(ctx), options);
-			        var padding_bottom = 30 - (yearsChart.height - yearsChart.chartArea.bottom);
-			        yearsChart.destroy();
-			        options.options.layout.padding.bottom = padding_bottom;
-			        yearsChart = new Chart($(ctx), options);
+				   		ctx_{$person->id} = $("#distribution_chart_years_" + {$person->id});
+				   		
+						options_{$person->id}.data.xLabels = {$years_chart_data['x_data_years'] ?: []};
+						options_{$person->id}.data.datasets[0].data = {$years_chart_data['y_data_points'] ?: []};
+						options_{$person->id}.options.scales.yAxes[0].ticks.max = 10000;
+						
+						yearsChart_{$person->id} = new Chart($(ctx_{$person->id}), options_{$person->id});
 
+						yearsChart_{$person->id}.tooltip._options.callbacks.title = function(tooltipItem, data){
+                            return "Rok " + tooltipItem[0].xLabel;
+                        };
+
+			        	yearsChart_{$person->id}.update();
+					});
 		        </script>
             </div>
         </div>

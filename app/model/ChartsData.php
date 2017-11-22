@@ -195,7 +195,7 @@ class ChartsData extends TableExtended
 
 	    	$weeks_axis[$year_from] = $year_weeks;    
 	    }
-	    else {  // interval s více roků
+	    else {  // interval přes více roků
 		    for($year = $year_from; $year <= $year_to; $year++) {
 			    $weeks_in_year = $this->getIsoWeeksInYear($year);
 			    $year_weeks = [];
@@ -227,31 +227,40 @@ class ChartsData extends TableExtended
 	public function generateMonthsAxis($year_from, $month_form, $year_to, $month_to) {
 	    $months_axis = [];
 	    
-	    for($year = $year_from; $year <= $year_to; $year++) {
-		    $months_in_year = 12;
-		    $year_months = [];
-		     
-		    // první rok
-		    if($year == $year_from) {
-				for($month = $month_form; $month <= $months_in_year; $month++) {
-					$year_months[$month] = null;    
-		    	}    
-		    }
+	    if($year_from == $year_to) { // pouze interval v jednom roce
+			for($month = $month_form; $month <= $month_to; $month++) {
+				$year_months[$month] = null;
+	    	}
 
-		    elseif($year == $year_to) { // poslední rok
-			    for($month = 1; $month <= $month_to; $month++) {
-					$year_months[$month] = null;    
-		    	}
-		    }
-
-		    else { // roky mezi
-				for($month = 1; $month <= $months_in_year; $month++) {
-					$year_months[$month] = null;    
-			    }		        
-		    }
-		    
-		    $months_axis[$year] = $year_months;
+	    	$months_axis[$year_from] = $year_months; 
 	    }
+	    else { // interval přes více roků
+		    for($year = $year_from; $year <= $year_to; $year++) {
+			    $months_in_year = 12;
+			    $year_months = [];
+			     
+			    // první rok
+			    if($year == $year_from) {
+					for($month = $month_form; $month <= $months_in_year; $month++) {
+						$year_months[$month] = null;    
+			    	}    
+			    }
+
+			    elseif($year == $year_to) { // poslední rok
+				    for($month = 1; $month <= $month_to; $month++) {
+						$year_months[$month] = null;    
+			    	}
+			    }
+
+			    else { // roky mezi
+					for($month = 1; $month <= $months_in_year; $month++) {
+						$year_months[$month] = null;    
+				    }		        
+			    }
+			    
+			    $months_axis[$year] = $year_months;
+		    }
+		}
 		
 		return $months_axis;	
 	}

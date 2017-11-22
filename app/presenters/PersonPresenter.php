@@ -117,7 +117,7 @@ class PersonPresenter extends ComplexPresenter {
 
         $first_month = $this->chartsData->getPersonFirstMonthDistribution($record_id);
         $last_month = $this->chartsData->getPersonLastMonthDistribution($record_id);
-        
+
         $months_chart_data = null;
 
         if($first_month && $last_month) {
