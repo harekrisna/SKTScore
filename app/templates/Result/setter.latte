@@ -110,6 +110,7 @@
             initFooTable('#resultsTable');
 
             $('#main_loading').fadeOut();
+            
             //  ajaxvá obsluha uložení výsledků osoby
             $("#snippet--resultsTable").on("submit", "form", function(event) {
 	            var is_superadmin = {$user->isInRole('superadmin')};

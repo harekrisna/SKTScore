@@ -136,6 +136,12 @@ function initFooTable(table, success_message = "Záznam byl smazán.", error_mes
                                                     .addClass('fooicon-plus');
     });
 
+    $(table).on("before.ft.paging", function (e, ft, pager) {
+        $(table).find('tbody tr.footable-detail-row').remove();
+        $(table).find('tbody td span.fooicon-minus').removeClass('fooicon-minus')
+                                                    .addClass('fooicon-plus');
+    });
+
     $(table).show();
 }
 
